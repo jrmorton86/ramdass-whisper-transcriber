@@ -63,11 +63,13 @@ def transcribe_with_speakers(audio_path, output_dir=None, model_size="base", hf_
     if speaker_config.speakers or speaker_names:
         speaker_config.list_speakers()
     
+    # Detect device (GPU/CUDA if available, otherwise CPU)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"\n💻 Device: {device} {'(GPU acceleration enabled)' if torch.cuda.is_available() else '(CPU - will be slower)'}")
+    
     # Load Whisper model
     print(f"\n1. Loading Whisper model ({model_size})...")
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"   Using device: {device}")
-    whisper_model = whisper.load_model(model_size, device=device)
+    whisper_model = whisper.load_model(model_size, device=str(device))
     
     # Transcribe with Whisper
     print("\n2. Transcribing audio with Whisper...")
@@ -92,12 +94,8 @@ def transcribe_with_speakers(audio_path, output_dir=None, model_size="base", hf_
                 token=hf_token
             )
             
-            # Move pipeline to GPU if available for faster processing
-            if torch.cuda.is_available():
-                print("   Using GPU acceleration for diarization")
-                pipeline.to(torch.device("cuda"))
-            else:
-                print("   Using CPU for diarization (GPU would be faster)")
+            # Move pipeline to same device as Whisper (GPU/CPU)
+            pipeline.to(device)
             
             print("   Running speaker detection (this may take a few minutes)...")
             
