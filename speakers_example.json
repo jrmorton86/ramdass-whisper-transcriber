@@ -1,0 +1,36 @@
+{
+  "speakers": [
+    {
+      "id": "ram_dass",
+      "name": "Ram Dass",
+      "aliases": ["Richard Alpert", "Baba Ram Dass"],
+      "voice_characteristics": {
+        "typical_role": "teacher",
+        "notes": "Primary speaker, calm and measured delivery"
+      }
+    },
+    {
+      "id": "host",
+      "name": "Host",
+      "aliases": ["Interviewer", "Moderator"],
+      "voice_characteristics": {
+        "typical_role": "interviewer",
+        "notes": "Asks questions, facilitates conversation"
+      }
+    },
+    {
+      "id": "caller",
+      "name": "Caller",
+      "aliases": ["Audience Member", "Questioner"],
+      "voice_characteristics": {
+        "typical_role": "questioner",
+        "notes": "Brief appearances, asks questions"
+      }
+    }
+  ],
+  "diarization_mapping": {
+    "SPEAKER_00": "ram_dass",
+    "SPEAKER_01": "host",
+    "SPEAKER_02": "caller"
+  }
+}
