@@ -86,8 +86,9 @@ def transcribe_with_speakers(audio_path, output_dir=None, model_size="base", hf_
     if hf_token:
         try:
             print("   Loading diarization pipeline...")
+            # Use community-1 model (successor to 3.1)
             pipeline = Pipeline.from_pretrained(
-                "pyannote/speaker-diarization-3.1",
+                "pyannote/speaker-diarization-community-1",
                 token=hf_token
             )
             
@@ -115,15 +116,15 @@ def transcribe_with_speakers(audio_path, output_dir=None, model_size="base", hf_
             try:
                 from pyannote.audio.pipelines.utils.hook import ProgressHook
                 with ProgressHook() as hook:
-                    diarization = pipeline(str(audio_path), hook=hook, **diarization_params)
+                    output = pipeline(str(audio_path), hook=hook, **diarization_params)
             except ImportError:
                 # Fallback if ProgressHook is not available
                 print("   (Install pyannote.audio>=3.0 for progress monitoring)")
-                diarization = pipeline(str(audio_path), **diarization_params)
+                output = pipeline(str(audio_path), **diarization_params)
             
-            # Extract speaker segments
+            # Extract speaker segments using the official API
             speaker_segments = []
-            for turn, _, speaker in diarization.itertracks(yield_label=True):
+            for turn, _, speaker in output.itertracks(yield_label=True):
                 speaker_segments.append({
                     "start": turn.start,
                     "end": turn.end,
@@ -314,7 +315,7 @@ def main():
         print("\nTo enable diarization:")
         print("1. Get a token from https://huggingface.co/settings/tokens")
         print("2. Accept the model terms at:")
-        print("   https://huggingface.co/pyannote/speaker-diarization-3.1")
+        print("   https://huggingface.co/pyannote/speaker-diarization-community-1")
         print("3. Provide token via --hf-token or HF_TOKEN environment variable")
         print("!" * 60 + "\n")
         

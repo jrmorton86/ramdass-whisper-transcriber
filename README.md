@@ -39,7 +39,7 @@ Transcribe audio files with speaker diarization using OpenAI Whisper and pyannot
 4. **Set up HuggingFace Token** (for speaker diarization):
    - Go to https://huggingface.co/settings/tokens
    - Create a new token with read access
-   - Accept the model terms at: https://huggingface.co/pyannote/speaker-diarization-3.1
+   - Accept the model terms at: https://huggingface.co/pyannote/speaker-diarization-community-1
    - Create a `.env` file in the project root:
      ```bash
      cp .env.example .env
