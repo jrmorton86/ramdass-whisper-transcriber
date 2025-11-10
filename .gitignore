@@ -1,8 +1,8 @@
 # Virtual Environment
-transcribe_pipeline/venv/
-transcribe_pipeline/.venv/
-transcribe_pipeline/env/
-transcribe_pipeline/ENV/
+venv/
+.venv/
+env/
+ENV/
 
 # Environment variables
 transcribe_pipeline/.env
