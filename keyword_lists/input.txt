@@ -1,0 +1,60 @@
+Phrase	SoundsLike	IPA	DisplayAs
+Ram-Dass	rahm-dahss		Ram Dass
+Ram-Das	ram-dahs		Ram Dass
+Ramdas			Ram Dass
+Ramdass			Ram Dass
+Maharaj-ji	mah-hah-RAHJ-jee		Maharaj-ji
+Maharaji			Maharaj-ji
+Maharajji			Maharaj-ji
+Mahrajji			Maharaj-ji
+Neem-Karoli-Baba	neem-kuh-ROH-lee-bah-bah		Neem Karoli Baba
+Richard	RICH-erd		Richard Alpert
+Hanuman	HAH-new-mahn		Hanuman
+Vrindavan	vrin-DAH-vuhn		Vrindavan
+Rishikesh	REE-shee-kesh		Rishikesh
+Tulsidas	TOOL-see-dahs		Tulsidas
+Dharma	DAR-mah		Dharma
+Karma	KAR-mah		Karma
+Bhakti	BUHK-tee		Bhakti
+Japa	JAH-puh		Japa
+Kirtan	KEER-tun		Kirtan
+Satsang	SUT-song		Satsang
+Seva	SAY-vuh		Seva
+Darshan	DAR-shun		Darshan
+Prasad	pruh-SAHD		Prasad
+Pranayama	prah-nuh-YAH-muh		Pranayama
+Kundalini	koon-dah-LEE-nee		Kundalini
+Lila	LEE-lah		Lila
+Moksha	MOKE-sha		Moksha
+Samadhi	suh-MAH-dee		Samadhi
+Samsara	sam-SAH-rah		Samsara
+Samskara	sum-SKAR-uh		Samskara
+Upanishads	oo-PAH-nee-shuds		Upanishads
+Vipassana	vi-PAH-suh-nuh		Vipassana
+Dzogchen	DZOG-chen		Dzogchen
+Bodhisattva	boh-dee-SUT-vuh		Bodhisattva
+Metta	MEH-tuh		Metta
+Prajna	PRAHZH-nya		Prajna
+Shunyata	shoon-YAH-tah		Shunyata
+Sangha	SAHNG-uh		Sangha
+Hanukkah	HAH-nuh-kah		Hanukkah
+Chanukah			Hanukkah
+Hannukah			Hanukkah
+Shekhinah	sheh-KHEE-nah		Shekhinah
+Shechinah			Shekhinah
+Kabbalah	kah-bah-LAH		Kabbalah
+Shabbat	shah-BAHT		Shabbat
+Shabbos			Shabbat
+Chutzpah	KHOOTS-pah		Chutzpah
+Tzedakah	tzeh-DAH-kah		Tzedakah
+Gestalt	geh-STAHLT		Gestalt
+Raghu-Marcus	Ragu-Mar-CUHS		Raghu Markus
+Luff	luhf		Love
+Luff-Everyone	luhf-Every-won		Love Everyone
+Ragu-Marcus	Ragu-Mar-CUHS		Raghu Markus
+Manu-Rai	Manu-Ra-Ji		Maharaj-ji
+Parvati-Marcus	Parvati-Marcus		Parvati Markus
+Ouspensky	OOS-pen-skee		Ouspensky
+Gurdjieff	GURD-jeef		Gurdjieff
+Timothy-Leary	TIM-uh-thee LEER-ee		Timothy Leary
+Grey's-Anatomy	grayz uh-NAT-uh-mee		Grey's Anatomy

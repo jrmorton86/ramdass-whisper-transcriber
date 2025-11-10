@@ -1,0 +1,5306 @@
+{
+  "custom_vocabulary": [
+    {
+      "phrase": "Ram-Dass",
+      "display_as": "Ram Dass",
+      "sounds_like": "rahm-dahss"
+    },
+    {
+      "phrase": "Ram-Das",
+      "display_as": "Ram Dass",
+      "sounds_like": "ram-dahs"
+    },
+    {
+      "phrase": "Ramdas",
+      "display_as": "Ram Dass"
+    },
+    {
+      "phrase": "Ramdass",
+      "display_as": "Ram Dass"
+    },
+    {
+      "phrase": "Maharaj-ji",
+      "display_as": "Maharaj-ji",
+      "sounds_like": "mah-hah-RAHJ-jee"
+    },
+    {
+      "phrase": "Maharaji",
+      "display_as": "Maharaj-ji"
+    },
+    {
+      "phrase": "Maharajji",
+      "display_as": "Maharaj-ji"
+    },
+    {
+      "phrase": "Mahrajji",
+      "display_as": "Maharaj-ji"
+    },
+    {
+      "phrase": "Neem-Karoli-Baba",
+      "display_as": "Neem Karoli Baba",
+      "sounds_like": "neem-kuh-ROH-lee-bah-bah"
+    },
+    {
+      "phrase": "Richard",
+      "display_as": "Richard Alpert",
+      "sounds_like": "RICH-erd"
+    },
+    {
+      "phrase": "Hanuman",
+      "display_as": "Hanuman",
+      "sounds_like": "HAH-new-mahn"
+    },
+    {
+      "phrase": "Vrindavan",
+      "display_as": "Vrindavan",
+      "sounds_like": "vrin-DAH-vuhn"
+    },
+    {
+      "phrase": "Rishikesh",
+      "display_as": "Rishikesh",
+      "sounds_like": "REE-shee-kesh"
+    },
+    {
+      "phrase": "Tulsidas",
+      "display_as": "Tulsidas",
+      "sounds_like": "TOOL-see-dahs"
+    },
+    {
+      "phrase": "Dharma",
+      "display_as": "Dharma",
+      "sounds_like": "DAR-mah"
+    },
+    {
+      "phrase": "Karma",
+      "display_as": "Karma",
+      "sounds_like": "KAR-mah"
+    },
+    {
+      "phrase": "Bhakti",
+      "display_as": "Bhakti",
+      "sounds_like": "BUHK-tee"
+    },
+    {
+      "phrase": "Japa",
+      "display_as": "Japa",
+      "sounds_like": "JAH-puh"
+    },
+    {
+      "phrase": "Kirtan",
+      "display_as": "Kirtan",
+      "sounds_like": "KEER-tun"
+    },
+    {
+      "phrase": "Satsang",
+      "display_as": "Satsang",
+      "sounds_like": "SUT-song"
+    },
+    {
+      "phrase": "Seva",
+      "display_as": "Seva",
+      "sounds_like": "SAY-vuh"
+    },
+    {
+      "phrase": "Darshan",
+      "display_as": "Darshan",
+      "sounds_like": "DAR-shun"
+    },
+    {
+      "phrase": "Prasad",
+      "display_as": "Prasad",
+      "sounds_like": "pruh-SAHD"
+    },
+    {
+      "phrase": "Pranayama",
+      "display_as": "Pranayama",
+      "sounds_like": "prah-nuh-YAH-muh"
+    },
+    {
+      "phrase": "Kundalini",
+      "display_as": "Kundalini",
+      "sounds_like": "koon-dah-LEE-nee"
+    },
+    {
+      "phrase": "Lila",
+      "display_as": "Lila",
+      "sounds_like": "LEE-lah"
+    },
+    {
+      "phrase": "Moksha",
+      "display_as": "Moksha",
+      "sounds_like": "MOKE-sha"
+    },
+    {
+      "phrase": "Samadhi",
+      "display_as": "Samadhi",
+      "sounds_like": "suh-MAH-dee"
+    },
+    {
+      "phrase": "Samsara",
+      "display_as": "Samsara",
+      "sounds_like": "sam-SAH-rah"
+    },
+    {
+      "phrase": "Samskara",
+      "display_as": "Samskara",
+      "sounds_like": "sum-SKAR-uh"
+    },
+    {
+      "phrase": "Upanishads",
+      "display_as": "Upanishads",
+      "sounds_like": "oo-PAH-nee-shuds"
+    },
+    {
+      "phrase": "Vipassana",
+      "display_as": "Vipassana",
+      "sounds_like": "vi-PAH-suh-nuh"
+    },
+    {
+      "phrase": "Dzogchen",
+      "display_as": "Dzogchen",
+      "sounds_like": "DZOG-chen"
+    },
+    {
+      "phrase": "Bodhisattva",
+      "display_as": "Bodhisattva",
+      "sounds_like": "boh-dee-SUT-vuh"
+    },
+    {
+      "phrase": "Metta",
+      "display_as": "Metta",
+      "sounds_like": "MEH-tuh"
+    },
+    {
+      "phrase": "Prajna",
+      "display_as": "Prajna",
+      "sounds_like": "PRAHZH-nya"
+    },
+    {
+      "phrase": "Shunyata",
+      "display_as": "Shunyata",
+      "sounds_like": "shoon-YAH-tah"
+    },
+    {
+      "phrase": "Sangha",
+      "display_as": "Sangha",
+      "sounds_like": "SAHNG-uh"
+    },
+    {
+      "phrase": "Hanukkah",
+      "display_as": "Hanukkah",
+      "sounds_like": "HAH-nuh-kah"
+    },
+    {
+      "phrase": "Chanukah",
+      "display_as": "Hanukkah"
+    },
+    {
+      "phrase": "Hannukah",
+      "display_as": "Hanukkah"
+    },
+    {
+      "phrase": "Shekhinah",
+      "display_as": "Shekhinah",
+      "sounds_like": "sheh-KHEE-nah"
+    },
+    {
+      "phrase": "Shechinah",
+      "display_as": "Shekhinah"
+    },
+    {
+      "phrase": "Kabbalah",
+      "display_as": "Kabbalah",
+      "sounds_like": "kah-bah-LAH"
+    },
+    {
+      "phrase": "Shabbat",
+      "display_as": "Shabbat",
+      "sounds_like": "shah-BAHT"
+    },
+    {
+      "phrase": "Shabbos",
+      "display_as": "Shabbat"
+    },
+    {
+      "phrase": "Chutzpah",
+      "display_as": "Chutzpah",
+      "sounds_like": "KHOOTS-pah"
+    },
+    {
+      "phrase": "Tzedakah",
+      "display_as": "Tzedakah",
+      "sounds_like": "tzeh-DAH-kah"
+    },
+    {
+      "phrase": "Gestalt",
+      "display_as": "Gestalt",
+      "sounds_like": "geh-STAHLT"
+    },
+    {
+      "phrase": "Raghu-Marcus",
+      "display_as": "Raghu Markus",
+      "sounds_like": "Ragu-Mar-CUHS"
+    },
+    {
+      "phrase": "Luff",
+      "display_as": "Love",
+      "sounds_like": "luhf"
+    },
+    {
+      "phrase": "Luff-Everyone",
+      "display_as": "Love Everyone",
+      "sounds_like": "luhf-Every-won"
+    },
+    {
+      "phrase": "Ragu-Marcus",
+      "display_as": "Raghu Markus",
+      "sounds_like": "Ragu-Mar-CUHS"
+    },
+    {
+      "phrase": "Manu-Rai",
+      "display_as": "Maharaj-ji",
+      "sounds_like": "Manu-Ra-Ji"
+    },
+    {
+      "phrase": "Parvati-Marcus",
+      "display_as": "Parvati Markus",
+      "sounds_like": "Parvati-Marcus"
+    },
+    {
+      "phrase": "Ouspensky",
+      "display_as": "Ouspensky",
+      "sounds_like": "OOS-pen-skee"
+    },
+    {
+      "phrase": "Gurdjieff",
+      "display_as": "Gurdjieff",
+      "sounds_like": "GURD-jeef"
+    },
+    {
+      "phrase": "Timothy-Leary",
+      "display_as": "Timothy Leary",
+      "sounds_like": "TIM-uh-thee LEER-ee"
+    },
+    {
+      "phrase": "Grey's-Anatomy",
+      "display_as": "Grey's Anatomy",
+      "sounds_like": "grayz uh-NAT-uh-mee"
+    }
+  ],
+  "filter_words": [
+    "uh",
+    "ugh",
+    "um"
+  ],
+  "top_words": [
+    {
+      "word": "first",
+      "count": 1555,
+      "percentage": "1.55%"
+    },
+    {
+      "word": "years",
+      "count": 1387,
+      "percentage": "1.38%"
+    },
+    {
+      "word": "people",
+      "count": 1211,
+      "percentage": "1.21%"
+    },
+    {
+      "word": "thing",
+      "count": 981,
+      "percentage": "0.98%"
+    },
+    {
+      "word": "mind",
+      "count": 937,
+      "percentage": "0.93%"
+    },
+    {
+      "word": "new",
+      "count": 770,
+      "percentage": "0.77%"
+    },
+    {
+      "word": "ram",
+      "count": 760,
+      "percentage": "0.76%"
+    },
+    {
+      "word": "india",
+      "count": 755,
+      "percentage": "0.75%"
+    },
+    {
+      "word": "time",
+      "count": 624,
+      "percentage": "0.62%"
+    },
+    {
+      "word": "god",
+      "count": 609,
+      "percentage": "0.61%"
+    },
+    {
+      "word": "person",
+      "count": 603,
+      "percentage": "0.60%"
+    },
+    {
+      "word": "whole",
+      "count": 535,
+      "percentage": "0.53%"
+    },
+    {
+      "word": "things",
+      "count": 521,
+      "percentage": "0.52%"
+    },
+    {
+      "word": "dass",
+      "count": 510,
+      "percentage": "0.51%"
+    },
+    {
+      "word": "way",
+      "count": 497,
+      "percentage": "0.50%"
+    },
+    {
+      "word": "year",
+      "count": 481,
+      "percentage": "0.48%"
+    },
+    {
+      "word": "day",
+      "count": 466,
+      "percentage": "0.46%"
+    },
+    {
+      "word": "minutes",
+      "count": 458,
+      "percentage": "0.46%"
+    },
+    {
+      "word": "ago",
+      "count": 456,
+      "percentage": "0.45%"
+    },
+    {
+      "word": "life",
+      "count": 430,
+      "percentage": "0.43%"
+    },
+    {
+      "word": "game",
+      "count": 418,
+      "percentage": "0.42%"
+    },
+    {
+      "word": "world",
+      "count": 418,
+      "percentage": "0.42%"
+    },
+    {
+      "word": "last",
+      "count": 415,
+      "percentage": "0.41%"
+    },
+    {
+      "word": "body",
+      "count": 409,
+      "percentage": "0.41%"
+    },
+    {
+      "word": "universe",
+      "count": 404,
+      "percentage": "0.40%"
+    },
+    {
+      "word": "second",
+      "count": 404,
+      "percentage": "0.40%"
+    },
+    {
+      "word": "place",
+      "count": 389,
+      "percentage": "0.39%"
+    },
+    {
+      "word": "next",
+      "count": 384,
+      "percentage": "0.38%"
+    },
+    {
+      "word": "york",
+      "count": 378,
+      "percentage": "0.38%"
+    },
+    {
+      "word": "days",
+      "count": 377,
+      "percentage": "0.38%"
+    },
+    {
+      "word": "christ",
+      "count": 353,
+      "percentage": "0.35%"
+    },
+    {
+      "word": "moment",
+      "count": 344,
+      "percentage": "0.34%"
+    },
+    {
+      "word": "heart",
+      "count": 335,
+      "percentage": "0.33%"
+    },
+    {
+      "word": "part",
+      "count": 331,
+      "percentage": "0.33%"
+    },
+    {
+      "word": "america",
+      "count": 318,
+      "percentage": "0.32%"
+    },
+    {
+      "word": "earth",
+      "count": 313,
+      "percentage": "0.31%"
+    },
+    {
+      "word": "room",
+      "count": 299,
+      "percentage": "0.30%"
+    },
+    {
+      "word": "old",
+      "count": 297,
+      "percentage": "0.30%"
+    },
+    {
+      "word": "months",
+      "count": 297,
+      "percentage": "0.30%"
+    },
+    {
+      "word": "hours",
+      "count": 292,
+      "percentage": "0.29%"
+    },
+    {
+      "word": "process",
+      "count": 287,
+      "percentage": "0.29%"
+    },
+    {
+      "word": "buddha",
+      "count": 285,
+      "percentage": "0.28%"
+    },
+    {
+      "word": "today",
+      "count": 279,
+      "percentage": "0.28%"
+    },
+    {
+      "word": "eyes",
+      "count": 277,
+      "percentage": "0.28%"
+    },
+    {
+      "word": "chakra",
+      "count": 277,
+      "percentage": "0.28%"
+    },
+    {
+      "word": "night",
+      "count": 273,
+      "percentage": "0.27%"
+    },
+    {
+      "word": "plane",
+      "count": 266,
+      "percentage": "0.27%"
+    },
+    {
+      "word": "city",
+      "count": 262,
+      "percentage": "0.26%"
+    },
+    {
+      "word": "week",
+      "count": 260,
+      "percentage": "0.26%"
+    },
+    {
+      "word": "maharaj-ji",
+      "count": 258,
+      "percentage": "0.26%"
+    },
+    {
+      "word": "car",
+      "count": 254,
+      "percentage": "0.25%"
+    },
+    {
+      "word": "morning",
+      "count": 252,
+      "percentage": "0.25%"
+    },
+    {
+      "word": "third",
+      "count": 251,
+      "percentage": "0.25%"
+    },
+    {
+      "word": "krishna",
+      "count": 251,
+      "percentage": "0.25%"
+    },
+    {
+      "word": "space",
+      "count": 246,
+      "percentage": "0.25%"
+    },
+    {
+      "word": "point",
+      "count": 234,
+      "percentage": "0.23%"
+    },
+    {
+      "word": "level",
+      "count": 233,
+      "percentage": "0.23%"
+    },
+    {
+      "word": "later",
+      "count": 231,
+      "percentage": "0.23%"
+    },
+    {
+      "word": "consciousness",
+      "count": 230,
+      "percentage": "0.23%"
+    },
+    {
+      "word": "sense",
+      "count": 229,
+      "percentage": "0.23%"
+    },
+    {
+      "word": "gandhi",
+      "count": 227,
+      "percentage": "0.23%"
+    },
+    {
+      "word": "different",
+      "count": 226,
+      "percentage": "0.23%"
+    },
+    {
+      "word": "united",
+      "count": 226,
+      "percentage": "0.23%"
+    },
+    {
+      "word": "predicament",
+      "count": 220,
+      "percentage": "0.22%"
+    },
+    {
+      "word": "culture",
+      "count": 219,
+      "percentage": "0.22%"
+    },
+    {
+      "word": "times",
+      "count": 219,
+      "percentage": "0.22%"
+    },
+    {
+      "word": "awareness",
+      "count": 219,
+      "percentage": "0.22%"
+    },
+    {
+      "word": "spiritual",
+      "count": 219,
+      "percentage": "0.22%"
+    },
+    {
+      "word": "nature",
+      "count": 217,
+      "percentage": "0.22%"
+    },
+    {
+      "word": "alpert",
+      "count": 207,
+      "percentage": "0.21%"
+    },
+    {
+      "word": "another",
+      "count": 206,
+      "percentage": "0.21%"
+    },
+    {
+      "word": "states",
+      "count": 206,
+      "percentage": "0.21%"
+    },
+    {
+      "word": "experience",
+      "count": 203,
+      "percentage": "0.20%"
+    },
+    {
+      "word": "system",
+      "count": 203,
+      "percentage": "0.20%"
+    },
+    {
+      "word": "california",
+      "count": 200,
+      "percentage": "0.20%"
+    },
+    {
+      "word": "mother",
+      "count": 197,
+      "percentage": "0.20%"
+    },
+    {
+      "word": "baba",
+      "count": 197,
+      "percentage": "0.20%"
+    },
+    {
+      "word": "situation",
+      "count": 196,
+      "percentage": "0.20%"
+    },
+    {
+      "word": "breath",
+      "count": 195,
+      "percentage": "0.19%"
+    },
+    {
+      "word": "weeks",
+      "count": 194,
+      "percentage": "0.19%"
+    },
+    {
+      "word": "family",
+      "count": 190,
+      "percentage": "0.19%"
+    },
+    {
+      "word": "seva",
+      "count": 189,
+      "percentage": "0.19%"
+    },
+    {
+      "word": "foundation",
+      "count": 189,
+      "percentage": "0.19%"
+    },
+    {
+      "word": "truth",
+      "count": 187,
+      "percentage": "0.19%"
+    },
+    {
+      "word": "question",
+      "count": 186,
+      "percentage": "0.19%"
+    },
+    {
+      "word": "tomorrow",
+      "count": 186,
+      "percentage": "0.19%"
+    },
+    {
+      "word": "society",
+      "count": 185,
+      "percentage": "0.18%"
+    },
+    {
+      "word": "group",
+      "count": 184,
+      "percentage": "0.18%"
+    },
+    {
+      "word": "miles",
+      "count": 184,
+      "percentage": "0.18%"
+    },
+    {
+      "word": "end",
+      "count": 181,
+      "percentage": "0.18%"
+    },
+    {
+      "word": "tonight",
+      "count": 178,
+      "percentage": "0.18%"
+    },
+    {
+      "word": "jesus",
+      "count": 175,
+      "percentage": "0.17%"
+    },
+    {
+      "word": "tibetan",
+      "count": 174,
+      "percentage": "0.17%"
+    },
+    {
+      "word": "trip",
+      "count": 167,
+      "percentage": "0.17%"
+    },
+    {
+      "word": "hanuman",
+      "count": 167,
+      "percentage": "0.17%"
+    },
+    {
+      "word": "book",
+      "count": 164,
+      "percentage": "0.16%"
+    },
+    {
+      "word": "human",
+      "count": 163,
+      "percentage": "0.16%"
+    },
+    {
+      "word": "yesterday",
+      "count": 163,
+      "percentage": "0.16%"
+    },
+    {
+      "word": "john",
+      "count": 161,
+      "percentage": "0.16%"
+    },
+    {
+      "word": "clock",
+      "count": 159,
+      "percentage": "0.16%"
+    },
+    {
+      "word": "hands",
+      "count": 158,
+      "percentage": "0.16%"
+    },
+    {
+      "word": "indian",
+      "count": 158,
+      "percentage": "0.16%"
+    },
+    {
+      "word": "words",
+      "count": 156,
+      "percentage": "0.16%"
+    },
+    {
+      "word": "tim",
+      "count": 154,
+      "percentage": "0.15%"
+    },
+    {
+      "word": "richard",
+      "count": 154,
+      "percentage": "0.15%"
+    },
+    {
+      "word": "reality",
+      "count": 153,
+      "percentage": "0.15%"
+    },
+    {
+      "word": "hour",
+      "count": 153,
+      "percentage": "0.15%"
+    },
+    {
+      "word": "certain",
+      "count": 151,
+      "percentage": "0.15%"
+    },
+    {
+      "word": "children",
+      "count": 151,
+      "percentage": "0.15%"
+    },
+    {
+      "word": "hand",
+      "count": 149,
+      "percentage": "0.15%"
+    },
+    {
+      "word": "love",
+      "count": 148,
+      "percentage": "0.15%"
+    },
+    {
+      "word": "ways",
+      "count": 143,
+      "percentage": "0.14%"
+    },
+    {
+      "word": "method",
+      "count": 139,
+      "percentage": "0.14%"
+    },
+    {
+      "word": "role",
+      "count": 138,
+      "percentage": "0.14%"
+    },
+    {
+      "word": "thousands",
+      "count": 137,
+      "percentage": "0.14%"
+    },
+    {
+      "word": "thoughts",
+      "count": 136,
+      "percentage": "0.14%"
+    },
+    {
+      "word": "maharshi",
+      "count": 136,
+      "percentage": "0.14%"
+    },
+    {
+      "word": "man",
+      "count": 135,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "mantra",
+      "count": 135,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "san",
+      "count": 134,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "boston",
+      "count": 133,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "father",
+      "count": 133,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "incarnation",
+      "count": 131,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "state",
+      "count": 130,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "power",
+      "count": 130,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "death",
+      "count": 129,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "stage",
+      "count": 129,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "practice",
+      "count": 129,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "story",
+      "count": 129,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "jewish",
+      "count": 129,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "stuff",
+      "count": 126,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "great",
+      "count": 126,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "million",
+      "count": 126,
+      "percentage": "0.13%"
+    },
+    {
+      "word": "country",
+      "count": 125,
+      "percentage": "0.12%"
+    },
+    {
+      "word": "energy",
+      "count": 124,
+      "percentage": "0.12%"
+    },
+    {
+      "word": "problem",
+      "count": 123,
+      "percentage": "0.12%"
+    },
+    {
+      "word": "physical",
+      "count": 123,
+      "percentage": "0.12%"
+    },
+    {
+      "word": "line",
+      "count": 122,
+      "percentage": "0.12%"
+    },
+    {
+      "word": "act",
+      "count": 121,
+      "percentage": "0.12%"
+    },
+    {
+      "word": "yoga",
+      "count": 120,
+      "percentage": "0.12%"
+    },
+    {
+      "word": "karma",
+      "count": 119,
+      "percentage": "0.12%"
+    },
+    {
+      "word": "mexico",
+      "count": 118,
+      "percentage": "0.12%"
+    },
+    {
+      "word": "form",
+      "count": 117,
+      "percentage": "0.12%"
+    },
+    {
+      "word": "feet",
+      "count": 117,
+      "percentage": "0.12%"
+    },
+    {
+      "word": "path",
+      "count": 116,
+      "percentage": "0.12%"
+    },
+    {
+      "word": "soul",
+      "count": 115,
+      "percentage": "0.11%"
+    },
+    {
+      "word": "emmanuel",
+      "count": 114,
+      "percentage": "0.11%"
+    },
+    {
+      "word": "half",
+      "count": 114,
+      "percentage": "0.11%"
+    },
+    {
+      "word": "journey",
+      "count": 112,
+      "percentage": "0.11%"
+    },
+    {
+      "word": "community",
+      "count": 112,
+      "percentage": "0.11%"
+    },
+    {
+      "word": "model",
+      "count": 111,
+      "percentage": "0.11%"
+    },
+    {
+      "word": "house",
+      "count": 111,
+      "percentage": "0.11%"
+    },
+    {
+      "word": "inner",
+      "count": 109,
+      "percentage": "0.11%"
+    },
+    {
+      "word": "harvard",
+      "count": 108,
+      "percentage": "0.11%"
+    },
+    {
+      "word": "head",
+      "count": 107,
+      "percentage": "0.11%"
+    },
+    {
+      "word": "beings",
+      "count": 106,
+      "percentage": "0.11%"
+    },
+    {
+      "word": "levels",
+      "count": 106,
+      "percentage": "0.11%"
+    },
+    {
+      "word": "couple",
+      "count": 105,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "spirit",
+      "count": 104,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "minds",
+      "count": 104,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "food",
+      "count": 103,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "money",
+      "count": 103,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "friends",
+      "count": 102,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "word",
+      "count": 102,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "lot",
+      "count": 101,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "planes",
+      "count": 101,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "little",
+      "count": 101,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "big",
+      "count": 100,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "leary",
+      "count": 99,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "action",
+      "count": 98,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "francisco",
+      "count": 97,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "child",
+      "count": 97,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "chinese",
+      "count": 97,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "buddhist",
+      "count": 97,
+      "percentage": "0.10%"
+    },
+    {
+      "word": "fire",
+      "count": 95,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "name",
+      "count": 94,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "side",
+      "count": 94,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "work",
+      "count": 94,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "ramana",
+      "count": 94,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "shiva",
+      "count": 93,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "guy",
+      "count": 92,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "single",
+      "count": 92,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "entire",
+      "count": 91,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "evening",
+      "count": 91,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "center",
+      "count": 91,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "water",
+      "count": 91,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "alan",
+      "count": 91,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "paul",
+      "count": 89,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "hearts",
+      "count": 88,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "swami",
+      "count": 87,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "social",
+      "count": 86,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "bible",
+      "count": 86,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "delhi",
+      "count": 86,
+      "percentage": "0.09%"
+    },
+    {
+      "word": "good",
+      "count": 85,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "street",
+      "count": 85,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "ocean",
+      "count": 85,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "relationship",
+      "count": 84,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "mary",
+      "count": 84,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "environment",
+      "count": 83,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "guru",
+      "count": 83,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "temple",
+      "count": 82,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "tree",
+      "count": 82,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "eye",
+      "count": 82,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "nepal",
+      "count": 82,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "minute",
+      "count": 82,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "hindu",
+      "count": 81,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "individual",
+      "count": 80,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "chest",
+      "count": 80,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "ego",
+      "count": 80,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "channel",
+      "count": 79,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "maharaj",
+      "count": 79,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "hundreds",
+      "count": 79,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "los",
+      "count": 79,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "river",
+      "count": 78,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "idea",
+      "count": 78,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "identity",
+      "count": 77,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "separate",
+      "count": 77,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "kind",
+      "count": 77,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "woman",
+      "count": 76,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "england",
+      "count": 76,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "english",
+      "count": 76,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "jai",
+      "count": 76,
+      "percentage": "0.08%"
+    },
+    {
+      "word": "einstein",
+      "count": 75,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "entity",
+      "count": 74,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "war",
+      "count": 74,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "hospital",
+      "count": 74,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "dream",
+      "count": 74,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "ramakrishna",
+      "count": 74,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "millions",
+      "count": 74,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "neem",
+      "count": 74,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "thought",
+      "count": 73,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "scene",
+      "count": 73,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "compassion",
+      "count": 73,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "march",
+      "count": 73,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "angeles",
+      "count": 73,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "american",
+      "count": 72,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "saint",
+      "count": 71,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "bob",
+      "count": 71,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "view",
+      "count": 70,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "course",
+      "count": 70,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "women",
+      "count": 70,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "hampshire",
+      "count": 70,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "ananda",
+      "count": 70,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "illusion",
+      "count": 69,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "king",
+      "count": 69,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "light",
+      "count": 69,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "step",
+      "count": 69,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "timothy",
+      "count": 69,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "santa",
+      "count": 69,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "terms",
+      "count": 68,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "bodies",
+      "count": 68,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "desire",
+      "count": 68,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "interesting",
+      "count": 68,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "david",
+      "count": 68,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "burma",
+      "count": 68,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "seconds",
+      "count": 68,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "around",
+      "count": 68,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "law",
+      "count": 66,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "arms",
+      "count": 66,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "parents",
+      "count": 66,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "village",
+      "count": 66,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "month",
+      "count": 66,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "das",
+      "count": 66,
+      "percentage": "0.07%"
+    },
+    {
+      "word": "town",
+      "count": 65,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "choice",
+      "count": 65,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "university",
+      "count": 65,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "job",
+      "count": 64,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "chicago",
+      "count": 64,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "lama",
+      "count": 64,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "africa",
+      "count": 64,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "message",
+      "count": 63,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "train",
+      "count": 63,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "fear",
+      "count": 63,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "real",
+      "count": 63,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "larry",
+      "count": 63,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "george",
+      "count": 63,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "lives",
+      "count": 62,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "kabir",
+      "count": 62,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "doctor",
+      "count": 62,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "mahatma",
+      "count": 62,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "south",
+      "count": 62,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "pat",
+      "count": 62,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "questions",
+      "count": 61,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "vietnam",
+      "count": 61,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "don",
+      "count": 61,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "saturday",
+      "count": 61,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "friend",
+      "count": 60,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "mountain",
+      "count": 60,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "japan",
+      "count": 60,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "men",
+      "count": 60,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "james",
+      "count": 60,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "ramm",
+      "count": 60,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "noble",
+      "count": 60,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "elizabeth",
+      "count": 60,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "juan",
+      "count": 60,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "statement",
+      "count": 59,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "sita",
+      "count": 59,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "grace",
+      "count": 59,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "karoli",
+      "count": 59,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "rational",
+      "count": 58,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "position",
+      "count": 58,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "quality",
+      "count": 58,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "steven",
+      "count": 58,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "jerry",
+      "count": 58,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "pain",
+      "count": 57,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "sam",
+      "count": 57,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "four",
+      "count": 57,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "desires",
+      "count": 56,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "kids",
+      "count": 56,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "air",
+      "count": 56,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "afternoon",
+      "count": 56,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "early",
+      "count": 56,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "huxley",
+      "count": 56,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "mcg",
+      "count": 56,
+      "percentage": "0.06%"
+    },
+    {
+      "word": "government",
+      "count": 55,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "drama",
+      "count": 55,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "parts",
+      "count": 55,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "steve",
+      "count": 55,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "art",
+      "count": 54,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "number",
+      "count": 54,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "william",
+      "count": 54,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "hills",
+      "count": 54,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "kingdom",
+      "count": 54,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "washington",
+      "count": 54,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "many",
+      "count": 54,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "image",
+      "count": 54,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "himalayas",
+      "count": 54,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "wavy",
+      "count": 54,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "existence",
+      "count": 53,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "presence",
+      "count": 53,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "issue",
+      "count": 53,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "guatemala",
+      "count": 53,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "casper",
+      "count": 53,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "middle",
+      "count": 52,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "lines",
+      "count": 52,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "lakshman",
+      "count": 52,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "school",
+      "count": 52,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "meditation",
+      "count": 52,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "organization",
+      "count": 51,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "answer",
+      "count": 51,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "retreat",
+      "count": 51,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "teacher",
+      "count": 51,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "baby",
+      "count": 51,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "marin",
+      "count": 51,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "dalai",
+      "count": 51,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "watts",
+      "count": 51,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "business",
+      "count": 50,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "faith",
+      "count": 50,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "maharaji",
+      "count": 50,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "europe",
+      "count": 50,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "tuesday",
+      "count": 50,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "sunday",
+      "count": 50,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "twice",
+      "count": 50,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "mine",
+      "count": 49,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "beautiful",
+      "count": 49,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "leg",
+      "count": 49,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "voice",
+      "count": 49,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "prison",
+      "count": 49,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "health",
+      "count": 49,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "birth",
+      "count": 48,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "case",
+      "count": 48,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "sri",
+      "count": 48,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "souls",
+      "count": 48,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "ramam",
+      "count": 48,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "dick",
+      "count": 48,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "actions",
+      "count": 47,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "picture",
+      "count": 47,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "hill",
+      "count": 47,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "hall",
+      "count": 47,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "bill",
+      "count": 47,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "sky",
+      "count": 46,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "deep",
+      "count": 46,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "intellect",
+      "count": 46,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "station",
+      "count": 46,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "freud",
+      "count": 46,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "ramda",
+      "count": 46,
+      "percentage": "0.05%"
+    },
+    {
+      "word": "humanity",
+      "count": 45,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "age",
+      "count": 45,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "difference",
+      "count": 45,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "ground",
+      "count": 45,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "deeper",
+      "count": 45,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "senses",
+      "count": 45,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "floor",
+      "count": 45,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "calcutta",
+      "count": 45,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "allah",
+      "count": 45,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "partner",
+      "count": 44,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "wisdom",
+      "count": 44,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "son",
+      "count": 44,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "past",
+      "count": 44,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "wife",
+      "count": 44,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "lecture",
+      "count": 44,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "monday",
+      "count": 44,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "joseph",
+      "count": 44,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "face",
+      "count": 43,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "long",
+      "count": 43,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "board",
+      "count": 43,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "condition",
+      "count": 43,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "jung",
+      "count": 43,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "dan",
+      "count": 43,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "shri",
+      "count": 43,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "henry",
+      "count": 43,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "church",
+      "count": 42,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "information",
+      "count": 42,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "mystery",
+      "count": 42,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "books",
+      "count": 42,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "mountains",
+      "count": 42,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "holy",
+      "count": 42,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "jew",
+      "count": 42,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "volkswagen",
+      "count": 42,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "japanese",
+      "count": 42,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "gravy",
+      "count": 42,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "connection",
+      "count": 41,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "thursday",
+      "count": 41,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "monk",
+      "count": 40,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "rama",
+      "count": 40,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "white",
+      "count": 40,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "pure",
+      "count": 40,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "song",
+      "count": 40,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "legs",
+      "count": 40,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "institute",
+      "count": 40,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "sanskrit",
+      "count": 40,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "robert",
+      "count": 40,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "ralph",
+      "count": 40,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "woods",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "high",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "island",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "stories",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "road",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "young",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "beach",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "vishnu",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "mukananda",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "grade",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "north",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "five",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "avenue",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "over",
+      "count": 39,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "silence",
+      "count": 38,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "tradition",
+      "count": 38,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "particular",
+      "count": 38,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "attention",
+      "count": 38,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "incarnations",
+      "count": 38,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "president",
+      "count": 38,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "southern",
+      "count": 38,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "berkeley",
+      "count": 38,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "albert",
+      "count": 38,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "bank",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "roles",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "evolution",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "change",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "unique",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "canada",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "anger",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "field",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "bangladesh",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "natural",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "television",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "service",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "divine",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "ron",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "april",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "peter",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "frank",
+      "count": 37,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "bus",
+      "count": 36,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "period",
+      "count": 36,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "miracle",
+      "count": 36,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "land",
+      "count": 36,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "channels",
+      "count": 36,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "joe",
+      "count": 36,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "pounds",
+      "count": 36,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "reagan",
+      "count": 36,
+      "percentage": "0.04%"
+    },
+    {
+      "word": "ears",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "brother",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "political",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "cancer",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "nixon",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "amount",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "practices",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "bed",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "gita",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "letter",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "maharajji",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "county",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "israel",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "september",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "levine",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "friday",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "lord",
+      "count": 35,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "small",
+      "count": 34,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "realm",
+      "count": 34,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "students",
+      "count": 34,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "fact",
+      "count": 34,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "laws",
+      "count": 34,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "opportunity",
+      "count": 34,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "awakening",
+      "count": 34,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "blanket",
+      "count": 34,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "central",
+      "count": 34,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "century",
+      "count": 34,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "dao",
+      "count": 34,
+      "percentage": "0.03%"
+    },
+    {
+      "word": "chris",
+      "count": 34,
+      "percentage": "0.03%"
+    }
+  ],
+  "top_phrases": [
+    {
+      "phrase": "people",
+      "count": 526,
+      "percentage": "1.31%"
+    },
+    {
+      "phrase": "the universe",
+      "count": 299,
+      "percentage": "0.74%"
+    },
+    {
+      "phrase": "india",
+      "count": 269,
+      "percentage": "0.67%"
+    },
+    {
+      "phrase": "the world",
+      "count": 262,
+      "percentage": "0.65%"
+    },
+    {
+      "phrase": "things",
+      "count": 259,
+      "percentage": "0.64%"
+    },
+    {
+      "phrase": "the game",
+      "count": 247,
+      "percentage": "0.61%"
+    },
+    {
+      "phrase": "god",
+      "count": 227,
+      "percentage": "0.56%"
+    },
+    {
+      "phrase": "my mind",
+      "count": 210,
+      "percentage": "0.52%"
+    },
+    {
+      "phrase": "life",
+      "count": 210,
+      "percentage": "0.52%"
+    },
+    {
+      "phrase": "your mind",
+      "count": 196,
+      "percentage": "0.49%"
+    },
+    {
+      "phrase": "the mind",
+      "count": 171,
+      "percentage": "0.42%"
+    },
+    {
+      "phrase": "the process",
+      "count": 164,
+      "percentage": "0.41%"
+    },
+    {
+      "phrase": "the end",
+      "count": 134,
+      "percentage": "0.33%"
+    },
+    {
+      "phrase": "the thing",
+      "count": 129,
+      "percentage": "0.32%"
+    },
+    {
+      "phrase": "america",
+      "count": 122,
+      "percentage": "0.30%"
+    },
+    {
+      "phrase": "the way",
+      "count": 121,
+      "percentage": "0.30%"
+    },
+    {
+      "phrase": "the nature",
+      "count": 118,
+      "percentage": "0.29%"
+    },
+    {
+      "phrase": "the moment",
+      "count": 112,
+      "percentage": "0.28%"
+    },
+    {
+      "phrase": "the car",
+      "count": 110,
+      "percentage": "0.27%"
+    },
+    {
+      "phrase": "the place",
+      "count": 107,
+      "percentage": "0.27%"
+    },
+    {
+      "phrase": "the whole thing",
+      "count": 106,
+      "percentage": "0.26%"
+    },
+    {
+      "phrase": "the room",
+      "count": 102,
+      "percentage": "0.25%"
+    },
+    {
+      "phrase": "the people",
+      "count": 99,
+      "percentage": "0.25%"
+    },
+    {
+      "phrase": "your awareness",
+      "count": 93,
+      "percentage": "0.23%"
+    },
+    {
+      "phrase": "the situation",
+      "count": 92,
+      "percentage": "0.23%"
+    },
+    {
+      "phrase": "years",
+      "count": 91,
+      "percentage": "0.23%"
+    },
+    {
+      "phrase": "the person",
+      "count": 91,
+      "percentage": "0.23%"
+    },
+    {
+      "phrase": "time",
+      "count": 90,
+      "percentage": "0.22%"
+    },
+    {
+      "phrase": "my father",
+      "count": 90,
+      "percentage": "0.22%"
+    },
+    {
+      "phrase": "the system",
+      "count": 88,
+      "percentage": "0.22%"
+    },
+    {
+      "phrase": "a lot",
+      "count": 87,
+      "percentage": "0.22%"
+    },
+    {
+      "phrase": "the body",
+      "count": 84,
+      "percentage": "0.21%"
+    },
+    {
+      "phrase": "your heart",
+      "count": 83,
+      "percentage": "0.21%"
+    },
+    {
+      "phrase": "the predicament",
+      "count": 80,
+      "percentage": "0.20%"
+    },
+    {
+      "phrase": "the spirit",
+      "count": 78,
+      "percentage": "0.19%"
+    },
+    {
+      "phrase": "your body",
+      "count": 78,
+      "percentage": "0.19%"
+    },
+    {
+      "phrase": "the family",
+      "count": 78,
+      "percentage": "0.19%"
+    },
+    {
+      "phrase": "the culture",
+      "count": 77,
+      "percentage": "0.19%"
+    },
+    {
+      "phrase": "the truth",
+      "count": 77,
+      "percentage": "0.19%"
+    },
+    {
+      "phrase": "the space",
+      "count": 77,
+      "percentage": "0.19%"
+    },
+    {
+      "phrase": "my body",
+      "count": 72,
+      "percentage": "0.18%"
+    },
+    {
+      "phrase": "the ocean",
+      "count": 72,
+      "percentage": "0.18%"
+    },
+    {
+      "phrase": "your own mind",
+      "count": 67,
+      "percentage": "0.17%"
+    },
+    {
+      "phrase": "the city",
+      "count": 67,
+      "percentage": "0.17%"
+    },
+    {
+      "phrase": "the heart",
+      "count": 66,
+      "percentage": "0.16%"
+    },
+    {
+      "phrase": "a sense",
+      "count": 64,
+      "percentage": "0.16%"
+    },
+    {
+      "phrase": "the problem",
+      "count": 64,
+      "percentage": "0.16%"
+    },
+    {
+      "phrase": "the question",
+      "count": 64,
+      "percentage": "0.16%"
+    },
+    {
+      "phrase": "a place",
+      "count": 62,
+      "percentage": "0.15%"
+    },
+    {
+      "phrase": "terms",
+      "count": 62,
+      "percentage": "0.15%"
+    },
+    {
+      "phrase": "my heart",
+      "count": 62,
+      "percentage": "0.15%"
+    },
+    {
+      "phrase": "another person",
+      "count": 61,
+      "percentage": "0.15%"
+    },
+    {
+      "phrase": "the fire",
+      "count": 61,
+      "percentage": "0.15%"
+    },
+    {
+      "phrase": "death",
+      "count": 58,
+      "percentage": "0.14%"
+    },
+    {
+      "phrase": "the illusion",
+      "count": 58,
+      "percentage": "0.14%"
+    },
+    {
+      "phrase": "my life",
+      "count": 57,
+      "percentage": "0.14%"
+    },
+    {
+      "phrase": "the group",
+      "count": 56,
+      "percentage": "0.14%"
+    },
+    {
+      "phrase": "my mother",
+      "count": 56,
+      "percentage": "0.14%"
+    },
+    {
+      "phrase": "the experience",
+      "count": 56,
+      "percentage": "0.14%"
+    },
+    {
+      "phrase": "earth",
+      "count": 56,
+      "percentage": "0.14%"
+    },
+    {
+      "phrase": "the method",
+      "count": 56,
+      "percentage": "0.14%"
+    },
+    {
+      "phrase": "his eyes",
+      "count": 55,
+      "percentage": "0.14%"
+    },
+    {
+      "phrase": "our hearts",
+      "count": 55,
+      "percentage": "0.14%"
+    },
+    {
+      "phrase": "society",
+      "count": 55,
+      "percentage": "0.14%"
+    },
+    {
+      "phrase": "the street",
+      "count": 54,
+      "percentage": "0.13%"
+    },
+    {
+      "phrase": "my consciousness",
+      "count": 53,
+      "percentage": "0.13%"
+    },
+    {
+      "phrase": "the country",
+      "count": 53,
+      "percentage": "0.13%"
+    },
+    {
+      "phrase": "space",
+      "count": 53,
+      "percentage": "0.13%"
+    },
+    {
+      "phrase": "our minds",
+      "count": 52,
+      "percentage": "0.13%"
+    },
+    {
+      "phrase": "this room",
+      "count": 52,
+      "percentage": "0.13%"
+    },
+    {
+      "phrase": "the physical plane",
+      "count": 52,
+      "percentage": "0.13%"
+    },
+    {
+      "phrase": "a person",
+      "count": 51,
+      "percentage": "0.13%"
+    },
+    {
+      "phrase": "consciousness",
+      "count": 51,
+      "percentage": "0.13%"
+    },
+    {
+      "phrase": "the same thing",
+      "count": 51,
+      "percentage": "0.13%"
+    },
+    {
+      "phrase": "the house",
+      "count": 51,
+      "percentage": "0.13%"
+    },
+    {
+      "phrase": "the united states",
+      "count": 51,
+      "percentage": "0.13%"
+    },
+    {
+      "phrase": "the role",
+      "count": 50,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "the book",
+      "count": 50,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "the story",
+      "count": 50,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "the energy",
+      "count": 50,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "the breath",
+      "count": 49,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "nature",
+      "count": 49,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "mine",
+      "count": 49,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "christ",
+      "count": 48,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "your eyes",
+      "count": 48,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "the train",
+      "count": 48,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "the temple",
+      "count": 48,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "my eyes",
+      "count": 48,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "view",
+      "count": 47,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "the river",
+      "count": 47,
+      "percentage": "0.12%"
+    },
+    {
+      "phrase": "money",
+      "count": 46,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "his hands",
+      "count": 46,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "this culture",
+      "count": 46,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "the stage",
+      "count": 45,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "the whole game",
+      "count": 45,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "the power",
+      "count": 45,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "reality",
+      "count": 44,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "your chest",
+      "count": 44,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "the earth",
+      "count": 44,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "your life",
+      "count": 44,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "his body",
+      "count": 43,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "the society",
+      "count": 43,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "the mantra",
+      "count": 43,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "the community",
+      "count": 43,
+      "percentage": "0.11%"
+    },
+    {
+      "phrase": "a group",
+      "count": 42,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "love",
+      "count": 42,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the idea",
+      "count": 42,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "karma",
+      "count": 42,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the mountain",
+      "count": 42,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the law",
+      "count": 42,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "california",
+      "count": 42,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "my car",
+      "count": 42,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the other person",
+      "count": 42,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the form",
+      "count": 41,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "his feet",
+      "count": 41,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the whole process",
+      "count": 40,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the center",
+      "count": 40,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the name",
+      "count": 40,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the words",
+      "count": 40,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the course",
+      "count": 40,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the air",
+      "count": 40,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the soul",
+      "count": 40,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the water",
+      "count": 40,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the woods",
+      "count": 39,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the art",
+      "count": 39,
+      "percentage": "0.10%"
+    },
+    {
+      "phrase": "the journey",
+      "count": 38,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "a part",
+      "count": 38,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "the sense",
+      "count": 38,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "a separate entity",
+      "count": 37,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "my feet",
+      "count": 37,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "my hand",
+      "count": 37,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "the mountains",
+      "count": 37,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "your thoughts",
+      "count": 37,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "other people",
+      "count": 37,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "the ground",
+      "count": 36,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "a culture",
+      "count": 36,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "the time",
+      "count": 36,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "the action",
+      "count": 35,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "the path",
+      "count": 35,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "food",
+      "count": 35,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "the mother",
+      "count": 35,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "the issue",
+      "count": 35,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "water",
+      "count": 35,
+      "percentage": "0.09%"
+    },
+    {
+      "phrase": "my friends",
+      "count": 34,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "a space",
+      "count": 34,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "the entire universe",
+      "count": 34,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "the sky",
+      "count": 34,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "men",
+      "count": 34,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "women",
+      "count": 34,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "our culture",
+      "count": 34,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "the one",
+      "count": 34,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "the practice",
+      "count": 33,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "your head",
+      "count": 33,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "the stuff",
+      "count": 33,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "a thing",
+      "count": 33,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "the food",
+      "count": 33,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "the reality",
+      "count": 33,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "a room",
+      "count": 33,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "the guy",
+      "count": 33,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "a book",
+      "count": 33,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "the word",
+      "count": 32,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "the drama",
+      "count": 31,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "his mind",
+      "count": 31,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "town",
+      "count": 31,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "the pain",
+      "count": 31,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "the eyes",
+      "count": 31,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "my guru",
+      "count": 31,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "your breath",
+      "count": 31,
+      "percentage": "0.08%"
+    },
+    {
+      "phrase": "my family",
+      "count": 30,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the scene",
+      "count": 30,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the environment",
+      "count": 30,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "a process",
+      "count": 30,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "a certain way",
+      "count": 30,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the government",
+      "count": 29,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "their eyes",
+      "count": 29,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "this game",
+      "count": 29,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "your predicament",
+      "count": 29,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the tree",
+      "count": 29,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the village",
+      "count": 29,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the bus",
+      "count": 28,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "your hands",
+      "count": 28,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the answer",
+      "count": 28,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "their mind",
+      "count": 28,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the kingdom",
+      "count": 28,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the hill",
+      "count": 28,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "energy",
+      "count": 28,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "a mantra",
+      "count": 28,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "stuff",
+      "count": 28,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the floor",
+      "count": 28,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the stars",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the board",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the child",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "his words",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the other end",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the presence",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "cancer",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "man",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the road",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the soil",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the first thing",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "this country",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "this moment",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "the dream",
+      "count": 27,
+      "percentage": "0.07%"
+    },
+    {
+      "phrase": "a way",
+      "count": 26,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the mystery",
+      "count": 26,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "our lives",
+      "count": 26,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the part",
+      "count": 26,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the hospital",
+      "count": 26,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "part",
+      "count": 26,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the ego",
+      "count": 25,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the awareness",
+      "count": 25,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the fact",
+      "count": 25,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "his socks",
+      "count": 25,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the audience",
+      "count": 25,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the rest",
+      "count": 25,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the children",
+      "count": 25,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "our mind",
+      "count": 25,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "jesus",
+      "count": 25,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "your consciousness",
+      "count": 24,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the bank",
+      "count": 24,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "my hands",
+      "count": 24,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "a situation",
+      "count": 24,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "our car",
+      "count": 24,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "an incarnation",
+      "count": 24,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "a trip",
+      "count": 24,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "power",
+      "count": 24,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "their minds",
+      "count": 24,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the difference",
+      "count": 24,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "words",
+      "count": 24,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the future",
+      "count": 23,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "a family",
+      "count": 23,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "a child",
+      "count": 23,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the same moment",
+      "count": 23,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the baby",
+      "count": 23,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "new york",
+      "count": 23,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "a partner",
+      "count": 23,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the act",
+      "count": 23,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "my head",
+      "count": 23,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "care",
+      "count": 23,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "this world",
+      "count": 23,
+      "percentage": "0.06%"
+    },
+    {
+      "phrase": "the first place",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "a model",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "hanuman",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the state",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the light",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the money",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "my parents",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the gods",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the plane",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "compassion",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the ways",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "friends",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the grace",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the edge",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the image",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "this thing",
+      "count": 22,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the trip",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the message",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "a number",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "information",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "boston",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "my awareness",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "your children",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the incarnation",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the model",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the hills",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the head",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "my room",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the rational mind",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "new york city",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "england",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the whole system",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "events",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "your attention",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the guru",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the door",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the things",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "a community",
+      "count": 21,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the silence",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the totality",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "japan",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "his elbow",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "their existence",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the human condition",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "thing",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "a moment",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the laborer",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "this incarnation",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "another plane",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "this plane",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the sun",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the fear",
+      "count": 20,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the point",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the corner",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the king",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "your own thoughts",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "your family",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the chest",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "mind",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the concept",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "my own mind",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "my lips",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "your desires",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the laws",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "your own heart",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "your feet",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the other side",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the courtyard",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the army",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "your senses",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "the news",
+      "count": 19,
+      "percentage": "0.05%"
+    },
+    {
+      "phrase": "a friend",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a tree",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "your incarnation",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "an act",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the side",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the kids",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the marketplace",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "evolution",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "ways",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "their body",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "his voice",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a method",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the first time",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the motion",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a great deal",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a dream",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a practice",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a car",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the town",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "this society",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "prison",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "my rational mind",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the witness",
+      "count": 18,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "seva",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "your friends",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the hotel",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a man",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the flow",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the relationship",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the curriculum",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "this situation",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the essence",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "his hand",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the harmony",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "my point",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the forest",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "your hand",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a statement",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a game",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "my thing",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "these things",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "my breath",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the work",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the 4th chakra",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "vietnam",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the top",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a retreat",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "politics",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "its thing",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a soul",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the bed",
+      "count": 17,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the evening",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "my brother",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "your identity",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a tight shoe",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "our tree",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the other thing",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the line",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "days",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "my predicament",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "my ego",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "your universe",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "his name",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "your thing",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "television",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the table",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a form",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "our society",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a state",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "your part",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "nepal",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a different place",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the desire",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "truth",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "my thoughts",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the level",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the quality",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the tip",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the same place",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "their lives",
+      "count": 16,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the possibility",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the dance",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "harvard",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the thoughts",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a question",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "your own life",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "your actions",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a picture",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the streets",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "phenomena",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "enlightenment",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "students",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "an elderly couple",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "sita",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "action",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "my friend",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the music",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "our eyes",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "your ego",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the mill",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the divine mother",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "your mother",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a choice",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the whole trip",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "a society",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "calcutta",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the statement",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "our consciousness",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the abdomen",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "my stepmother",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "delhi",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "awareness",
+      "count": 15,
+      "percentage": "0.04%"
+    },
+    {
+      "phrase": "the church",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the phone",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "this temporary body",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "this process",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the retreat",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the opportunity",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "their bodies",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "a woman",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "an environment",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "my model",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "our predicament",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the gate",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "their hearts",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the perfection",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "a system",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "a result",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the awakening",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the doctor",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the planet",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the surface",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "a mental hospital",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the snow",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "your way",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the years",
+      "count": 14,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "your rational mind",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the realm",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "a member",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the nose",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "our bodies",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "an experience",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "my method",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the stream",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the whole scene",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the bathroom",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "a parent",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "anger",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "growth",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "a baby",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "his arms",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "your problem",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "your intellect",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "this place",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "knowledge",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "most people",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "my identity",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "your parents",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "your job",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the hall",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "your role",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the garden",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "my trip",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "a human birth",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the result",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the day",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "maharaji",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "my spine",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "my children",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "fire",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the spiritual path",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "heaven",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "this stuff",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "a long time",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the stroke",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the minute",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "each other",
+      "count": 13,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "gold",
+      "count": 12,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the fruits",
+      "count": 12,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "our roles",
+      "count": 12,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "months",
+      "count": 12,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "individual differences",
+      "count": 12,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the wisdom",
+      "count": 12,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "their role",
+      "count": 12,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the consciousness",
+      "count": 12,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the old woman",
+      "count": 12,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "your child",
+      "count": 12,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "your environment",
+      "count": 12,
+      "percentage": "0.03%"
+    },
+    {
+      "phrase": "the field",
+      "count": 12,
+      "percentage": "0.03%"
+    }
+  ],
+  "metadata": {
+    "total_custom_entries": 59,
+    "total_filter_words": 3,
+    "total_top_words": 500,
+    "total_top_phrases": 500,
+    "description": "Custom vocabulary for Ram Dass transcriptions"
+  }
+}

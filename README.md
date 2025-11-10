@@ -1,21 +1,23 @@
-# Ramdass Whisper Transcriber
+# Ram Dass Whisper Transcriber
 
-Transcribe audio files with speaker diarization using OpenAI Whisper and pyannote.audio. Designed for transcribing Ram Dass lectures and multi-speaker recordings with automatic speaker identification.
+Production-ready transcription pipeline for Ram Dass audio content using OpenAI Whisper and Claude AI. Features vocabulary-enhanced transcription, intelligent paragraphing, and cost-optimized AI refinement.
 
 ## Features
 
-- 🎙️ High-quality transcription using OpenAI Whisper
-- 👥 Speaker diarization with pyannote.audio
-- 🏷️ Automatic speaker name mapping
-- 📊 GPU acceleration support
-- 📝 Multiple output formats (JSON, formatted text, simple text)
-- ⚙️ Configurable speaker detection parameters
+- 🎙️ **Vocabulary-Enhanced Transcription**: 60+ custom spiritual/philosophical terms (Ouspensky, Maharaj-ji, Gurdjieff, etc.)
+- 🤖 **AI-Powered Refinement**: Claude Sonnet 4.5 for intelligent error correction and paragraphing
+- 📝 **Intelligent Paragraphs**: Q3-based pause detection for natural reading flow
+- 💰 **Cost Optimized**: Single Claude API call (~$0.05 per file)
+- � **SRT Subtitles**: Automatically generated and refined
+- 📊 **GPU Acceleration**: CUDA support for fast Whisper processing
+- 🚀 **Production Ready**: 4-stage pipeline with comprehensive error handling
 
 ## Prerequisites
 
 - Python 3.12+
 - FFmpeg (for audio processing)
-- CUDA-capable GPU (optional, for faster processing)
+- CUDA-capable GPU (recommended for Whisper)
+- AWS account with Bedrock access (for Claude API)
 
 ## Installation
 
@@ -36,118 +38,119 @@ Transcribe audio files with speaker diarization using OpenAI Whisper and pyannot
    pip install -r requirements.txt
    ```
 
-4. **Set up HuggingFace Token** (for speaker diarization):
-   - Go to https://huggingface.co/settings/tokens
-   - Create a new token with read access
-   - Accept the model terms at: https://huggingface.co/pyannote/speaker-diarization-community-1
-   - Create a `.env` file in the project root:
-     ```bash
-     cp .env.example .env
-     ```
-   - Edit `.env` and add your token:
-     ```
-     HF_TOKEN=your_token_here
-     ```
-   - Alternatively, set as an environment variable:
-     ```powershell
-     $env:HF_TOKEN = "your_token_here"
-     ```
+4. **Configure AWS Bedrock** (for Claude AI refinement):
+   ```powershell
+   # Configure AWS credentials
+   aws configure
+   # Access Key ID: YOUR_ACCESS_KEY
+   # Secret Access Key: YOUR_SECRET_KEY
+   # Default region: us-east-1
+   
+   # Ensure Bedrock access with Claude Sonnet 4.5 enabled
+   ```
 
-## Usage
+## Quick Start
 
-### Basic Transcription (without speaker diarization)
+### Basic Usage
 
 ```powershell
-python transcribe_with_diarization.py "downloads\Clip 1_1969.mp3"
+# Full pipeline (all 4 stages)
+python transcribe_pipeline.py "downloads\Clip 1_1969.mp3" --model medium
+
+# Skip Whisper (use existing JSON)
+python transcribe_pipeline.py "downloads\Clip 1_1969.mp3" --skip-whisper
+
+# Skip Claude refinement
+python transcribe_pipeline.py "downloads\Clip 1_1969.mp3" --skip-claude
+
+# Verbose output with detailed progress
+python transcribe_pipeline.py "downloads\Clip 1_1969.mp3" --model large --verbose
 ```
-
-This will work without a HuggingFace token but will label all segments as SPEAKER_00.
-
-### With Speaker Diarization
-
-```powershell
-python transcribe_with_diarization.py "downloads\Clip 1_1969.mp3" --hf-token YOUR_TOKEN
-```
-
-Or set the environment variable:
-
-```powershell
-$env:HF_TOKEN = "your_token_here"
-python transcribe_with_diarization.py "downloads\Clip 1_1969.mp3"
-```
-
-### With Speaker Identification
-
-Automatically identify speakers by name instead of generic labels:
-
-```powershell
-# Map detected speakers to names in order
-python transcribe_with_diarization.py "downloads\Clip 1_1969.mp3" --speaker-names "Ram Dass,Host,Caller"
-
-# Use a speaker configuration file for more control
-python transcribe_with_diarization.py "downloads\Clip 1_1969.mp3" --speaker-config speakers.json
-```
-
-The script will map `SPEAKER_00` → "Ram Dass", `SPEAKER_01` → "Host", etc.
 
 ### Options
 
 - `-m, --model`: Whisper model size (tiny, base, small, medium, large)
-  - Default: `base`
-  - Larger models are more accurate but slower
-  - Example: `python transcribe_with_diarization.py audio.mp3 -m medium`
+  - Default: `medium`
+  - **Recommended**: `medium` (best quality/speed balance)
+  - `large` for production quality (slower, 10GB VRAM)
 
-- `-o, --output-dir`: Output directory
-  - Default: same directory as audio file
-  - Example: `python transcribe_with_diarization.py audio.mp3 -o transcripts`
+- `-o, --output-dir`: Output directory (default: `downloads/`)
 
-- `--speaker-names`: Comma-separated list of speaker names
-  - Maps detected speakers to real names in order
-  - Example: `--speaker-names "Ram Dass,Host,Caller"`
-  
-- `--speaker-config`: Path to speaker configuration JSON file
-  - For advanced speaker identification with aliases and characteristics
-  - Example: `--speaker-config speakers.json`
+- `--skip-whisper`: Skip transcription (use existing JSON)
+  - Useful for re-running formatting/refinement only
 
-- `--min-speakers`, `--max-speakers`: Control number of detected speakers
-  - Helps diarization when you know the speaker count
-  - Example: `--min-speakers 2 --max-speakers 3`
+- `--skip-claude`: Skip Claude AI refinement
+  - Faster, but no intelligent corrections or paragraphing
+
+- `-v, --verbose`: Show detailed progress, timing, and costs
 
 ## Output Files
 
-The script generates three files:
+The pipeline generates 8 files:
 
-1. **`{filename}_with_speakers.json`**: Detailed JSON with timestamps and speaker labels
-2. **`{filename}_with_speakers.txt`**: Formatted transcript with timestamps
-3. **`{filename}_simple.txt`**: Clean transcript grouped by speaker
+1. **`{filename}.json`**: Raw Whisper output (word-level timing)
+2. **`{filename}.txt`**: Simple transcript
+3. **`{filename}.srt`**: Original SRT subtitles
+4. **`{filename}_formatted.txt`**: With intelligent paragraph breaks
+5. **`{filename}_formatted_refined.txt`**: Final refined transcript ⭐
+6. **`{filename}_formatted_refined_changes.json`**: List of corrections made
+7. **`{filename}_refined.srt`**: Final refined subtitles ⭐
+8. **`{filename}_refined_changes.json`**: SRT corrections log
 
-## Example Workflow
+## Pipeline Stages
+
+```
+Stage 1: Whisper Transcription (~4 min for 20-min audio)
+  ↓ Vocabulary-enhanced with 60+ custom terms
+  
+Stage 2: Format & Generate SRT (~5 seconds)
+  ↓ Q3-based intelligent paragraph breaks
+  
+Stage 3: Claude TXT Refinement (~45 seconds, ~$0.05)
+  ↓ Fix errors + add proper paragraphs
+  
+Stage 4: Apply to SRT (~2 seconds, $0 - reuses Stage 3!)
+  ✓ Final refined transcript + subtitles
+```
+
+## Example Workflows
 
 ```powershell
 # Activate virtual environment
 .\venv\Scripts\Activate.ps1
 
-# Single file with speaker identification
-python transcribe_with_diarization.py "audio.mp3" --speaker-names "Ram Dass,Host" -m medium
+# Single file production quality
+python transcribe_pipeline.py "audio.mp3" --model large --verbose
 
 # Batch process multiple files
 Get-ChildItem .\audio\*.mp3 | ForEach-Object { 
-    python transcribe_with_diarization.py $_.FullName --speaker-names "Ram Dass,Host,Caller" 
+    python transcribe_pipeline.py $_.FullName --model medium
 }
+
+# Re-run refinement only (after vocabulary update)
+python transcribe_pipeline.py "audio.mp3" --skip-whisper
 ```
 
 ## Project Structure
 
 ```
 ramdass-whisper-transcriber/
-├── transcribe_with_diarization.py  # Main transcription script
-├── speaker_config.py               # Speaker identification system
-├── simple_diarization.py          # Basic diarization (Windows fallback)
-├── test_diarization.py            # Testing utilities
-├── requirements.txt               # Python dependencies
-├── .env.example                   # Environment variable template
-├── speakers_example.json          # Example speaker configuration
+├── transcribe_pipeline.py              # Main orchestration script ⭐
+├── whisper_with_vocab.py               # Stage 1: Vocabulary-enhanced Whisper
+├── convert_aws_transcribe.py           # Stage 2: Format + SRT generation
+├── claude_refine_transcript.py         # Stage 3: Claude AI refinement
+├── apply_txt_corrections_to_srt.py     # Stage 4: Apply corrections to SRT
+├── build_vocabulary.py                 # Build vocabulary files
+├── keyword_lists/
+│   ├── input.txt                       # Custom vocabulary (edit this!)
+│   ├── whisper_vocabulary.json         # Auto-generated for Whisper
+│   ├── replacement_map.json            # Auto-generated for Claude
+│   ├── embedding_top_phrases_*.csv     # Common phrases (500)
+│   └── embedding_top_words_*.csv       # Domain words (500)
+├── downloads/                          # Output directory (default)
+├── requirements.txt
 ├── README.md
+├── PIPELINE.md                         # Detailed documentation ⭐
 └── LICENSE
 ```
 
@@ -155,26 +158,59 @@ ramdass-whisper-transcriber/
 
 Key libraries (see `requirements.txt` for full list):
 - `openai-whisper==20250625` - Speech transcription
-- `pyannote.audio==4.0.1` - Speaker diarization
-- `torch==2.9.0` - PyTorch for model inference
-- `python-dotenv==1.2.1` - Environment variable management
+- `torch==2.9.0+cu128` - PyTorch with CUDA
+- `boto3==1.35.99` - AWS SDK for Bedrock
+- `numpy==1.26.4` - Numerical operations
 - `tqdm==4.67.1` - Progress bars
 
-## Performance Tips
+## Performance & Cost
 
-- **GPU Acceleration**: Automatically used if CUDA is available (10-20x faster)
-- **Model Selection**: 
-  - `tiny` - Fastest, lower accuracy (~1x realtime on CPU)
-  - `base` - Good balance (default, ~3x realtime on CPU)
-  - `medium` - Better accuracy (~10x realtime on CPU)
-  - `large` - Best accuracy (~20x realtime on CPU, 6GB+ VRAM)
-- **Speaker Count**: Provide `--min-speakers` and `--max-speakers` for better diarization accuracy
+**20-minute audio file on RTX 5070 Ti**:
+- **Time**: ~5.5 minutes total
+  - Stage 1 (Whisper): ~4 min
+  - Stage 2 (Format): ~5 sec
+  - Stage 3 (Claude): ~45 sec
+  - Stage 4 (Apply): ~2 sec
+- **Cost**: ~$0.05 per file (Claude API only)
+- **Quality**: Production-ready with proper paragraphs
+
+**Scaling**:
+- 100 hours of audio = ~$15-30 in Claude costs
+- GPU required for reasonable Whisper speed
+- Can process multiple files in parallel
+
+## Custom Vocabulary
+
+Add your own terms to `keyword_lists/input.txt`:
+
+```
+# Format: Display_Name	IPA-pronunciation	alternatives	Final Display
+Ouspensky	oo-SPEN-skee	lispensky uspensky	Ouspensky
+Maharaj-ji	muh-hah-RAHJ-jee	maharaji maraj ji	Maharaj-ji
+Grey's-Anatomy	grayz uh-NAT-uh-mee		Grey's Anatomy
+```
+
+Then rebuild:
+```powershell
+python build_vocabulary.py
+```
+
+The pipeline will now recognize these terms in audio!
 
 ## Troubleshooting
 
-- **CUDA out of memory**: Use a smaller Whisper model or process shorter audio segments
-- **Diarization errors**: Check HuggingFace token and model terms acceptance
-- **Audio format issues**: Ensure FFmpeg is installed and accessible in PATH
+- **CUDA out of memory**: Use smaller model (`--model small`)
+- **AWS credentials error**: Run `aws configure` with Bedrock-enabled credentials
+- **Claude timeout**: Large files (>2 hours) may need splitting
+- **No paragraph breaks**: Lower threshold in `convert_aws_transcribe.py` (line 113)
+- **Unicode errors**: Already fixed in current version (uses ASCII output)
+
+See **[PIPELINE.md](PIPELINE.md)** for detailed troubleshooting and advanced usage.
+
+## Documentation
+
+- **[README.md](README.md)** - This file (quick start)
+- **[PIPELINE.md](PIPELINE.md)** - Comprehensive documentation (architecture, scripts, troubleshooting)
 
 ## License
 
@@ -183,5 +219,9 @@ MIT License - see [LICENSE](LICENSE) file for details
 ## Acknowledgments
 
 - [OpenAI Whisper](https://github.com/openai/whisper) for state-of-the-art transcription
-- [pyannote.audio](https://github.com/pyannote/pyannote-audio) for speaker diarization
+- [Anthropic Claude](https://www.anthropic.com/) for intelligent refinement
 - Ram Dass Foundation for preserving the teachings
+
+---
+
+**Made with ❤️ for the Ram Dass community**
