@@ -5,12 +5,20 @@ env/
 ENV/
 
 # Environment variables
+.env
+.env.local
+.env.*.local
 transcribe_pipeline/.env
 transcribe_pipeline/.env.local
 transcribe_pipeline/.env.*.local
 
-# Audio files and outputs
+# Downloaded files and temporary storage
+downloads/
+tmp/
 transcribe_pipeline/downloads/
+assets_without_embeddings.json
+
+# Audio files and outputs
 *.mp3
 *.wav
 *.mp4

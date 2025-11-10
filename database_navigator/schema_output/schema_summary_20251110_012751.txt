@@ -1,0 +1,985 @@
+Database Schema Summary
+================================================================================
+
+Database: dam_ramdass_io_rds
+Extracted: 2025-11-10T06:27:46.534371
+Tables: 32
+Views: 21
+Sequences: 14
+
+
+================================================================================
+TABLE: asset_custom_field_values
+================================================================================
+Row Count: 0
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('asset_custom_field_values_id_seq'::regclass)
+  asset_id                       uuid                 NOT NULL   
+  bynder_id                      character varying    NULL       
+  custom_field_id                integer              NOT NULL   
+  field_uuid                     uuid                 NOT NULL   
+  value                          text                 NULL       
+  value_json                     jsonb                NULL       
+  synced_at                      timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  custom_field_id -> ib_custom_fields.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  asset_custom_field_values_pkey (PRIMARY, UNIQUE): id
+  asset_custom_field_values_unique (UNIQUE): asset_id, custom_field_id
+  idx_asset_custom_field_values_asset_id: asset_id
+  idx_asset_custom_field_values_bynder_id: bynder_id
+  idx_asset_custom_field_values_field_uuid: field_uuid
+
+================================================================================
+TABLE: asset_custom_form_filter_values
+================================================================================
+Row Count: 0
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('asset_custom_form_filter_values_id_seq'::regclass)
+  asset_id                       uuid                 NOT NULL   
+  bynder_id                      character varying    NULL       
+  filter_id                      integer              NOT NULL   
+  filter_option_id               integer              NOT NULL   
+  option_uuid                    uuid                 NOT NULL   
+  synced_at                      timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  filter_id -> ib_custom_form_filters.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+  filter_option_id -> ib_custom_form_filter_options.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  asset_custom_form_filter_values_pkey (PRIMARY, UNIQUE): id
+  asset_custom_form_filter_values_unique (UNIQUE): asset_id, filter_option_id
+  idx_asset_custom_form_filter_values_asset_id: asset_id
+  idx_asset_custom_form_filter_values_option_uuid: option_uuid
+
+================================================================================
+TABLE: asset_embeddings
+================================================================================
+Row Count: 3648
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('asset_embeddings_id_seq'::regclass)
+  resource_id                    uuid                 NOT NULL   
+  content_type                   character varying    NOT NULL   
+  embedding_model                character varying    NOT NULL   'amazon.titan-embed-text-v2:0'::character varying
+  embedding                      USER-DEFINED         NULL       
+  created_at                     timestamp without time zone NULL       CURRENT_TIMESTAMP
+  updated_at                     timestamp without time zone NULL       CURRENT_TIMESTAMP
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  resource_id -> assets.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  asset_embeddings_pkey (PRIMARY, UNIQUE): id
+  asset_embeddings_resource_id_content_type_embedding_model_key (UNIQUE): resource_id, content_type, embedding_model
+  idx_asset_embeddings_content_type: content_type
+  idx_asset_embeddings_created_at: created_at
+  idx_asset_embeddings_model: embedding_model
+  idx_asset_embeddings_resource_id: resource_id
+  idx_asset_embeddings_vector_cosine: embedding
+
+================================================================================
+TABLE: asset_filter_values
+================================================================================
+Row Count: 0
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('asset_filter_values_id_seq'::regclass)
+  asset_id                       uuid                 NOT NULL   
+  bynder_id                      character varying    NULL       
+  filter_id                      integer              NOT NULL   
+  filter_option_id               integer              NOT NULL   
+  option_uuid                    uuid                 NOT NULL   
+  synced_at                      timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  filter_id -> ib_filters.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+  filter_option_id -> ib_filter_options.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  asset_filter_values_pkey (PRIMARY, UNIQUE): id
+  asset_filter_values_unique (UNIQUE): asset_id, filter_option_id
+  idx_asset_filter_values_asset_id: asset_id
+  idx_asset_filter_values_bynder_id: bynder_id
+  idx_asset_filter_values_filter_id: filter_id
+  idx_asset_filter_values_option_uuid: option_uuid
+
+================================================================================
+TABLE: asset_participants
+================================================================================
+Row Count: 2651
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  asset_id                       uuid                 NOT NULL   
+  participant_id                 uuid                 NOT NULL   
+
+PRIMARY KEY: asset_id, participant_id
+
+FOREIGN KEYS:
+  asset_id -> assets.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+  participant_id -> participants.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  asset_participants_pkey (PRIMARY, UNIQUE): asset_id, participant_id
+  idx_asset_participants_participant_id: participant_id
+
+================================================================================
+TABLE: asset_related_assets
+================================================================================
+Row Count: 109372
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  asset_id                       uuid                 NOT NULL   
+  related_asset_id               uuid                 NOT NULL   
+  relationship_type              character varying    NULL       'related'::character varying
+
+PRIMARY KEY: asset_id, related_asset_id
+
+FOREIGN KEYS:
+  asset_id -> assets.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  asset_related_assets_pkey (PRIMARY, UNIQUE): asset_id, related_asset_id
+  idx_asset_related_assets_related_id: related_asset_id
+
+================================================================================
+TABLE: asset_teachers
+================================================================================
+Row Count: 10590
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  asset_id                       uuid                 NOT NULL   
+  teacher_id                     uuid                 NOT NULL   
+
+PRIMARY KEY: asset_id, teacher_id
+
+FOREIGN KEYS:
+  asset_id -> assets.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+  teacher_id -> teachers.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  asset_teachers_pkey (PRIMARY, UNIQUE): asset_id, teacher_id
+  idx_asset_teachers_teacher_id: teacher_id
+
+================================================================================
+TABLE: asset_topics
+================================================================================
+Row Count: 10697
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  asset_id                       uuid                 NOT NULL   
+  topic_id                       uuid                 NOT NULL   
+
+PRIMARY KEY: asset_id, topic_id
+
+FOREIGN KEYS:
+  asset_id -> assets.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+  topic_id -> topics.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  asset_topics_pkey (PRIMARY, UNIQUE): asset_id, topic_id
+  idx_asset_topics_topic_id: topic_id
+
+================================================================================
+TABLE: assets
+================================================================================
+Row Count: 22975
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   
+  bynder_id                      character varying    NULL       
+  name                           character varying    NOT NULL   
+  description                    text                 NULL       
+  short_description              text                 NULL       
+  alt_title                      character varying    NULL       
+  folder_path                    character varying    NULL       
+  webdam_folder_path             character varying    NULL       
+  s3_bucket                      character varying    NULL       
+  dropbox_link                   text                 NULL       
+  youtube_url                    text                 NULL       
+  asset_type                     character varying    NULL       
+  asset_sub_type                 character varying    NULL       
+  rights_information             character varying    NULL       
+  height                         integer              NULL       
+  width                          integer              NULL       
+  orientation                    character varying    NULL       
+  original_format                character varying    NULL       
+  media_duration_seconds         numeric              NULL       
+  location_id                    uuid                 NULL       
+  event_id                       uuid                 NULL       
+  decade                         character varying    NULL       
+  publication_date               date                 NULL       
+  needs_identification           boolean              NULL       
+  needs_restoration              boolean              NULL       
+  needs_description              boolean              NULL       
+  physical_condition             character varying    NULL       
+  quality                        character varying    NULL       
+  bin_number                     character varying    NULL       
+  session                        character varying    NULL       
+  value_level                    character varying    NULL       
+  mobile_app_flags               character varying    NULL       
+  inventory_id                   character varying    NULL       
+  accreditation                  text                 NULL       
+  copyright                      character varying    NULL       
+  copyright_xmp                  character varying    NULL       
+  describer                      character varying    NULL       
+  notes                          text                 NULL       
+  usage_notes                    text                 NULL       
+  asset_references               text                 NULL       
+  duplicates                     text                 NULL       
+  search_vector                  tsvector             NULL       
+  created_at                     timestamp without time zone NULL       now()
+  updated_at                     timestamp without time zone NULL       now()
+  deleted_at                     timestamp without time zone NULL       
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  location_id -> locations.id
+    ON UPDATE: NO ACTION, ON DELETE: NO ACTION
+  event_id -> events.id
+    ON UPDATE: NO ACTION, ON DELETE: NO ACTION
+
+INDEXES:
+  assets_bynder_id_key (UNIQUE): bynder_id
+  assets_pkey (PRIMARY, UNIQUE): id
+  idx_assets_asset_sub_type: asset_sub_type
+  idx_assets_asset_type: asset_type
+  idx_assets_bin_number: bin_number
+  idx_assets_bynder_id: bynder_id
+  idx_assets_decade: decade
+  idx_assets_deleted_at: deleted_at
+  idx_assets_describer: describer
+  idx_assets_event_id: event_id
+  idx_assets_folder_path: folder_path
+  idx_assets_location_id: location_id
+  idx_assets_name: name
+  idx_assets_publication_date: publication_date
+  idx_assets_rights: rights_information
+  idx_assets_search_vector: search_vector
+  idx_assets_webdam_path: webdam_folder_path
+
+================================================================================
+TABLE: branches
+================================================================================
+Row Count: 1
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   uuid_generate_v4()
+  name                           character varying    NOT NULL   
+  created_at                     timestamp without time zone NULL       now()
+  created_by                     uuid                 NULL       
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  created_by -> users.id
+    ON UPDATE: NO ACTION, ON DELETE: NO ACTION
+
+INDEXES:
+  branches_name_key (UNIQUE): name
+  branches_pkey (PRIMARY, UNIQUE): id
+
+================================================================================
+TABLE: comprehend_entities
+================================================================================
+Row Count: 51969
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('comprehend_entities_id_seq'::regclass)
+  resource_id                    uuid                 NOT NULL   
+  entity_text                    character varying    NOT NULL   
+  entity_type                    character varying    NOT NULL   
+  confidence_score               numeric              NOT NULL   
+  begin_offset                   integer              NULL       
+  end_offset                     integer              NULL       
+  created_at                     timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  resource_id -> assets.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  comprehend_entities_pkey (PRIMARY, UNIQUE): id
+  idx_comprehend_entities_confidence: confidence_score
+  idx_comprehend_entities_resource_id: resource_id
+  idx_comprehend_entities_text: entity_text
+  idx_comprehend_entities_type: entity_type
+  idx_comprehend_entities_type_confidence: entity_type, confidence_score
+
+CONSTRAINTS:
+  comprehend_entities_confidence_check: CHECK (((confidence_score >= (0)::numeric) AND (confidence_score <= (1)::numeric)))
+
+================================================================================
+TABLE: comprehend_key_phrases
+================================================================================
+Row Count: 40552
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('comprehend_key_phrases_id_seq'::regclass)
+  resource_id                    uuid                 NOT NULL   
+  phrase_text                    text                 NOT NULL   
+  confidence_score               numeric              NOT NULL   
+  begin_offset                   integer              NULL       
+  end_offset                     integer              NULL       
+  created_at                     timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  resource_id -> assets.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  comprehend_key_phrases_pkey (PRIMARY, UNIQUE): id
+  idx_comprehend_key_phrases_confidence: confidence_score
+  idx_comprehend_key_phrases_resource_id: resource_id
+
+CONSTRAINTS:
+  comprehend_key_phrases_confidence_check: CHECK (((confidence_score >= (0)::numeric) AND (confidence_score <= (1)::numeric)))
+
+================================================================================
+TABLE: comprehend_sentiment
+================================================================================
+Row Count: 912
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('comprehend_sentiment_id_seq'::regclass)
+  resource_id                    uuid                 NOT NULL   
+  sentiment                      character varying    NOT NULL   
+  positive_score                 numeric              NOT NULL   
+  negative_score                 numeric              NOT NULL   
+  neutral_score                  numeric              NOT NULL   
+  mixed_score                    numeric              NOT NULL   
+  analyzed_at                    timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  resource_id -> assets.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  comprehend_sentiment_pkey (PRIMARY, UNIQUE): id
+  comprehend_sentiment_unique_resource (UNIQUE): resource_id
+  idx_comprehend_sentiment_resource_id: resource_id
+  idx_comprehend_sentiment_sentiment: sentiment
+
+CONSTRAINTS:
+  comprehend_sentiment_positive_check: CHECK (((positive_score >= (0)::numeric) AND (positive_score <= (1)::numeric)))
+  comprehend_sentiment_negative_check: CHECK (((negative_score >= (0)::numeric) AND (negative_score <= (1)::numeric)))
+  comprehend_sentiment_neutral_check: CHECK (((neutral_score >= (0)::numeric) AND (neutral_score <= (1)::numeric)))
+  comprehend_sentiment_mixed_check: CHECK (((mixed_score >= (0)::numeric) AND (mixed_score <= (1)::numeric)))
+  comprehend_sentiment_value_check: CHECK (((sentiment)::text = ANY ((ARRAY['POSITIVE'::character varying, 'NEGATIVE'::character varying, 'NEUTRAL'::character varying, 'MIXED'::character varying])::text[])))
+
+================================================================================
+TABLE: documents
+================================================================================
+Row Count: 1
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   uuid_generate_v4()
+  file_id                        uuid                 NULL       
+  source                         character varying    NOT NULL   
+  s3_bucket                      character varying    NULL       
+  s3_key                         character varying    NULL       
+  file_name                      character varying    NULL       
+  content_text                   text                 NULL       
+  content_type                   character varying    NULL       
+  metadata                       jsonb                NULL       
+  created_at                     timestamp with time zone NOT NULL   now()
+
+PRIMARY KEY: id
+
+INDEXES:
+  documents_file_id_idx: file_id
+  documents_pkey (PRIMARY, UNIQUE): id
+  documents_source_idx: source
+
+================================================================================
+TABLE: events
+================================================================================
+Row Count: 400
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   uuid_generate_v4()
+  event_type                     character varying    NULL       
+  event_name                     character varying    NULL       
+  event_features                 character varying    NULL       
+  created_at                     timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+INDEXES:
+  events_event_type_event_name_key (UNIQUE): event_type, event_name
+  events_pkey (PRIMARY, UNIQUE): id
+  idx_events_name: event_name
+  idx_events_type: event_type
+
+================================================================================
+TABLE: file_history
+================================================================================
+Row Count: 0
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   uuid_generate_v4()
+  file_id                        uuid                 NULL       
+  content                        text                 NULL       
+  version                        integer              NOT NULL   
+  created_at                     timestamp without time zone NULL       now()
+  created_by                     character varying    NULL       
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  file_id -> files.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  file_history_pkey (PRIMARY, UNIQUE): id
+  idx_file_history_file_id: file_id
+  idx_file_history_version: file_id, version
+
+================================================================================
+TABLE: files
+================================================================================
+Row Count: 0
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   uuid_generate_v4()
+  ib_id                          character varying    NULL       
+  path                           character varying    NOT NULL   
+  name                           character varying    NOT NULL   
+  content                        text                 NULL       
+  type                           character varying    NULL       
+  size                           bigint               NULL       
+  metadata                       jsonb                NULL       
+  branch                         character varying    NULL       'main'::character varying
+  version                        integer              NULL       1
+  created_at                     timestamp without time zone NULL       now()
+  updated_at                     timestamp without time zone NULL       now()
+  created_by                     uuid                 NULL       
+  deleted_at                     timestamp without time zone NULL       
+  deleted_by                     uuid                 NULL       
+  search_vector                  tsvector             NULL       
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  created_by -> users.id
+    ON UPDATE: NO ACTION, ON DELETE: NO ACTION
+  deleted_by -> users.id
+    ON UPDATE: NO ACTION, ON DELETE: NO ACTION
+
+INDEXES:
+  files_ib_id_key (UNIQUE): ib_id
+  files_path_key (UNIQUE): path
+  files_pkey (PRIMARY, UNIQUE): id
+  idx_files_branch: branch
+  idx_files_deleted_at: deleted_at
+  idx_files_ib_id: ib_id
+  idx_files_path: path
+  idx_files_search_vector: search_vector
+  idx_files_type: type
+  idx_files_updated_at: updated_at
+
+================================================================================
+TABLE: ib_custom_fields
+================================================================================
+Row Count: 0
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('ib_custom_fields_id_seq'::regclass)
+  section_id                     integer              NULL       
+  section_uuid                   uuid                 NOT NULL   
+  field_uuid                     uuid                 NOT NULL   
+  label                          character varying    NOT NULL   
+  field_type                     character varying    NULL       
+  validation_type                character varying    NULL       
+  validation_params              jsonb                NULL       
+  synced_at                      timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  section_id -> ib_custom_sections.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  ib_custom_fields_field_uuid_key (UNIQUE): field_uuid
+  ib_custom_fields_pkey (PRIMARY, UNIQUE): id
+  idx_ib_custom_fields_label: label
+  idx_ib_custom_fields_section_id: section_id
+  idx_ib_custom_fields_uuid: field_uuid
+
+================================================================================
+TABLE: ib_custom_form_filter_options
+================================================================================
+Row Count: 2034
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('ib_custom_form_filter_options_id_seq'::regclass)
+  filter_id                      integer              NOT NULL   
+  filter_ib_uuid                 uuid                 NOT NULL   
+  option_uuid                    uuid                 NOT NULL   
+  value_en                       text                 NULL       
+  value_fr                       text                 NULL       
+  value_json                     jsonb                NULL       
+  sort_order                     integer              NULL       0
+  synced_at                      timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  filter_id -> ib_custom_form_filters.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  ib_custom_form_filter_options_option_uuid_key (UNIQUE): option_uuid
+  ib_custom_form_filter_options_pkey (PRIMARY, UNIQUE): id
+  ib_custom_form_filter_options_unique (UNIQUE): filter_id, option_uuid
+  idx_ib_custom_form_filter_options_filter_id: filter_id
+  idx_ib_custom_form_filter_options_uuid: option_uuid
+
+================================================================================
+TABLE: ib_custom_form_filters
+================================================================================
+Row Count: 22
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('ib_custom_form_filters_id_seq'::regclass)
+  ib_uuid                        uuid                 NOT NULL   
+  name_en                        character varying    NULL       
+  name_fr                        character varying    NULL       
+  name_json                      jsonb                NULL       
+  multiple                       boolean              NULL       false
+  resource_filter_range          character varying    NULL       
+  tools                          ARRAY                NULL       
+  synced_at                      timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+INDEXES:
+  ib_custom_form_filters_ib_uuid_key (UNIQUE): ib_uuid
+  ib_custom_form_filters_pkey (PRIMARY, UNIQUE): id
+  idx_ib_custom_form_filters_name_en: name_en
+  idx_ib_custom_form_filters_uuid: ib_uuid
+
+================================================================================
+TABLE: ib_custom_sections
+================================================================================
+Row Count: 0
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('ib_custom_sections_id_seq'::regclass)
+  tab_id                         integer              NULL       
+  tab_uuid                       uuid                 NOT NULL   
+  section_uuid                   uuid                 NOT NULL   
+  label                          character varying    NOT NULL   
+  is_duplicable                  boolean              NULL       false
+  enforce_one_section_min        boolean              NULL       false
+  maintain_mandatory_validation  boolean              NULL       false
+  check_user_in_non_listed_groups boolean              NULL       false
+  synced_at                      timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  tab_id -> ib_custom_tabs.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  ib_custom_sections_pkey (PRIMARY, UNIQUE): id
+  ib_custom_sections_section_uuid_key (UNIQUE): section_uuid
+  idx_ib_custom_sections_tab_id: tab_id
+  idx_ib_custom_sections_uuid: section_uuid
+
+================================================================================
+TABLE: ib_custom_tabs
+================================================================================
+Row Count: 0
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('ib_custom_tabs_id_seq'::regclass)
+  tab_uuid                       uuid                 NOT NULL   
+  label                          character varying    NULL       
+  synced_at                      timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+INDEXES:
+  ib_custom_tabs_pkey (PRIMARY, UNIQUE): id
+  ib_custom_tabs_tab_uuid_key (UNIQUE): tab_uuid
+  idx_ib_custom_tabs_uuid: tab_uuid
+
+================================================================================
+TABLE: ib_filter_options
+================================================================================
+Row Count: 2068
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('ib_filter_options_id_seq'::regclass)
+  filter_id                      integer              NOT NULL   
+  filter_ib_uuid                 uuid                 NOT NULL   
+  option_uuid                    uuid                 NOT NULL   
+  value                          text                 NOT NULL   
+  sort_order                     integer              NULL       0
+  divisions                      ARRAY                NULL       
+  synced_at                      timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  filter_id -> ib_filters.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  ib_filter_options_option_uuid_key (UNIQUE): option_uuid
+  ib_filter_options_pkey (PRIMARY, UNIQUE): id
+  ib_filter_options_unique (UNIQUE): filter_id, option_uuid
+  idx_ib_filter_options_filter_id: filter_id
+  idx_ib_filter_options_option_uuid: option_uuid
+  idx_ib_filter_options_value: value
+
+================================================================================
+TABLE: ib_filters
+================================================================================
+Row Count: 28
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   nextval('ib_filters_id_seq'::regclass)
+  ib_id                          character varying    NOT NULL   
+  ib_uuid                        uuid                 NOT NULL   
+  name                           character varying    NOT NULL   
+  sort_alpha                     boolean              NULL       false
+  multiple                       boolean              NULL       false
+  required                       boolean              NULL       false
+  sort_order                     integer              NULL       
+  resource_filter_range          character varying    NULL       
+  tools                          ARRAY                NULL       
+  restricted_folders             ARRAY                NULL       
+  auto_propagate_folders         boolean              NULL       false
+  ib_create_time                 timestamp without time zone NULL       
+  ib_last_update_time            timestamp without time zone NULL       
+  creator_uuid                   uuid                 NULL       
+  last_updater_uuid              uuid                 NULL       
+  synced_at                      timestamp without time zone NULL       now()
+  last_verified_at               timestamp without time zone NULL       
+
+PRIMARY KEY: id
+
+INDEXES:
+  ib_filters_ib_id_key (UNIQUE): ib_id
+  ib_filters_ib_uuid_key (UNIQUE): ib_uuid
+  ib_filters_pkey (PRIMARY, UNIQUE): id
+  idx_ib_filters_ib_id: ib_id
+  idx_ib_filters_ib_uuid: ib_uuid
+  idx_ib_filters_name: name
+  idx_ib_filters_synced_at: synced_at
+
+================================================================================
+TABLE: locations
+================================================================================
+Row Count: 618
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   uuid_generate_v4()
+  venue                          character varying    NULL       
+  country                        character varying    NULL       
+  city                           character varying    NULL       
+  created_at                     timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+INDEXES:
+  idx_locations_city: city
+  idx_locations_country: country
+  idx_locations_venue: venue
+  locations_pkey (PRIMARY, UNIQUE): id
+  locations_venue_country_city_key (UNIQUE): venue, country, city
+
+================================================================================
+TABLE: participants
+================================================================================
+Row Count: 352
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   uuid_generate_v4()
+  name                           character varying    NOT NULL   
+  created_at                     timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+INDEXES:
+  idx_participants_name: name
+  participants_name_key (UNIQUE): name
+  participants_pkey (PRIMARY, UNIQUE): id
+
+================================================================================
+TABLE: permissions
+================================================================================
+Row Count: 0
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   uuid_generate_v4()
+  user_id                        uuid                 NULL       
+  path                           character varying    NULL       
+  permission                     character varying    NULL       
+  created_at                     timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+FOREIGN KEYS:
+  user_id -> users.id
+    ON UPDATE: NO ACTION, ON DELETE: CASCADE
+
+INDEXES:
+  idx_permissions_path: path
+  idx_permissions_user_id: user_id
+  permissions_pkey (PRIMARY, UNIQUE): id
+
+================================================================================
+TABLE: sync_logs
+================================================================================
+Row Count: 1
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   uuid_generate_v4()
+  started_at                     timestamp without time zone NOT NULL   
+  completed_at                   timestamp without time zone NULL       
+  status                         character varying    NOT NULL   
+  files_processed                integer              NULL       0
+  files_created                  integer              NULL       0
+  files_updated                  integer              NULL       0
+  errors                         text                 NULL       
+  duration_ms                    integer              NULL       
+
+PRIMARY KEY: id
+
+INDEXES:
+  idx_sync_logs_started_at: started_at
+  idx_sync_logs_status: status
+  sync_logs_pkey (PRIMARY, UNIQUE): id
+
+================================================================================
+TABLE: sync_metadata
+================================================================================
+Row Count: 1
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             integer              NOT NULL   1
+  last_sync_time                 timestamp without time zone NULL       
+  last_sync_status               character varying    NULL       
+  files_synced                   integer              NULL       0
+  errors_count                   integer              NULL       0
+  total_syncs                    integer              NULL       0
+  last_error                     text                 NULL       
+  updated_at                     timestamp with time zone NOT NULL   now()
+
+PRIMARY KEY: id
+
+INDEXES:
+  sync_metadata_pkey (PRIMARY, UNIQUE): id
+
+CONSTRAINTS:
+  sync_metadata_id_check: CHECK ((id = 1))
+
+================================================================================
+TABLE: teachers
+================================================================================
+Row Count: 43
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   uuid_generate_v4()
+  name                           character varying    NOT NULL   
+  created_at                     timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+INDEXES:
+  idx_teachers_name: name
+  teachers_name_key (UNIQUE): name
+  teachers_pkey (PRIMARY, UNIQUE): id
+
+================================================================================
+TABLE: topics
+================================================================================
+Row Count: 18
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   uuid_generate_v4()
+  name                           character varying    NOT NULL   
+  created_at                     timestamp without time zone NULL       now()
+
+PRIMARY KEY: id
+
+INDEXES:
+  idx_topics_name: name
+  topics_name_key (UNIQUE): name
+  topics_pkey (PRIMARY, UNIQUE): id
+
+================================================================================
+TABLE: users
+================================================================================
+Row Count: 1
+
+COLUMNS:
+  Name                           Type                 Nullable   Default
+  ------------------------------ -------------------- ---------- ------------------------------
+  id                             uuid                 NOT NULL   uuid_generate_v4()
+  username                       character varying    NOT NULL   
+  email                          character varying    NOT NULL   
+  password_hash                  character varying    NOT NULL   
+  created_at                     timestamp without time zone NULL       now()
+  updated_at                     timestamp without time zone NULL       now()
+  first_name                     character varying    NULL       
+  last_name                      character varying    NULL       
+  role                           character varying    NULL       'user'::character varying
+  last_login                     timestamp with time zone NULL       
+  is_active                      boolean              NULL       true
+
+PRIMARY KEY: id
+
+INDEXES:
+  idx_users_email: email
+  idx_users_username: username
+  users_email_key (UNIQUE): email
+  users_pkey (PRIMARY, UNIQUE): id
+  users_username_key (UNIQUE): username
+
+
+================================================================================
+VIEWS
+================================================================================
+
+- v_asset_custom_fields
+
+- v_asset_custom_form_filters
+
+- v_asset_entities_summary
+
+- v_asset_filters
+
+- v_asset_sentiment_overview
+
+- v_asset_stats_by_decade
+
+- v_asset_stats_by_type
+
+- v_assets_by_teacher
+
+- v_assets_by_topic
+
+- v_assets_complete
+
+- v_custom_fields_hierarchy
+
+- v_custom_form_filter_options_usage
+
+- v_custom_form_filters_summary
+
+- v_filter_options_usage
+
+- v_filter_summary
+
+- v_sync_history
+
+- v_sync_stats
+
+- v_top_locations
+
+- v_top_organizations
+
+- v_top_people
+
+- vw_embedding_stats

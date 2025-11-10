@@ -1,0 +1,4580 @@
+{
+  "extracted_at": "2025-11-10T06:27:46.534371",
+  "database": "dam_ramdass_io_rds",
+  "tables": {
+    "asset_custom_field_values": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('asset_custom_field_values_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "asset_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "bynder_id",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "custom_field_id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "field_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "value",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "value_json",
+          "data_type": "jsonb",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "jsonb"
+        },
+        {
+          "name": "synced_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "custom_field_id",
+          "references_table": "ib_custom_fields",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "asset_custom_field_values_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "asset_custom_field_values_unique",
+          "columns": [
+            "asset_id",
+            "custom_field_id"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_custom_field_values_asset_id",
+          "columns": [
+            "asset_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_custom_field_values_bynder_id",
+          "columns": [
+            "bynder_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_custom_field_values_field_uuid",
+          "columns": [
+            "field_uuid"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 0
+    },
+    "asset_custom_form_filter_values": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('asset_custom_form_filter_values_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "asset_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "bynder_id",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "filter_id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "filter_option_id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "option_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "synced_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "filter_id",
+          "references_table": "ib_custom_form_filters",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        },
+        {
+          "column": "filter_option_id",
+          "references_table": "ib_custom_form_filter_options",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "asset_custom_form_filter_values_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "asset_custom_form_filter_values_unique",
+          "columns": [
+            "asset_id",
+            "filter_option_id"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_custom_form_filter_values_asset_id",
+          "columns": [
+            "asset_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_custom_form_filter_values_option_uuid",
+          "columns": [
+            "option_uuid"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 0
+    },
+    "asset_embeddings": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('asset_embeddings_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "resource_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "content_type",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "embedding_model",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "'amazon.titan-embed-text-v2:0'::character varying",
+          "udt_name": "varchar"
+        },
+        {
+          "name": "embedding",
+          "data_type": "USER-DEFINED",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "vector"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "resource_id",
+          "references_table": "assets",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "asset_embeddings_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "asset_embeddings_resource_id_content_type_embedding_model_key",
+          "columns": [
+            "resource_id",
+            "content_type",
+            "embedding_model"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_embeddings_content_type",
+          "columns": [
+            "content_type"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_embeddings_created_at",
+          "columns": [
+            "created_at"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_embeddings_model",
+          "columns": [
+            "embedding_model"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_embeddings_resource_id",
+          "columns": [
+            "resource_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_embeddings_vector_cosine",
+          "columns": [
+            "embedding"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 3648
+    },
+    "asset_filter_values": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('asset_filter_values_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "asset_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "bynder_id",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "filter_id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "filter_option_id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "option_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "synced_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "filter_id",
+          "references_table": "ib_filters",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        },
+        {
+          "column": "filter_option_id",
+          "references_table": "ib_filter_options",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "asset_filter_values_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "asset_filter_values_unique",
+          "columns": [
+            "asset_id",
+            "filter_option_id"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_filter_values_asset_id",
+          "columns": [
+            "asset_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_filter_values_bynder_id",
+          "columns": [
+            "bynder_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_filter_values_filter_id",
+          "columns": [
+            "filter_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_asset_filter_values_option_uuid",
+          "columns": [
+            "option_uuid"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 0
+    },
+    "asset_participants": {
+      "columns": [
+        {
+          "name": "asset_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "participant_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        }
+      ],
+      "primary_key": [
+        "asset_id",
+        "participant_id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "asset_id",
+          "references_table": "assets",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        },
+        {
+          "column": "participant_id",
+          "references_table": "participants",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "asset_participants_pkey",
+          "columns": [
+            "asset_id",
+            "participant_id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_asset_participants_participant_id",
+          "columns": [
+            "participant_id"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 2651
+    },
+    "asset_related_assets": {
+      "columns": [
+        {
+          "name": "asset_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "related_asset_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "relationship_type",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "'related'::character varying",
+          "udt_name": "varchar"
+        }
+      ],
+      "primary_key": [
+        "asset_id",
+        "related_asset_id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "asset_id",
+          "references_table": "assets",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "asset_related_assets_pkey",
+          "columns": [
+            "asset_id",
+            "related_asset_id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_asset_related_assets_related_id",
+          "columns": [
+            "related_asset_id"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 109372
+    },
+    "asset_teachers": {
+      "columns": [
+        {
+          "name": "asset_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "teacher_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        }
+      ],
+      "primary_key": [
+        "asset_id",
+        "teacher_id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "asset_id",
+          "references_table": "assets",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        },
+        {
+          "column": "teacher_id",
+          "references_table": "teachers",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "asset_teachers_pkey",
+          "columns": [
+            "asset_id",
+            "teacher_id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_asset_teachers_teacher_id",
+          "columns": [
+            "teacher_id"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 10590
+    },
+    "asset_topics": {
+      "columns": [
+        {
+          "name": "asset_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "topic_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        }
+      ],
+      "primary_key": [
+        "asset_id",
+        "topic_id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "asset_id",
+          "references_table": "assets",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        },
+        {
+          "column": "topic_id",
+          "references_table": "topics",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "asset_topics_pkey",
+          "columns": [
+            "asset_id",
+            "topic_id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_asset_topics_topic_id",
+          "columns": [
+            "topic_id"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 10697
+    },
+    "assets": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "bynder_id",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "name",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "short_description",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "alt_title",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "folder_path",
+          "data_type": "character varying",
+          "max_length": 1000,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "webdam_folder_path",
+          "data_type": "character varying",
+          "max_length": 1000,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "s3_bucket",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "dropbox_link",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "youtube_url",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "asset_type",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "asset_sub_type",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "rights_information",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "height",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "width",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "orientation",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "original_format",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "media_duration_seconds",
+          "data_type": "numeric",
+          "max_length": null,
+          "numeric_precision": 12,
+          "numeric_scale": 5,
+          "nullable": true,
+          "default": null,
+          "udt_name": "numeric"
+        },
+        {
+          "name": "location_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "event_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "decade",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "publication_date",
+          "data_type": "date",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "date"
+        },
+        {
+          "name": "needs_identification",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "bool"
+        },
+        {
+          "name": "needs_restoration",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "bool"
+        },
+        {
+          "name": "needs_description",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "bool"
+        },
+        {
+          "name": "physical_condition",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "quality",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "bin_number",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "session",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "value_level",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "mobile_app_flags",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "inventory_id",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "accreditation",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "copyright",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "copyright_xmp",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "describer",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "notes",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "usage_notes",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "asset_references",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "duplicates",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "search_vector",
+          "data_type": "tsvector",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "tsvector"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "deleted_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "location_id",
+          "references_table": "locations",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "NO ACTION"
+        },
+        {
+          "column": "event_id",
+          "references_table": "events",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "NO ACTION"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "assets_bynder_id_key",
+          "columns": [
+            "bynder_id"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "assets_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_assets_asset_sub_type",
+          "columns": [
+            "asset_sub_type"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_asset_type",
+          "columns": [
+            "asset_type"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_bin_number",
+          "columns": [
+            "bin_number"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_bynder_id",
+          "columns": [
+            "bynder_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_decade",
+          "columns": [
+            "decade"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_deleted_at",
+          "columns": [
+            "deleted_at"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_describer",
+          "columns": [
+            "describer"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_event_id",
+          "columns": [
+            "event_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_folder_path",
+          "columns": [
+            "folder_path"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_location_id",
+          "columns": [
+            "location_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_name",
+          "columns": [
+            "name"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_publication_date",
+          "columns": [
+            "publication_date"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_rights",
+          "columns": [
+            "rights_information"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_search_vector",
+          "columns": [
+            "search_vector"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_assets_webdam_path",
+          "columns": [
+            "webdam_folder_path"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 22975
+    },
+    "branches": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "udt_name": "uuid"
+        },
+        {
+          "name": "name",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "created_by",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "uuid"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "created_by",
+          "references_table": "users",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "NO ACTION"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "branches_name_key",
+          "columns": [
+            "name"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "branches_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        }
+      ],
+      "constraints": [],
+      "row_count": 1
+    },
+    "comprehend_entities": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('comprehend_entities_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "resource_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "entity_text",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "entity_type",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "confidence_score",
+          "data_type": "numeric",
+          "max_length": null,
+          "numeric_precision": 5,
+          "numeric_scale": 4,
+          "nullable": false,
+          "default": null,
+          "udt_name": "numeric"
+        },
+        {
+          "name": "begin_offset",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "end_offset",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "resource_id",
+          "references_table": "assets",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "comprehend_entities_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_comprehend_entities_confidence",
+          "columns": [
+            "confidence_score"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_comprehend_entities_resource_id",
+          "columns": [
+            "resource_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_comprehend_entities_text",
+          "columns": [
+            "entity_text"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_comprehend_entities_type",
+          "columns": [
+            "entity_type"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_comprehend_entities_type_confidence",
+          "columns": [
+            "entity_type",
+            "confidence_score"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [
+        {
+          "name": "comprehend_entities_confidence_check",
+          "definition": "CHECK (((confidence_score >= (0)::numeric) AND (confidence_score <= (1)::numeric)))"
+        }
+      ],
+      "row_count": 51969
+    },
+    "comprehend_key_phrases": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('comprehend_key_phrases_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "resource_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "phrase_text",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "confidence_score",
+          "data_type": "numeric",
+          "max_length": null,
+          "numeric_precision": 5,
+          "numeric_scale": 4,
+          "nullable": false,
+          "default": null,
+          "udt_name": "numeric"
+        },
+        {
+          "name": "begin_offset",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "end_offset",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "resource_id",
+          "references_table": "assets",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "comprehend_key_phrases_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_comprehend_key_phrases_confidence",
+          "columns": [
+            "confidence_score"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_comprehend_key_phrases_resource_id",
+          "columns": [
+            "resource_id"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [
+        {
+          "name": "comprehend_key_phrases_confidence_check",
+          "definition": "CHECK (((confidence_score >= (0)::numeric) AND (confidence_score <= (1)::numeric)))"
+        }
+      ],
+      "row_count": 40552
+    },
+    "comprehend_sentiment": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('comprehend_sentiment_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "resource_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "sentiment",
+          "data_type": "character varying",
+          "max_length": 20,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "positive_score",
+          "data_type": "numeric",
+          "max_length": null,
+          "numeric_precision": 5,
+          "numeric_scale": 4,
+          "nullable": false,
+          "default": null,
+          "udt_name": "numeric"
+        },
+        {
+          "name": "negative_score",
+          "data_type": "numeric",
+          "max_length": null,
+          "numeric_precision": 5,
+          "numeric_scale": 4,
+          "nullable": false,
+          "default": null,
+          "udt_name": "numeric"
+        },
+        {
+          "name": "neutral_score",
+          "data_type": "numeric",
+          "max_length": null,
+          "numeric_precision": 5,
+          "numeric_scale": 4,
+          "nullable": false,
+          "default": null,
+          "udt_name": "numeric"
+        },
+        {
+          "name": "mixed_score",
+          "data_type": "numeric",
+          "max_length": null,
+          "numeric_precision": 5,
+          "numeric_scale": 4,
+          "nullable": false,
+          "default": null,
+          "udt_name": "numeric"
+        },
+        {
+          "name": "analyzed_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "resource_id",
+          "references_table": "assets",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "comprehend_sentiment_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "comprehend_sentiment_unique_resource",
+          "columns": [
+            "resource_id"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "idx_comprehend_sentiment_resource_id",
+          "columns": [
+            "resource_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_comprehend_sentiment_sentiment",
+          "columns": [
+            "sentiment"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [
+        {
+          "name": "comprehend_sentiment_positive_check",
+          "definition": "CHECK (((positive_score >= (0)::numeric) AND (positive_score <= (1)::numeric)))"
+        },
+        {
+          "name": "comprehend_sentiment_negative_check",
+          "definition": "CHECK (((negative_score >= (0)::numeric) AND (negative_score <= (1)::numeric)))"
+        },
+        {
+          "name": "comprehend_sentiment_neutral_check",
+          "definition": "CHECK (((neutral_score >= (0)::numeric) AND (neutral_score <= (1)::numeric)))"
+        },
+        {
+          "name": "comprehend_sentiment_mixed_check",
+          "definition": "CHECK (((mixed_score >= (0)::numeric) AND (mixed_score <= (1)::numeric)))"
+        },
+        {
+          "name": "comprehend_sentiment_value_check",
+          "definition": "CHECK (((sentiment)::text = ANY ((ARRAY['POSITIVE'::character varying, 'NEGATIVE'::character varying, 'NEUTRAL'::character varying, 'MIXED'::character varying])::text[])))"
+        }
+      ],
+      "row_count": 912
+    },
+    "documents": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "udt_name": "uuid"
+        },
+        {
+          "name": "file_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "source",
+          "data_type": "character varying",
+          "max_length": 128,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "s3_bucket",
+          "data_type": "character varying",
+          "max_length": 256,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "s3_key",
+          "data_type": "character varying",
+          "max_length": 512,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "file_name",
+          "data_type": "character varying",
+          "max_length": 512,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "content_text",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "content_type",
+          "data_type": "character varying",
+          "max_length": 128,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "now()",
+          "udt_name": "timestamptz"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "documents_file_id_idx",
+          "columns": [
+            "file_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "documents_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "documents_source_idx",
+          "columns": [
+            "source"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 1
+    },
+    "events": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "udt_name": "uuid"
+        },
+        {
+          "name": "event_type",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "event_name",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "event_features",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "events_event_type_event_name_key",
+          "columns": [
+            "event_type",
+            "event_name"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "events_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_events_name",
+          "columns": [
+            "event_name"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_events_type",
+          "columns": [
+            "event_type"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 400
+    },
+    "file_history": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "udt_name": "uuid"
+        },
+        {
+          "name": "file_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "content",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "version",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "created_by",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "file_id",
+          "references_table": "files",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "file_history_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_file_history_file_id",
+          "columns": [
+            "file_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_file_history_version",
+          "columns": [
+            "file_id",
+            "version"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 0
+    },
+    "files": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "udt_name": "uuid"
+        },
+        {
+          "name": "ib_id",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "path",
+          "data_type": "character varying",
+          "max_length": 1000,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "name",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "content",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "type",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "size",
+          "data_type": "bigint",
+          "max_length": null,
+          "numeric_precision": 64,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": null,
+          "udt_name": "int8"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "jsonb"
+        },
+        {
+          "name": "branch",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "'main'::character varying",
+          "udt_name": "varchar"
+        },
+        {
+          "name": "version",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": "1",
+          "udt_name": "int4"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "created_by",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "deleted_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "deleted_by",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "search_vector",
+          "data_type": "tsvector",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "tsvector"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "created_by",
+          "references_table": "users",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "NO ACTION"
+        },
+        {
+          "column": "deleted_by",
+          "references_table": "users",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "NO ACTION"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "files_ib_id_key",
+          "columns": [
+            "ib_id"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "files_path_key",
+          "columns": [
+            "path"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "files_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_files_branch",
+          "columns": [
+            "branch"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_files_deleted_at",
+          "columns": [
+            "deleted_at"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_files_ib_id",
+          "columns": [
+            "ib_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_files_path",
+          "columns": [
+            "path"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_files_search_vector",
+          "columns": [
+            "search_vector"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_files_type",
+          "columns": [
+            "type"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_files_updated_at",
+          "columns": [
+            "updated_at"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 0
+    },
+    "ib_custom_fields": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('ib_custom_fields_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "section_id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "section_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "field_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "label",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "field_type",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "validation_type",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "validation_params",
+          "data_type": "jsonb",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "jsonb"
+        },
+        {
+          "name": "synced_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "section_id",
+          "references_table": "ib_custom_sections",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "ib_custom_fields_field_uuid_key",
+          "columns": [
+            "field_uuid"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "ib_custom_fields_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_ib_custom_fields_label",
+          "columns": [
+            "label"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_custom_fields_section_id",
+          "columns": [
+            "section_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_custom_fields_uuid",
+          "columns": [
+            "field_uuid"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 0
+    },
+    "ib_custom_form_filter_options": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('ib_custom_form_filter_options_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "filter_id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "filter_ib_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "option_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "value_en",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "value_fr",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "value_json",
+          "data_type": "jsonb",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "jsonb"
+        },
+        {
+          "name": "sort_order",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": "0",
+          "udt_name": "int4"
+        },
+        {
+          "name": "synced_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "filter_id",
+          "references_table": "ib_custom_form_filters",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "ib_custom_form_filter_options_option_uuid_key",
+          "columns": [
+            "option_uuid"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "ib_custom_form_filter_options_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "ib_custom_form_filter_options_unique",
+          "columns": [
+            "filter_id",
+            "option_uuid"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_custom_form_filter_options_filter_id",
+          "columns": [
+            "filter_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_custom_form_filter_options_uuid",
+          "columns": [
+            "option_uuid"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 2034
+    },
+    "ib_custom_form_filters": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('ib_custom_form_filters_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "ib_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "name_en",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "name_fr",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "name_json",
+          "data_type": "jsonb",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "jsonb"
+        },
+        {
+          "name": "multiple",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "false",
+          "udt_name": "bool"
+        },
+        {
+          "name": "resource_filter_range",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "tools",
+          "data_type": "ARRAY",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "_text"
+        },
+        {
+          "name": "synced_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "ib_custom_form_filters_ib_uuid_key",
+          "columns": [
+            "ib_uuid"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "ib_custom_form_filters_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_ib_custom_form_filters_name_en",
+          "columns": [
+            "name_en"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_custom_form_filters_uuid",
+          "columns": [
+            "ib_uuid"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 22
+    },
+    "ib_custom_sections": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('ib_custom_sections_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "tab_id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "tab_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "section_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "label",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "is_duplicable",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "false",
+          "udt_name": "bool"
+        },
+        {
+          "name": "enforce_one_section_min",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "false",
+          "udt_name": "bool"
+        },
+        {
+          "name": "maintain_mandatory_validation",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "false",
+          "udt_name": "bool"
+        },
+        {
+          "name": "check_user_in_non_listed_groups",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "false",
+          "udt_name": "bool"
+        },
+        {
+          "name": "synced_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "tab_id",
+          "references_table": "ib_custom_tabs",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "ib_custom_sections_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "ib_custom_sections_section_uuid_key",
+          "columns": [
+            "section_uuid"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_custom_sections_tab_id",
+          "columns": [
+            "tab_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_custom_sections_uuid",
+          "columns": [
+            "section_uuid"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 0
+    },
+    "ib_custom_tabs": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('ib_custom_tabs_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "tab_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "label",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "synced_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "ib_custom_tabs_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "ib_custom_tabs_tab_uuid_key",
+          "columns": [
+            "tab_uuid"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_custom_tabs_uuid",
+          "columns": [
+            "tab_uuid"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 0
+    },
+    "ib_filter_options": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('ib_filter_options_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "filter_id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "filter_ib_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "option_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "value",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "sort_order",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": "0",
+          "udt_name": "int4"
+        },
+        {
+          "name": "divisions",
+          "data_type": "ARRAY",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "_uuid"
+        },
+        {
+          "name": "synced_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "filter_id",
+          "references_table": "ib_filters",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "ib_filter_options_option_uuid_key",
+          "columns": [
+            "option_uuid"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "ib_filter_options_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "ib_filter_options_unique",
+          "columns": [
+            "filter_id",
+            "option_uuid"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_filter_options_filter_id",
+          "columns": [
+            "filter_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_filter_options_option_uuid",
+          "columns": [
+            "option_uuid"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_filter_options_value",
+          "columns": [
+            "value"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 2068
+    },
+    "ib_filters": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "nextval('ib_filters_id_seq'::regclass)",
+          "udt_name": "int4"
+        },
+        {
+          "name": "ib_id",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "ib_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "name",
+          "data_type": "character varying",
+          "max_length": 500,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "sort_alpha",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "false",
+          "udt_name": "bool"
+        },
+        {
+          "name": "multiple",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "false",
+          "udt_name": "bool"
+        },
+        {
+          "name": "required",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "false",
+          "udt_name": "bool"
+        },
+        {
+          "name": "sort_order",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": null,
+          "udt_name": "int4"
+        },
+        {
+          "name": "resource_filter_range",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "tools",
+          "data_type": "ARRAY",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "_text"
+        },
+        {
+          "name": "restricted_folders",
+          "data_type": "ARRAY",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "_uuid"
+        },
+        {
+          "name": "auto_propagate_folders",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "false",
+          "udt_name": "bool"
+        },
+        {
+          "name": "ib_create_time",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "ib_last_update_time",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "creator_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "last_updater_uuid",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "synced_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "last_verified_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "ib_filters_ib_id_key",
+          "columns": [
+            "ib_id"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "ib_filters_ib_uuid_key",
+          "columns": [
+            "ib_uuid"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "ib_filters_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "idx_ib_filters_ib_id",
+          "columns": [
+            "ib_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_filters_ib_uuid",
+          "columns": [
+            "ib_uuid"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_filters_name",
+          "columns": [
+            "name"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_ib_filters_synced_at",
+          "columns": [
+            "synced_at"
+          ],
+          "unique": false,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 28
+    },
+    "locations": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "udt_name": "uuid"
+        },
+        {
+          "name": "venue",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "country",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "city",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "idx_locations_city",
+          "columns": [
+            "city"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_locations_country",
+          "columns": [
+            "country"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_locations_venue",
+          "columns": [
+            "venue"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "locations_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "locations_venue_country_city_key",
+          "columns": [
+            "venue",
+            "country",
+            "city"
+          ],
+          "unique": true,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 618
+    },
+    "participants": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "udt_name": "uuid"
+        },
+        {
+          "name": "name",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "idx_participants_name",
+          "columns": [
+            "name"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "participants_name_key",
+          "columns": [
+            "name"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "participants_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        }
+      ],
+      "constraints": [],
+      "row_count": 352
+    },
+    "permissions": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "udt_name": "uuid"
+        },
+        {
+          "name": "user_id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "uuid"
+        },
+        {
+          "name": "path",
+          "data_type": "character varying",
+          "max_length": 1000,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "permission",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "user_id",
+          "references_table": "users",
+          "references_column": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "idx_permissions_path",
+          "columns": [
+            "path"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_permissions_user_id",
+          "columns": [
+            "user_id"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "permissions_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        }
+      ],
+      "constraints": [],
+      "row_count": 0
+    },
+    "sync_logs": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "udt_name": "uuid"
+        },
+        {
+          "name": "started_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "completed_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "status",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "files_processed",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": "0",
+          "udt_name": "int4"
+        },
+        {
+          "name": "files_created",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": "0",
+          "udt_name": "int4"
+        },
+        {
+          "name": "files_updated",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": "0",
+          "udt_name": "int4"
+        },
+        {
+          "name": "errors",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "duration_ms",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": null,
+          "udt_name": "int4"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "idx_sync_logs_started_at",
+          "columns": [
+            "started_at"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_sync_logs_status",
+          "columns": [
+            "status"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "sync_logs_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        }
+      ],
+      "constraints": [],
+      "row_count": 1
+    },
+    "sync_metadata": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": false,
+          "default": "1",
+          "udt_name": "int4"
+        },
+        {
+          "name": "last_sync_time",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "last_sync_status",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "files_synced",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": "0",
+          "udt_name": "int4"
+        },
+        {
+          "name": "errors_count",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": "0",
+          "udt_name": "int4"
+        },
+        {
+          "name": "total_syncs",
+          "data_type": "integer",
+          "max_length": null,
+          "numeric_precision": 32,
+          "numeric_scale": 0,
+          "nullable": true,
+          "default": "0",
+          "udt_name": "int4"
+        },
+        {
+          "name": "last_error",
+          "data_type": "text",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "text"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "now()",
+          "udt_name": "timestamptz"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "sync_metadata_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "sync_metadata_id_check",
+          "definition": "CHECK ((id = 1))"
+        }
+      ],
+      "row_count": 1
+    },
+    "teachers": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "udt_name": "uuid"
+        },
+        {
+          "name": "name",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "idx_teachers_name",
+          "columns": [
+            "name"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "teachers_name_key",
+          "columns": [
+            "name"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "teachers_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        }
+      ],
+      "constraints": [],
+      "row_count": 43
+    },
+    "topics": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "udt_name": "uuid"
+        },
+        {
+          "name": "name",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "idx_topics_name",
+          "columns": [
+            "name"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "topics_name_key",
+          "columns": [
+            "name"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "topics_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        }
+      ],
+      "constraints": [],
+      "row_count": 18
+    },
+    "users": {
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "udt_name": "uuid"
+        },
+        {
+          "name": "username",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "email",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "password_hash",
+          "data_type": "character varying",
+          "max_length": 255,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": false,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp without time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "now()",
+          "udt_name": "timestamp"
+        },
+        {
+          "name": "first_name",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "last_name",
+          "data_type": "character varying",
+          "max_length": 100,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "varchar"
+        },
+        {
+          "name": "role",
+          "data_type": "character varying",
+          "max_length": 50,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "'user'::character varying",
+          "udt_name": "varchar"
+        },
+        {
+          "name": "last_login",
+          "data_type": "timestamp with time zone",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": null,
+          "udt_name": "timestamptz"
+        },
+        {
+          "name": "is_active",
+          "data_type": "boolean",
+          "max_length": null,
+          "numeric_precision": null,
+          "numeric_scale": null,
+          "nullable": true,
+          "default": "true",
+          "udt_name": "bool"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "idx_users_email",
+          "columns": [
+            "email"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "idx_users_username",
+          "columns": [
+            "username"
+          ],
+          "unique": false,
+          "primary": false
+        },
+        {
+          "name": "users_email_key",
+          "columns": [
+            "email"
+          ],
+          "unique": true,
+          "primary": false
+        },
+        {
+          "name": "users_pkey",
+          "columns": [
+            "id"
+          ],
+          "unique": true,
+          "primary": true
+        },
+        {
+          "name": "users_username_key",
+          "columns": [
+            "username"
+          ],
+          "unique": true,
+          "primary": false
+        }
+      ],
+      "constraints": [],
+      "row_count": 1
+    }
+  },
+  "views": {
+    "v_asset_custom_fields": {
+      "definition": " SELECT a.id AS asset_id,\n    a.bynder_id,\n    a.name AS asset_name,\n    f.label AS field_label,\n    f.field_type,\n    acfv.value,\n    acfv.value_json,\n    s.label AS section_label,\n    t.label AS tab_label\n   FROM ((((assets a\n     JOIN asset_custom_field_values acfv ON ((a.id = acfv.asset_id)))\n     JOIN ib_custom_fields f ON ((acfv.custom_field_id = f.id)))\n     JOIN ib_custom_sections s ON ((f.section_id = s.id)))\n     JOIN ib_custom_tabs t ON ((s.tab_id = t.id)))\n  ORDER BY a.bynder_id, t.label, s.label, f.label;"
+    },
+    "v_asset_custom_form_filters": {
+      "definition": " SELECT a.id AS asset_id,\n    a.bynder_id,\n    a.name AS asset_name,\n    f.name_en AS filter_name,\n    fo.value_en AS filter_value,\n    fo.option_uuid,\n    acffv.synced_at\n   FROM (((assets a\n     JOIN asset_custom_form_filter_values acffv ON ((a.id = acffv.asset_id)))\n     JOIN ib_custom_form_filters f ON ((acffv.filter_id = f.id)))\n     JOIN ib_custom_form_filter_options fo ON ((acffv.filter_option_id = fo.id)))\n  ORDER BY a.bynder_id, f.name_en;"
+    },
+    "v_asset_entities_summary": {
+      "definition": " SELECT a.id AS asset_id,\n    a.name AS asset_name,\n    ce.entity_type,\n    count(*) AS entity_count,\n    avg(ce.confidence_score) AS avg_confidence,\n    array_agg(ce.entity_text ORDER BY ce.confidence_score DESC) AS top_entities\n   FROM (assets a\n     JOIN comprehend_entities ce ON ((a.id = ce.resource_id)))\n  GROUP BY a.id, a.name, ce.entity_type;"
+    },
+    "v_asset_filters": {
+      "definition": " SELECT a.id AS asset_id,\n    a.bynder_id,\n    a.name AS asset_name,\n    f.name AS filter_name,\n    f.ib_id AS filter_ib_id,\n    fo.value AS filter_value,\n    fo.option_uuid,\n    afv.synced_at\n   FROM (((assets a\n     JOIN asset_filter_values afv ON ((a.id = afv.asset_id)))\n     JOIN ib_filters f ON ((afv.filter_id = f.id)))\n     JOIN ib_filter_options fo ON ((afv.filter_option_id = fo.id)))\n  ORDER BY a.bynder_id, f.name;"
+    },
+    "v_asset_sentiment_overview": {
+      "definition": " SELECT a.id AS asset_id,\n    a.name AS asset_name,\n    a.asset_type,\n    a.decade,\n    cs.sentiment,\n    cs.positive_score,\n    cs.negative_score,\n    cs.neutral_score,\n    cs.mixed_score,\n    cs.analyzed_at\n   FROM (assets a\n     JOIN comprehend_sentiment cs ON ((a.id = cs.resource_id)))\n  ORDER BY cs.analyzed_at DESC;"
+    },
+    "v_asset_stats_by_decade": {
+      "definition": " SELECT decade,\n    count(*) AS count,\n    count(\n        CASE\n            WHEN ((asset_type)::text = 'Audio'::text) THEN 1\n            ELSE NULL::integer\n        END) AS audio_count,\n    count(\n        CASE\n            WHEN ((asset_type)::text = 'Videos'::text) THEN 1\n            ELSE NULL::integer\n        END) AS video_count,\n    count(\n        CASE\n            WHEN ((asset_type)::text = 'Photo'::text) THEN 1\n            ELSE NULL::integer\n        END) AS photo_count,\n    count(\n        CASE\n            WHEN ((asset_type)::text = 'Documents'::text) THEN 1\n            ELSE NULL::integer\n        END) AS document_count\n   FROM assets\n  WHERE ((deleted_at IS NULL) AND (decade IS NOT NULL))\n  GROUP BY decade\n  ORDER BY decade;"
+    },
+    "v_asset_stats_by_type": {
+      "definition": " SELECT asset_type,\n    count(*) AS count,\n    count(\n        CASE\n            WHEN ((rights_information)::text = 'Free for Use'::text) THEN 1\n            ELSE NULL::integer\n        END) AS free_for_use_count,\n    count(\n        CASE\n            WHEN ((rights_information)::text = 'Permission Required'::text) THEN 1\n            ELSE NULL::integer\n        END) AS permission_required_count,\n    count(\n        CASE\n            WHEN (needs_identification = true) THEN 1\n            ELSE NULL::integer\n        END) AS needs_identification_count,\n    count(\n        CASE\n            WHEN (needs_restoration = true) THEN 1\n            ELSE NULL::integer\n        END) AS needs_restoration_count,\n    count(\n        CASE\n            WHEN (needs_description = true) THEN 1\n            ELSE NULL::integer\n        END) AS needs_description_count\n   FROM assets\n  WHERE (deleted_at IS NULL)\n  GROUP BY asset_type\n  ORDER BY (count(*)) DESC;"
+    },
+    "v_assets_by_teacher": {
+      "definition": " SELECT t.name AS teacher_name,\n    count(DISTINCT a.id) AS asset_count,\n    count(DISTINCT\n        CASE\n            WHEN ((a.asset_type)::text = 'Audio'::text) THEN a.id\n            ELSE NULL::uuid\n        END) AS audio_count,\n    count(DISTINCT\n        CASE\n            WHEN ((a.asset_type)::text = 'Videos'::text) THEN a.id\n            ELSE NULL::uuid\n        END) AS video_count\n   FROM ((teachers t\n     JOIN asset_teachers at ON ((t.id = at.teacher_id)))\n     JOIN assets a ON ((at.asset_id = a.id)))\n  WHERE (a.deleted_at IS NULL)\n  GROUP BY t.id, t.name\n  ORDER BY (count(DISTINCT a.id)) DESC;"
+    },
+    "v_assets_by_topic": {
+      "definition": " SELECT t.name AS topic_name,\n    count(DISTINCT a.id) AS asset_count,\n    count(DISTINCT\n        CASE\n            WHEN ((a.rights_information)::text = 'Free for Use'::text) THEN a.id\n            ELSE NULL::uuid\n        END) AS free_for_use_count\n   FROM ((topics t\n     JOIN asset_topics at ON ((t.id = at.topic_id)))\n     JOIN assets a ON ((at.asset_id = a.id)))\n  WHERE (a.deleted_at IS NULL)\n  GROUP BY t.id, t.name\n  ORDER BY (count(DISTINCT a.id)) DESC;"
+    },
+    "v_assets_complete": {
+      "definition": " SELECT a.id,\n    a.bynder_id,\n    a.name,\n    a.description,\n    a.short_description,\n    a.alt_title,\n    a.folder_path,\n    a.webdam_folder_path,\n    a.s3_bucket,\n    a.dropbox_link,\n    a.youtube_url,\n    a.asset_type,\n    a.asset_sub_type,\n    a.rights_information,\n    a.height,\n    a.width,\n    a.orientation,\n    a.original_format,\n    a.media_duration_seconds,\n    a.location_id,\n    a.event_id,\n    a.decade,\n    a.publication_date,\n    a.needs_identification,\n    a.needs_restoration,\n    a.needs_description,\n    a.physical_condition,\n    a.quality,\n    a.bin_number,\n    a.session,\n    a.value_level,\n    a.mobile_app_flags,\n    a.inventory_id,\n    a.accreditation,\n    a.copyright,\n    a.copyright_xmp,\n    a.describer,\n    a.notes,\n    a.usage_notes,\n    a.asset_references,\n    a.duplicates,\n    a.search_vector,\n    a.created_at,\n    a.updated_at,\n    a.deleted_at,\n    l.venue,\n    l.country,\n    l.city,\n    e.event_type,\n    e.event_name,\n    e.event_features,\n    array_agg(DISTINCT t.name) FILTER (WHERE (t.name IS NOT NULL)) AS topics,\n    array_agg(DISTINCT te.name) FILTER (WHERE (te.name IS NOT NULL)) AS teachers,\n    array_agg(DISTINCT p.name) FILTER (WHERE (p.name IS NOT NULL)) AS participants\n   FROM ((((((((assets a\n     LEFT JOIN locations l ON ((a.location_id = l.id)))\n     LEFT JOIN events e ON ((a.event_id = e.id)))\n     LEFT JOIN asset_topics atop ON ((a.id = atop.asset_id)))\n     LEFT JOIN topics t ON ((atop.topic_id = t.id)))\n     LEFT JOIN asset_teachers ate ON ((a.id = ate.asset_id)))\n     LEFT JOIN teachers te ON ((ate.teacher_id = te.id)))\n     LEFT JOIN asset_participants ap ON ((a.id = ap.asset_id)))\n     LEFT JOIN participants p ON ((ap.participant_id = p.id)))\n  WHERE (a.deleted_at IS NULL)\n  GROUP BY a.id, a.bynder_id, a.name, a.description, a.short_description, a.alt_title, a.folder_path, a.webdam_folder_path, a.s3_bucket, a.dropbox_link, a.youtube_url, a.asset_type, a.asset_sub_type, a.rights_information, a.height, a.width, a.orientation, a.original_format, a.media_duration_seconds, a.location_id, a.event_id, a.decade, a.publication_date, a.needs_identification, a.needs_restoration, a.needs_description, a.physical_condition, a.quality, a.bin_number, a.session, a.value_level, a.mobile_app_flags, a.inventory_id, a.accreditation, a.copyright, a.copyright_xmp, a.describer, a.notes, a.usage_notes, a.asset_references, a.duplicates, a.search_vector, a.created_at, a.updated_at, a.deleted_at, l.venue, l.country, l.city, e.event_type, e.event_name, e.event_features;"
+    },
+    "v_custom_fields_hierarchy": {
+      "definition": " SELECT t.id AS tab_id,\n    t.tab_uuid,\n    t.label AS tab_label,\n    s.id AS section_id,\n    s.section_uuid,\n    s.label AS section_label,\n    f.id AS field_id,\n    f.field_uuid,\n    f.label AS field_label,\n    f.field_type,\n    f.validation_type,\n    count(DISTINCT acfv.asset_id) AS usage_count\n   FROM (((ib_custom_tabs t\n     LEFT JOIN ib_custom_sections s ON ((t.id = s.tab_id)))\n     LEFT JOIN ib_custom_fields f ON ((s.id = f.section_id)))\n     LEFT JOIN asset_custom_field_values acfv ON ((f.id = acfv.custom_field_id)))\n  GROUP BY t.id, t.tab_uuid, t.label, s.id, s.section_uuid, s.label, f.id, f.field_uuid, f.label, f.field_type, f.validation_type\n  ORDER BY t.label, s.label, f.label;"
+    },
+    "v_custom_form_filter_options_usage": {
+      "definition": " SELECT fo.id,\n    fo.option_uuid,\n    fo.value_en,\n    fo.value_fr,\n    f.name_en AS filter_name,\n    f.ib_uuid AS filter_ib_uuid,\n    count(DISTINCT acffv.asset_id) AS usage_count,\n    fo.sort_order,\n    fo.synced_at\n   FROM ((ib_custom_form_filter_options fo\n     JOIN ib_custom_form_filters f ON ((fo.filter_id = f.id)))\n     LEFT JOIN asset_custom_form_filter_values acffv ON ((fo.id = acffv.filter_option_id)))\n  GROUP BY fo.id, fo.option_uuid, fo.value_en, fo.value_fr, f.name_en, f.ib_uuid, fo.sort_order, fo.synced_at\n  ORDER BY f.name_en, fo.sort_order;"
+    },
+    "v_custom_form_filters_summary": {
+      "definition": " SELECT f.id,\n    f.ib_uuid,\n    f.name_en,\n    f.name_fr,\n    f.multiple,\n    f.resource_filter_range,\n    f.tools,\n    count(DISTINCT o.id) AS option_count,\n    count(DISTINCT acffv.asset_id) AS assets_using_count,\n    f.synced_at\n   FROM ((ib_custom_form_filters f\n     LEFT JOIN ib_custom_form_filter_options o ON ((f.id = o.filter_id)))\n     LEFT JOIN asset_custom_form_filter_values acffv ON ((f.id = acffv.filter_id)))\n  GROUP BY f.id, f.ib_uuid, f.name_en, f.name_fr, f.multiple, f.resource_filter_range, f.tools, f.synced_at\n  ORDER BY f.name_en;"
+    },
+    "v_filter_options_usage": {
+      "definition": " SELECT fo.id,\n    fo.option_uuid,\n    fo.value,\n    f.name AS filter_name,\n    f.ib_id AS filter_ib_id,\n    count(DISTINCT afv.asset_id) AS usage_count,\n    fo.sort_order,\n    fo.synced_at\n   FROM ((ib_filter_options fo\n     JOIN ib_filters f ON ((fo.filter_id = f.id)))\n     LEFT JOIN asset_filter_values afv ON ((fo.id = afv.filter_option_id)))\n  GROUP BY fo.id, fo.option_uuid, fo.value, f.name, f.ib_id, fo.sort_order, fo.synced_at\n  ORDER BY f.name, fo.sort_order;"
+    },
+    "v_filter_summary": {
+      "definition": " SELECT f.id,\n    f.ib_id,\n    f.ib_uuid,\n    f.name,\n    f.multiple,\n    f.required,\n    f.resource_filter_range,\n    count(DISTINCT o.id) AS option_count,\n    count(DISTINCT afv.asset_id) AS assets_using_count,\n    f.ib_create_time,\n    f.ib_last_update_time,\n    f.synced_at\n   FROM ((ib_filters f\n     LEFT JOIN ib_filter_options o ON ((f.id = o.filter_id)))\n     LEFT JOIN asset_filter_values afv ON ((f.id = afv.filter_id)))\n  GROUP BY f.id, f.ib_id, f.ib_uuid, f.name, f.multiple, f.required, f.resource_filter_range, f.ib_create_time, f.ib_last_update_time, f.synced_at\n  ORDER BY f.name;"
+    },
+    "v_sync_history": {
+      "definition": " SELECT id,\n    started_at,\n    completed_at,\n    EXTRACT(epoch FROM (completed_at - started_at)) AS duration_seconds,\n    duration_ms,\n    status,\n    files_processed,\n    files_created,\n    files_updated,\n        CASE\n            WHEN (errors IS NULL) THEN 'No errors'::text\n            WHEN (length(errors) < 100) THEN errors\n            ELSE (\"substring\"(errors, 1, 100) || '...'::text)\n        END AS error_summary\n   FROM sync_logs\n  ORDER BY started_at DESC\n LIMIT 30;"
+    },
+    "v_sync_stats": {
+      "definition": " SELECT count(*) AS total_syncs,\n    count(*) FILTER (WHERE ((status)::text = 'success'::text)) AS successful_syncs,\n    count(*) FILTER (WHERE ((status)::text = 'partial_success'::text)) AS partial_success_syncs,\n    count(*) FILTER (WHERE ((status)::text = 'failed'::text)) AS failed_syncs,\n    sum(files_processed) AS total_files_processed,\n    sum(files_created) AS total_files_created,\n    sum(files_updated) AS total_files_updated,\n    max(started_at) AS last_sync_time,\n    avg(EXTRACT(epoch FROM (completed_at - started_at))) AS avg_duration_seconds\n   FROM sync_logs\n  WHERE (started_at > (now() - '30 days'::interval));"
+    },
+    "v_top_locations": {
+      "definition": " SELECT entity_text AS location_name,\n    count(DISTINCT resource_id) AS asset_count,\n    avg(confidence_score) AS avg_confidence,\n    max(confidence_score) AS max_confidence\n   FROM comprehend_entities\n  WHERE ((entity_type)::text = 'LOCATION'::text)\n  GROUP BY entity_text\n  ORDER BY (count(DISTINCT resource_id)) DESC, (avg(confidence_score)) DESC;"
+    },
+    "v_top_organizations": {
+      "definition": " SELECT entity_text AS org_name,\n    count(DISTINCT resource_id) AS asset_count,\n    avg(confidence_score) AS avg_confidence,\n    max(confidence_score) AS max_confidence\n   FROM comprehend_entities\n  WHERE ((entity_type)::text = 'ORGANIZATION'::text)\n  GROUP BY entity_text\n  ORDER BY (count(DISTINCT resource_id)) DESC, (avg(confidence_score)) DESC;"
+    },
+    "v_top_people": {
+      "definition": " SELECT entity_text AS person_name,\n    count(DISTINCT resource_id) AS asset_count,\n    avg(confidence_score) AS avg_confidence,\n    max(confidence_score) AS max_confidence\n   FROM comprehend_entities\n  WHERE ((entity_type)::text = 'PERSON'::text)\n  GROUP BY entity_text\n  ORDER BY (count(DISTINCT resource_id)) DESC, (avg(confidence_score)) DESC;"
+    },
+    "vw_embedding_stats": {
+      "definition": " SELECT embedding_model,\n    content_type,\n    count(*) AS embeddings_count,\n    count(DISTINCT resource_id) AS unique_assets,\n    min(created_at) AS first_embedded,\n    max(created_at) AS last_embedded,\n    avg(pg_column_size(embedding)) AS avg_embedding_size_bytes\n   FROM asset_embeddings e\n  GROUP BY embedding_model, content_type\n  ORDER BY embedding_model, content_type;"
+    }
+  },
+  "sequences": [
+    {
+      "name": "asset_custom_field_values_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "asset_custom_form_filter_values_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "asset_embeddings_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "asset_filter_values_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "comprehend_entities_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "comprehend_key_phrases_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "comprehend_sentiment_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "ib_custom_fields_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "ib_custom_form_filter_options_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "ib_custom_form_filters_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "ib_custom_sections_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "ib_custom_tabs_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "ib_filter_options_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    },
+    {
+      "name": "ib_filters_id_seq",
+      "data_type": "integer",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1"
+    }
+  ]
+}
