@@ -1,16 +1,16 @@
 # Virtual Environment
-venv/
-.venv/
-env/
-ENV/
+transcribe_pipeline/venv/
+transcribe_pipeline/.venv/
+transcribe_pipeline/env/
+transcribe_pipeline/ENV/
 
 # Environment variables
-.env
-.env.local
-.env.*.local
+transcribe_pipeline/.env
+transcribe_pipeline/.env.local
+transcribe_pipeline/.env.*.local
 
 # Audio files and outputs
-downloads/
+transcribe_pipeline/downloads/
 *.mp3
 *.wav
 *.mp4
@@ -55,4 +55,4 @@ share/python-wheels/
 Thumbs.db
 
 # Downloads
-/downloads/
+/transcribe_pipeline/downloads/
