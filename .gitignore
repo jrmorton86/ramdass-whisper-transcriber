@@ -61,6 +61,13 @@ share/python-wheels/
 # OS
 .DS_Store
 Thumbs.db
+nul
+
+# Archived/deprecated files
+archive/
+
+# Accidental Windows path artifacts
+%USERPROFILE%/
 
 # Downloads
 /transcribe_pipeline/downloads/
