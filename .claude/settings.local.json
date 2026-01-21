@@ -9,7 +9,28 @@
       "Bash(gh pr merge:*)",
       "Bash(git pull:*)",
       "Bash(git push:*)",
-      "Bash(gh pr create:*)"
+      "Bash(gh pr create:*)",
+      "Bash(git worktree:*)",
+      "Bash(if:*)",
+      "Bash(then echo \"FOUND: requirements.txt\")",
+      "Bash(elif [ -f transcribe_pipeline/requirements.txt ])",
+      "Bash(then echo \"FOUND: transcribe_pipeline/requirements.txt\")",
+      "Bash(else echo \"NO_REQUIREMENTS\")",
+      "Bash(fi)",
+      "Skill(superpowers:writing-plans)",
+      "Skill(superpowers:subagent-driven-development)",
+      "Bash(python -c:*)",
+      "Bash(dir:*)",
+      "Bash(\"C:\\\\Users\\\\jrmor\\\\OneDrive\\\\Documents\\\\Programming\\\\ramdass.io\\\\transcriber\\\\venv\\\\Scripts\\\\python.exe\" -c \"from transcribe_pipeline.whisper_with_vocab import transcribe_audio, load_vocabulary_data, save_transcription_result; print\\(''OK''\\)\")",
+      "Bash(grep:*)",
+      "Bash(python3:*)",
+      "Bash(python -m py_compile:*)",
+      "Bash(\"C:\\\\Users\\\\jrmor\\\\OneDrive\\\\Documents\\\\Programming\\\\ramdass.io\\\\transcriber\\\\venv\\\\Scripts\\\\python.exe\" -c \"from transcribe_pipeline.claude_refine_transcript import refine_transcript_text; print\\(''OK''\\)\")",
+      "Bash(python batch_process_pool.py:*)",
+      "Bash(.....venvScriptspython.exe:*)",
+      "Bash(findstr:*)",
+      "Bash(\"C:\\\\Users\\\\jrmor\\\\OneDrive\\\\Documents\\\\Programming\\\\ramdass.io\\\\transcriber\\\\venv\\\\Scripts\\\\python.exe\" -c \"\nfrom worker_pool import WorkerPool, TranscriptionWorker\nfrom batch_process_pool import main\nfrom transcribe_pipeline.whisper_with_vocab import transcribe_audio, load_vocabulary_data\nfrom transcribe_pipeline.convert_aws_transcribe import format_whisper_transcript\nfrom transcribe_pipeline.claude_refine_transcript import refine_transcript_text\nfrom transcribe_pipeline.apply_txt_corrections_to_srt import apply_corrections_to_srt_file\nprint\\(''All imports OK''\\)\n\")",
+      "Bash(\"C:\\\\Users\\\\jrmor\\\\OneDrive\\\\Documents\\\\Programming\\\\ramdass.io\\\\transcriber\\\\venv\\\\Scripts\\\\python.exe\" batch_process_pool.py --help)"
     ]
   }
 }
