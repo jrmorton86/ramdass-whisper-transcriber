@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(superpowers:brainstorming)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Skill(superpowers:using-git-worktrees)",
+      "Bash(gh pr merge:*)",
+      "Bash(git pull:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)"
+    ]
+  }
+}
