@@ -336,6 +336,194 @@ class VocabularyEnhancedTranscriber:
         return text_path, json_path
 
 
+def transcribe_audio(audio_path, model, vocab_data=None, replacement_map=None,
+                     apply_vocab_corrections=True, remove_fillers=False, device=None):
+    """
+    Transcribe audio with a pre-loaded Whisper model.
+
+    This function is designed for worker pools where the model is loaded once
+    and reused for multiple transcriptions.
+
+    Args:
+        audio_path: Path to audio file
+        model: Pre-loaded Whisper model
+        vocab_data: Vocabulary data dict (optional, for corrections)
+        replacement_map: Replacement map dict (optional, for corrections)
+        apply_vocab_corrections: Apply post-processing corrections
+        remove_fillers: Remove filler words
+        device: CUDA device string (for logging only - model already on device)
+
+    Returns:
+        dict with 'text', 'segments', and metadata
+    """
+    import torch
+
+    print(f"\n{'='*70}")
+    print(f"TRANSCRIBING: {audio_path}")
+    print(f"{'='*70}\n")
+
+    # Build initial prompt from vocabulary if available
+    initial_prompt = None
+    if vocab_data:
+        initial_prompt = _build_initial_prompt(vocab_data)
+
+    # Detect device from model
+    target_device = str(next(model.parameters()).device)
+    is_cuda = target_device.startswith('cuda')
+
+    # Prepare transcription options
+    options = {
+        'language': 'en',
+        'initial_prompt': initial_prompt,
+        'condition_on_previous_text': False,
+        'compression_ratio_threshold': 2.4,
+        'logprob_threshold': -1.0,
+        'no_speech_threshold': 0.6,
+        'verbose': False,
+        'fp16': is_cuda
+    }
+
+    if is_cuda:
+        device_idx = int(target_device.split(':')[1]) if ':' in target_device else 0
+        vram_before = torch.cuda.memory_allocated(device_idx) / 1024**3
+        print(f"[VRAM] Before transcription: {vram_before:.2f} GB")
+
+    # Transcribe
+    result = model.transcribe(str(audio_path), **options)
+
+    if is_cuda:
+        vram_after = torch.cuda.memory_allocated(device_idx) / 1024**3
+        print(f"[VRAM] After transcription: {vram_after:.2f} GB")
+
+    # Post-process text
+    original_text = result['text']
+    processed_text = original_text
+
+    if apply_vocab_corrections and replacement_map:
+        processed_text = _apply_replacements(processed_text, replacement_map)
+
+    if remove_fillers and vocab_data and 'filter_words' in vocab_data:
+        processed_text = _filter_filler_words(processed_text, vocab_data['filter_words'])
+
+    result['text'] = processed_text
+    result['original_text'] = original_text
+    result['vocab_enhanced'] = apply_vocab_corrections
+    result['fillers_removed'] = remove_fillers
+
+    print(f"\n{'='*70}")
+    print(f"TRANSCRIPTION COMPLETE - {len(processed_text)} characters")
+    print(f"{'='*70}")
+
+    return result
+
+
+def _build_initial_prompt(vocab_data, max_tokens=32768):
+    """Build initial prompt for Whisper from vocabulary data."""
+    target_chars = max_tokens * 4
+    full_prompt = ""
+
+    custom_terms = [entry['display_as'] for entry in vocab_data.get('custom_vocabulary', [])]
+    full_prompt += "Key spiritual terms: " + ", ".join(custom_terms) + ". "
+
+    if len(full_prompt) < target_chars * 0.8:
+        all_phrases = [p['phrase'] for p in vocab_data.get('top_phrases', [])]
+        full_prompt += "Common topics and phrases: " + ", ".join(all_phrases) + ". "
+
+    if len(full_prompt) < target_chars * 0.8:
+        exclude_common = {'first', 'years', 'people', 'thing', 'new', 'time', 'way',
+                         'day', 'minutes', 'ago', 'last', 'second', 'next', 'days'}
+        all_words = [w['word'] for w in vocab_data.get('top_words', [])
+                    if w['word'].lower() not in exclude_common]
+        full_prompt += "Vocabulary context: " + ", ".join(all_words) + ". "
+
+    return full_prompt.strip()
+
+
+def _apply_replacements(text, replacement_map):
+    """Apply vocabulary-based replacements to transcribed text."""
+    import re
+    result = text
+    sorted_replacements = sorted(replacement_map.items(), key=lambda x: len(x[0]), reverse=True)
+
+    for incorrect, correct in sorted_replacements:
+        pattern = r'\b' + re.escape(incorrect) + r'\b'
+        result = re.sub(pattern, correct, result, flags=re.IGNORECASE)
+
+    return result
+
+
+def _filter_filler_words(text, filter_words):
+    """Remove filler words from text."""
+    import re
+    result = text
+    for filler in filter_words:
+        pattern = r'\b' + re.escape(filler) + r'\b'
+        result = re.sub(pattern, '', result, flags=re.IGNORECASE)
+    result = re.sub(r'\s+', ' ', result).strip()
+    return result
+
+
+def load_vocabulary_data(vocab_file="keyword_lists/whisper_vocabulary.json",
+                         replacement_map_file="keyword_lists/replacement_map.json"):
+    """
+    Load vocabulary data and replacement map.
+
+    Args:
+        vocab_file: Path to vocabulary JSON
+        replacement_map_file: Path to replacement map JSON
+
+    Returns:
+        tuple: (vocab_data, replacement_map) - either can be None if file not found
+    """
+    import json
+    from pathlib import Path
+
+    script_dir = Path(__file__).parent
+
+    vocab_data = None
+    vocab_path = script_dir / vocab_file
+    if vocab_path.exists():
+        with open(vocab_path, 'r', encoding='utf-8') as f:
+            vocab_data = json.load(f)
+        print(f"[OK] Loaded vocabulary: {len(vocab_data.get('custom_vocabulary', []))} terms")
+
+    replacement_map = None
+    replacement_path = script_dir / replacement_map_file
+    if replacement_path.exists():
+        with open(replacement_path, 'r', encoding='utf-8') as f:
+            replacement_map = json.load(f)
+        print(f"[OK] Loaded {len(replacement_map)} replacement rules")
+
+    return vocab_data, replacement_map
+
+
+def save_transcription_result(result, output_path):
+    """
+    Save transcription result to JSON and TXT files.
+
+    Args:
+        result: Whisper transcription result dict
+        output_path: Base output path (without extension)
+
+    Returns:
+        tuple: (txt_path, json_path)
+    """
+    import json
+    from pathlib import Path
+
+    output_path = Path(output_path)
+
+    txt_path = Path(str(output_path) + '.txt')
+    with open(txt_path, 'w', encoding='utf-8') as f:
+        f.write(result['text'])
+
+    json_path = Path(str(output_path) + '.json')
+    with open(json_path, 'w', encoding='utf-8') as f:
+        json.dump(result, f, indent=2, ensure_ascii=False)
+
+    return txt_path, json_path
+
+
 def main():
     import argparse
     
