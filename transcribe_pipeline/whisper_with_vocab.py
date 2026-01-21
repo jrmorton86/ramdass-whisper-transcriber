@@ -360,6 +360,8 @@ def transcribe_audio(audio_path, model, vocab_data=None, replacement_map=None,
 
     print(f"\n{'='*70}")
     print(f"TRANSCRIBING: {audio_path}")
+    if device:
+        print(f"Device hint: {device}")
     print(f"{'='*70}\n")
 
     # Build initial prompt from vocabulary if available
@@ -368,7 +370,13 @@ def transcribe_audio(audio_path, model, vocab_data=None, replacement_map=None,
         initial_prompt = _build_initial_prompt(vocab_data)
 
     # Detect device from model
-    target_device = str(next(model.parameters()).device)
+    try:
+        target_device = str(next(model.parameters()).device)
+    except StopIteration:
+        raise RuntimeError(
+            "Model has no parameters - cannot determine device. "
+            "Ensure a valid Whisper model was loaded."
+        )
     is_cuda = target_device.startswith('cuda')
 
     # Prepare transcription options
@@ -384,7 +392,7 @@ def transcribe_audio(audio_path, model, vocab_data=None, replacement_map=None,
     }
 
     if is_cuda:
-        device_idx = int(target_device.split(':')[1]) if ':' in target_device else 0
+        device_idx = _parse_device_index(target_device)
         vram_before = torch.cuda.memory_allocated(device_idx) / 1024**3
         print(f"[VRAM] Before transcription: {vram_before:.2f} GB")
 
@@ -441,7 +449,6 @@ def _build_initial_prompt(vocab_data, max_tokens=32768):
 
 def _apply_replacements(text, replacement_map):
     """Apply vocabulary-based replacements to transcribed text."""
-    import re
     result = text
     sorted_replacements = sorted(replacement_map.items(), key=lambda x: len(x[0]), reverse=True)
 
@@ -454,13 +461,33 @@ def _apply_replacements(text, replacement_map):
 
 def _filter_filler_words(text, filter_words):
     """Remove filler words from text."""
-    import re
     result = text
     for filler in filter_words:
         pattern = r'\b' + re.escape(filler) + r'\b'
         result = re.sub(pattern, '', result, flags=re.IGNORECASE)
     result = re.sub(r'\s+', ' ', result).strip()
     return result
+
+
+def _parse_device_index(device_string):
+    """
+    Parse device index from a device string like 'cuda:0' or 'cuda'.
+
+    Args:
+        device_string: Device string (e.g., 'cuda', 'cuda:0', 'cuda:1')
+
+    Returns:
+        int: Device index (defaults to 0 if not specified or invalid)
+    """
+    if ':' not in device_string:
+        return 0
+    try:
+        parts = device_string.split(':')
+        if len(parts) >= 2 and parts[1].isdigit():
+            return int(parts[1])
+        return 0
+    except (ValueError, IndexError):
+        return 0
 
 
 def load_vocabulary_data(vocab_file="keyword_lists/whisper_vocabulary.json",
@@ -473,26 +500,33 @@ def load_vocabulary_data(vocab_file="keyword_lists/whisper_vocabulary.json",
         replacement_map_file: Path to replacement map JSON
 
     Returns:
-        tuple: (vocab_data, replacement_map) - either can be None if file not found
+        tuple: (vocab_data, replacement_map) - either can be None if file not found or invalid
     """
-    import json
-    from pathlib import Path
-
     script_dir = Path(__file__).parent
 
     vocab_data = None
     vocab_path = script_dir / vocab_file
     if vocab_path.exists():
-        with open(vocab_path, 'r', encoding='utf-8') as f:
-            vocab_data = json.load(f)
-        print(f"[OK] Loaded vocabulary: {len(vocab_data.get('custom_vocabulary', []))} terms")
+        try:
+            with open(vocab_path, 'r', encoding='utf-8') as f:
+                vocab_data = json.load(f)
+            print(f"[OK] Loaded vocabulary: {len(vocab_data.get('custom_vocabulary', []))} terms")
+        except json.JSONDecodeError as e:
+            print(f"[ERROR] Failed to parse vocabulary file {vocab_path}: {e}")
+        except IOError as e:
+            print(f"[ERROR] Failed to read vocabulary file {vocab_path}: {e}")
 
     replacement_map = None
     replacement_path = script_dir / replacement_map_file
     if replacement_path.exists():
-        with open(replacement_path, 'r', encoding='utf-8') as f:
-            replacement_map = json.load(f)
-        print(f"[OK] Loaded {len(replacement_map)} replacement rules")
+        try:
+            with open(replacement_path, 'r', encoding='utf-8') as f:
+                replacement_map = json.load(f)
+            print(f"[OK] Loaded {len(replacement_map)} replacement rules")
+        except json.JSONDecodeError as e:
+            print(f"[ERROR] Failed to parse replacement map {replacement_path}: {e}")
+        except IOError as e:
+            print(f"[ERROR] Failed to read replacement map {replacement_path}: {e}")
 
     return vocab_data, replacement_map
 
@@ -507,19 +541,26 @@ def save_transcription_result(result, output_path):
 
     Returns:
         tuple: (txt_path, json_path)
-    """
-    import json
-    from pathlib import Path
 
+    Raises:
+        IOError: If file cannot be written
+    """
     output_path = Path(output_path)
 
     txt_path = Path(str(output_path) + '.txt')
-    with open(txt_path, 'w', encoding='utf-8') as f:
-        f.write(result['text'])
-
     json_path = Path(str(output_path) + '.json')
-    with open(json_path, 'w', encoding='utf-8') as f:
-        json.dump(result, f, indent=2, ensure_ascii=False)
+
+    try:
+        with open(txt_path, 'w', encoding='utf-8') as f:
+            f.write(result['text'])
+    except IOError as e:
+        raise IOError(f"Failed to write text file {txt_path}: {e}") from e
+
+    try:
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(result, f, indent=2, ensure_ascii=False)
+    except IOError as e:
+        raise IOError(f"Failed to write JSON file {json_path}: {e}") from e
 
     return txt_path, json_path
 
