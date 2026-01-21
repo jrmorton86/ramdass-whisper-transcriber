@@ -26,12 +26,16 @@ import json
 
 class TranscriptionPipeline:
     def __init__(self, audio_file, output_dir=None, model="medium", 
-                 skip_whisper=False, skip_claude=False, verbose=False):
+                 skip_whisper=False, skip_claude=False, verbose=True, device=None):
         self.audio_file = Path(audio_file)
         self.model = model
         self.skip_whisper = skip_whisper
         self.skip_claude = skip_claude
         self.verbose = verbose
+        self.device = device
+        
+        # Get the directory where this script is located
+        self.script_dir = Path(__file__).parent
         
         # Determine output directory
         if output_dir:
@@ -90,14 +94,19 @@ class TranscriptionPipeline:
             print(f"[ERROR] Error: Audio file not found: {self.audio_file}")
             return False
         
-        # Build command
+        # Build command with absolute path to whisper_with_vocab.py
+        whisper_script = self.script_dir / "whisper_with_vocab.py"
         cmd = [
-            sys.executable,  # Use same Python interpreter
-            "whisper_with_vocab.py",
+            sys.executable,
+            str(whisper_script),
             str(self.audio_file),
             "--model", self.model,
             "--output", str(self.output_dir / self.base_name)
         ]
+        
+        # Add device if specified
+        if self.device:
+            cmd.extend(["--device", self.device])
         
         return self.run_command(cmd, "Whisper Transcription (Vocabulary-Enhanced)")
     
@@ -107,10 +116,11 @@ class TranscriptionPipeline:
             print(f"[ERROR] Error: JSON file not found: {self.json_file}")
             return False
         
-        # Build command
+        # Build command with absolute path to convert_aws_transcribe.py
+        convert_script = self.script_dir / "convert_aws_transcribe.py"
         cmd = [
             sys.executable,
-            "convert_aws_transcribe.py",
+            str(convert_script),
             str(self.json_file),
             "--output-dir", str(self.output_dir)
         ]
@@ -127,15 +137,17 @@ class TranscriptionPipeline:
             print(f"[ERROR] Error: Formatted file not found: {self.formatted_file}")
             return False
         
-        # Build command for transcript refinement
+        # Build command for transcript refinement with absolute path
+        claude_script = self.script_dir / "claude_refine_transcript.py"
         cmd = [
             sys.executable,
-            "claude_refine_transcript.py",
+            str(claude_script),
             str(self.formatted_file)
         ]
         
-        if self.verbose:
-            cmd.append("--verbose")
+        # Pass silent flag if disabled (verbose is default)
+        if not self.verbose:
+            cmd.append("--silent")
         
         return self.run_command(cmd, "Claude Transcript Refinement")
     
@@ -156,10 +168,11 @@ class TranscriptionPipeline:
             print("       Stage 3 must complete successfully first.")
             return False
         
-        # Build command to apply TXT corrections to SRT
+        # Build command to apply TXT corrections to SRT with absolute path
+        apply_corrections_script = self.script_dir / "apply_txt_corrections_to_srt.py"
         cmd = [
             sys.executable,
-            "apply_txt_corrections_to_srt.py",
+            str(apply_corrections_script),
             str(changes_file),
             str(self.srt_file)
         ]
@@ -240,8 +253,8 @@ Examples:
   # Skip Claude (just transcribe and format)
   python transcribe_pipeline.py audio.mp3 --skip-claude
   
-  # Verbose mode (see all output)
-  python transcribe_pipeline.py audio.mp3 --model medium --verbose
+  # Silent mode (minimal output, no Claude thinking)
+  python transcribe_pipeline.py audio.mp3 --model medium --silent
   
   # Custom output directory
   python transcribe_pipeline.py audio.mp3 --output-dir output/
@@ -267,9 +280,12 @@ Examples:
                         action='store_true',
                         help='Skip Claude refinement (faster, less accurate)')
     
-    parser.add_argument('-v', '--verbose', 
+    parser.add_argument('-d', '--device',
+                        help='CUDA device to use (e.g., cuda:0, cuda:1)')
+    
+    parser.add_argument('-s', '--silent', 
                         action='store_true',
-                        help='Show detailed output from each stage')
+                        help='Silent mode - disable detailed output and Claude thinking display')
     
     args = parser.parse_args()
     
@@ -279,6 +295,9 @@ Examples:
         print(f"[ERROR] Error: Audio file not found: {args.audio_file}")
         return 1
     
+    # Verbose is default (ON unless --silent is specified)
+    verbose = not args.silent
+    
     # Run pipeline
     pipeline = TranscriptionPipeline(
         audio_file=args.audio_file,
@@ -286,7 +305,8 @@ Examples:
         model=args.model,
         skip_whisper=args.skip_whisper,
         skip_claude=args.skip_claude,
-        verbose=args.verbose
+        verbose=verbose,
+        device=args.device
     )
     
     success = pipeline.run()

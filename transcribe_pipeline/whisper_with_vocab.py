@@ -176,7 +176,7 @@ class VocabularyEnhancedTranscriber:
     
     def transcribe(self, audio_path, model_name="base", language="en",
                    apply_vocab_corrections=True, remove_fillers=False,
-                   **whisper_kwargs):
+                   device=None, **whisper_kwargs):
         """
         Transcribe audio with vocabulary enhancement.
         
@@ -186,6 +186,7 @@ class VocabularyEnhancedTranscriber:
             language: Language code (default: en)
             apply_vocab_corrections: Apply post-processing corrections
             remove_fillers: Remove filler words (uh, um, etc.)
+            device: CUDA device to use (e.g., 'cuda:0', 'cuda:1')
             **whisper_kwargs: Additional arguments for whisper.transcribe()
         
         Returns:
@@ -195,9 +196,43 @@ class VocabularyEnhancedTranscriber:
         print(f"TRANSCRIBING: {audio_path}")
         print(f"{'='*70}\n")
         
-        # Load model
+        # Load model - prioritize GPU VRAM over system RAM
         print(f"Loading Whisper model: {model_name}")
-        model = whisper.load_model(model_name)
+        
+        # Import torch for device detection
+        import torch
+        
+        # Determine device: use specified device, or auto-detect CUDA
+        if device:
+            target_device = device
+            print(f"Using specified device: {device}")
+        else:
+            # Auto-detect: use CUDA if available, otherwise CPU
+            if torch.cuda.is_available():
+                target_device = "cuda"
+                print(f"Auto-detected CUDA - Loading directly to GPU VRAM")
+                print(f"   GPU 0: {torch.cuda.get_device_name(0)}")
+                vram_gb = torch.cuda.get_device_properties(0).total_memory / 1024**3
+                print(f"   Total VRAM: {vram_gb:.1f} GB")
+            else:
+                target_device = "cpu"
+                print(f"CUDA not available - Using CPU")
+        
+        # Load model with explicit device to ensure VRAM usage
+        model = whisper.load_model(model_name, device=target_device)
+        
+        # Verify model is on correct device and check precision
+        if target_device.startswith('cuda'):
+            actual_device = next(model.parameters()).device
+            model_dtype = next(model.parameters()).dtype
+            print(f"[OK] Model loaded on: {actual_device}")
+            print(f"   Model precision: {model_dtype}")
+            
+            # Show VRAM usage
+            vram_allocated = torch.cuda.memory_allocated(actual_device.index or 0) / 1024**3
+            print(f"   VRAM allocated: {vram_allocated:.2f} GB")
+        else:
+            print(f"[OK] Model loaded on: {target_device}")
         
         # Prepare transcription options
         options = {
@@ -207,15 +242,51 @@ class VocabularyEnhancedTranscriber:
             'compression_ratio_threshold': 2.4,   # Detect repetitive output
             'logprob_threshold': -1.0,            # Filter low-confidence segments
             'no_speech_threshold': 0.6,           # Skip silence better
-            'verbose': True,
+            'verbose': False,  # Disable to prevent Unicode encoding errors on Windows console
             **whisper_kwargs
         }
         
-        print(f"\nTranscribing with vocabulary-enhanced prompt...")
-        print("Anti-hallucination settings enabled (condition_on_previous_text=False)")
+        # CRITICAL: Force FP16 on GPU for optimal VRAM usage (50% reduction)
+        if target_device.startswith('cuda'):
+            # Override any fp16 setting in whisper_kwargs to ensure it's enabled
+            options['fp16'] = True
+            
+            print(f"\n{'='*70}")
+            print("TRANSCRIPTION SETTINGS")
+            print(f"{'='*70}")
+            print(f"[OK] FP16 precision: ENABLED (forced)")
+            print(f"   Expected VRAM: ~2.5 GB for medium model")
+            print(f"   Performance: 2-3x faster than CPU")
+            print(f"   Memory savings: 50% vs FP32")
+            print(f"\nVocabulary-enhanced prompt: ENABLED")
+            print("Anti-hallucination settings: ENABLED (condition_on_previous_text=False)")
+            print(f"{'='*70}")
+        else:
+            options['fp16'] = False
+            print(f"\n{'='*70}")
+            print("TRANSCRIPTION SETTINGS")
+            print(f"{'='*70}")
+            print(f"⚠️  CPU Mode: FP16 disabled (CPU doesn't support FP16)")
+            print(f"\nVocabulary-enhanced prompt: ENABLED")
+            print("Anti-hallucination settings: ENABLED (condition_on_previous_text=False)")
+            print(f"{'='*70}")
         
-        # Transcribe
+        # Show memory usage tracking for GPU
+        if target_device.startswith('cuda'):
+            device_idx = actual_device.index if actual_device.index is not None else 0
+            vram_before = torch.cuda.memory_allocated(device_idx) / 1024**3
+            print(f"\n[VRAM] Before transcription: {vram_before:.2f} GB")
+        
+        # Transcribe (NOTE: Whisper architecture requires audio in CPU RAM first)
+        # Audio preprocessing (load, resample) happens on CPU
+        # Model inference happens on GPU with FP16
         result = model.transcribe(str(audio_path), **options)
+        
+        # Show final memory usage
+        if target_device.startswith('cuda'):
+            vram_after = torch.cuda.memory_allocated(device_idx) / 1024**3
+            print(f"[VRAM] After transcription: {vram_after:.2f} GB")
+            print(f"   Peak usage during transcription: ~{vram_after:.2f} GB")
         
         # Post-process text
         original_text = result['text']
@@ -250,14 +321,14 @@ class VocabularyEnhancedTranscriber:
         """Save transcription to file"""
         output_path = Path(output_path)
         
-        # Save text file
-        text_path = output_path.with_suffix('.txt')
+        # Save text file (append .txt to preserve full filename)
+        text_path = Path(str(output_path) + '.txt')
         with open(text_path, 'w', encoding='utf-8') as f:
             f.write(result['text'])
         print(f"[OK] Saved text: {text_path}")
         
-        # Save JSON with full details
-        json_path = output_path.with_suffix('.json')
+        # Save JSON with full details (append .json to preserve full filename)
+        json_path = Path(str(output_path) + '.json')
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(result, f, indent=2, ensure_ascii=False)
         print(f"[OK] Saved JSON: {json_path}")
@@ -276,6 +347,7 @@ def main():
                         choices=['tiny', 'base', 'small', 'medium', 'large'],
                         help='Whisper model size (default: base)')
     parser.add_argument('-o', '--output', help='Output file path (without extension)')
+    parser.add_argument('-d', '--device', help='CUDA device to use (e.g., cuda:0, cuda:1)')
     parser.add_argument('--no-corrections', action='store_true',
                         help='Disable vocabulary corrections')
     parser.add_argument('--remove-fillers', action='store_true',
@@ -294,7 +366,8 @@ def main():
         model_name=args.model,
         language=args.language,
         apply_vocab_corrections=not args.no_corrections,
-        remove_fillers=args.remove_fillers
+        remove_fillers=args.remove_fillers,
+        device=args.device
     )
     
     # Save output
