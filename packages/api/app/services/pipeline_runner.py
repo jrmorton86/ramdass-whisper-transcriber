@@ -1,13 +1,15 @@
 """
 Pipeline Runner - Runs transcription pipeline with real-time log capture.
 
-Uses asyncio.create_subprocess_exec for safe subprocess execution (no shell injection).
+Uses subprocess.Popen for cross-platform compatibility (Windows/Linux).
 """
 
 import asyncio
 import json
 import os
+import subprocess
 import sys
+import threading
 from datetime import datetime
 from pathlib import Path
 from typing import Callable, Optional
@@ -118,7 +120,13 @@ class PipelineRunner:
         Returns:
             dict with success status and result/error
         """
-        await self._log("info", f"Starting pipeline for file: {file_path}")
+        # Convert to absolute path (file_path may be relative to API working dir)
+        abs_file_path = Path(file_path).resolve()
+        await self._log("info", f"Starting pipeline for file: {abs_file_path}")
+
+        # Verify file exists
+        if not abs_file_path.exists():
+            return {"success": False, "error": f"Audio file not found: {abs_file_path}"}
 
         # Get the transcribe_pipeline.py script
         pipeline_script = self.pipeline_dir / "transcribe_pipeline" / "transcribe_pipeline.py"
@@ -126,17 +134,18 @@ class PipelineRunner:
         if not pipeline_script.exists():
             return {"success": False, "error": f"Pipeline script not found: {pipeline_script}"}
 
-        # Create output directory
-        output_dir = Path("tmp") / job_id
+        # Create output directory (absolute path)
+        output_dir = (Path.cwd() / "tmp" / job_id).resolve()
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        # Build command - all arguments are passed as list items (safe)
+        # Build command - use pipeline Python (has whisper installed)
         cmd = [
-            sys.executable,
+            str(settings.pipeline_python),
             str(pipeline_script),
-            file_path,
+            str(abs_file_path),
             "--model", settings.whisper_model,
             "--output-dir", str(output_dir),
+            "--skip-claude",  # Skip Claude refinement until IAM credentials are configured
         ]
 
         # Add GPU device if specified
@@ -156,13 +165,20 @@ class PipelineRunner:
         # Read results
         base_name = Path(file_path).stem
         refined_txt = output_dir / f"{base_name}_formatted_refined.txt"
+        formatted_txt = output_dir / f"{base_name}_formatted.txt"
         json_file = output_dir / f"{base_name}.json"
 
-        if not refined_txt.exists():
-            return {"success": False, "error": "Refined transcript not found"}
+        # Use refined transcript if available, otherwise fall back to formatted
+        if refined_txt.exists():
+            transcript_file = refined_txt
+        elif formatted_txt.exists():
+            await self._log("warning", "Claude refinement not available, using formatted transcript")
+            transcript_file = formatted_txt
+        else:
+            return {"success": False, "error": "No transcript file found"}
 
         # Read transcript
-        with open(refined_txt, "r", encoding="utf-8") as f:
+        with open(transcript_file, "r", encoding="utf-8") as f:
             text = f.read()
 
         # Read segments from JSON if available
@@ -201,8 +217,7 @@ class PipelineRunner:
         """
         Run a subprocess with real-time log capture.
 
-        Uses asyncio.create_subprocess_exec which is safe from shell injection
-        as it executes the command directly without shell interpretation.
+        Uses subprocess.Popen for Windows compatibility, with async log reading.
 
         Args:
             cmd: Command and arguments as a list
@@ -215,42 +230,36 @@ class PipelineRunner:
         env = os.environ.copy()
         env["PYTHONUNBUFFERED"] = "1"  # Ensure unbuffered output
 
-        # create_subprocess_exec is safe - no shell, arguments passed directly
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.STDOUT,
+        # Use Popen for Windows compatibility
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             cwd=cwd,
             env=env,
         )
 
-        # Read output line by line
-        while True:
-            if is_cancelled():
-                process.terminate()
-                await process.wait()
-                return -1
+        # Read output in a thread to avoid blocking
+        async def read_output():
+            loop = asyncio.get_event_loop()
+            while True:
+                if is_cancelled():
+                    process.terminate()
+                    return
 
-            try:
-                line = await asyncio.wait_for(
-                    process.stdout.readline(),
-                    timeout=0.1,
-                )
-            except asyncio.TimeoutError:
-                # Check if process is still running
-                if process.returncode is not None:
+                # Read line in executor to avoid blocking
+                line = await loop.run_in_executor(None, process.stdout.readline)
+
+                if not line:
                     break
-                continue
 
-            if not line:
-                break
+                decoded = line.decode("utf-8", errors="replace").rstrip()
+                if decoded:
+                    level = self._detect_level(decoded)
+                    await self._log(level, decoded)
 
-            decoded = line.decode("utf-8", errors="replace").rstrip()
-            if decoded:
-                level = self._detect_level(decoded)
-                await self._log(level, decoded)
-
-        await process.wait()
+        await read_output()
+        process.wait()
         return process.returncode
 
     async def _run_subprocess_capture_output(
@@ -261,7 +270,7 @@ class PipelineRunner:
         """
         Run a subprocess and capture its output.
 
-        Uses asyncio.create_subprocess_exec for safe execution.
+        Uses subprocess.Popen for Windows compatibility.
 
         Returns:
             Tuple of (return_code, output)
@@ -269,14 +278,19 @@ class PipelineRunner:
         env = os.environ.copy()
         env["PYTHONUNBUFFERED"] = "1"
 
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            env=env,
-        )
+        loop = asyncio.get_event_loop()
 
-        stdout, stderr = await process.communicate()
+        # Run in executor to avoid blocking
+        def run_process():
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                env=env,
+            )
+            return process.communicate(), process.returncode
+
+        (stdout, stderr), returncode = await loop.run_in_executor(None, run_process)
 
         # Log any errors
         if stderr:
@@ -290,7 +304,7 @@ class PipelineRunner:
             if line:
                 await self._log("info", line)
 
-        return process.returncode, output
+        return returncode, output
 
     def _detect_level(self, message: str) -> str:
         """Detect log level from message content."""

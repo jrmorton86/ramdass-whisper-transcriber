@@ -12,6 +12,7 @@ import subprocess
 import sys
 import os
 import signal
+import shutil
 import time
 from pathlib import Path
 
@@ -26,6 +27,34 @@ else:
     API_PYTHON = API_DIR / "venv" / "bin" / "python"
 
 processes = []
+
+
+def clear_python_cache():
+    """Clear all __pycache__ directories in the API package."""
+    print("[CACHE] Clearing Python cache...")
+    cache_dirs_removed = 0
+
+    # Clear cache in API app directory
+    for cache_dir in API_DIR.rglob("__pycache__"):
+        # Skip venv directory
+        if "venv" in cache_dir.parts:
+            continue
+        try:
+            shutil.rmtree(cache_dir)
+            cache_dirs_removed += 1
+        except Exception as e:
+            print(f"[CACHE] Warning: Could not remove {cache_dir}: {e}")
+
+    # Also clear any .pyc files directly
+    for pyc_file in API_DIR.rglob("*.pyc"):
+        if "venv" in pyc_file.parts:
+            continue
+        try:
+            pyc_file.unlink()
+        except Exception:
+            pass
+
+    print(f"[CACHE] Cleared {cache_dirs_removed} cache directories")
 
 
 def run_api():
@@ -43,7 +72,13 @@ def run_api():
     env["PYTHONPATH"] = str(ROOT_DIR / "packages" / "pipeline")
 
     proc = subprocess.Popen(
-        [str(API_PYTHON), "-m", "uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"],
+        [
+            str(API_PYTHON), "-m", "uvicorn", "app.main:app",
+            "--reload",
+            "--reload-include", "app",
+            "--host", "0.0.0.0",
+            "--port", "8000"
+        ],
         cwd=API_DIR,
         env=env,
     )
@@ -71,7 +106,7 @@ def run_frontend():
 
 
 def cleanup(signum=None, frame=None):
-    """Clean up all running processes."""
+    """Clean up all running processes and clear cache."""
     print("\n\nShutting down services...")
     for name, proc in processes:
         print(f"  Stopping {name}...")
@@ -80,6 +115,10 @@ def cleanup(signum=None, frame=None):
             proc.wait(timeout=5)
         except subprocess.TimeoutExpired:
             proc.kill()
+
+    # Clear Python cache on shutdown to prevent stale code issues
+    clear_python_cache()
+
     print("All services stopped.")
     sys.exit(0)
 
@@ -97,6 +136,9 @@ def main():
     print("=" * 60)
     print("  Transcription Dashboard - Development Server")
     print("=" * 60)
+
+    # Clear cache on startup to ensure fresh code
+    clear_python_cache()
 
     if run_api_only:
         run_api()

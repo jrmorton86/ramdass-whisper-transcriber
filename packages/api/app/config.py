@@ -2,9 +2,20 @@
 Configuration settings for the API.
 """
 
+import sys
 import os
 from pathlib import Path
 from pydantic_settings import BaseSettings
+
+
+# Root directory (transcriber/)
+ROOT_DIR = Path(__file__).parent.parent.parent.parent
+
+# Detect pipeline Python executable (uses root venv with whisper installed)
+if sys.platform == "win32":
+    _PIPELINE_PYTHON = ROOT_DIR / "venv" / "Scripts" / "python.exe"
+else:
+    _PIPELINE_PYTHON = ROOT_DIR / "venv" / "bin" / "python"
 
 
 class Settings(BaseSettings):
@@ -24,6 +35,7 @@ class Settings(BaseSettings):
 
     # Pipeline Settings
     pipeline_dir: Path = Path(__file__).parent.parent.parent / "pipeline"
+    pipeline_python: Path = _PIPELINE_PYTHON  # Python with whisper installed
     gpu_ids: str = "0"
     whisper_model: str = "medium"
 

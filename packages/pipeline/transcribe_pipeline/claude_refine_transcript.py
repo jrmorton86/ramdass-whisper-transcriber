@@ -18,6 +18,7 @@ Does NOT:
 
 import json
 import re
+import os
 import boto3
 from pathlib import Path
 import argparse
@@ -30,7 +31,7 @@ class ModelStreamError(Exception):
 
 
 class ClaudeTranscriptRefiner:
-    def __init__(self, 
+    def __init__(self,
                  vocab_file="keyword_lists/whisper_vocabulary.json",
                  replacement_map_file="keyword_lists/replacement_map.json",
                  region_name="us-east-1"):
@@ -40,7 +41,7 @@ class ClaudeTranscriptRefiner:
         self.replacement_map_file = script_dir / replacement_map_file if not Path(replacement_map_file).is_absolute() else Path(replacement_map_file)
         self.vocab_data = None
         self.replacement_map = None
-        
+
         # Configure boto3 with longer timeout
         from botocore.config import Config
         config = Config(
@@ -48,8 +49,25 @@ class ClaudeTranscriptRefiner:
             connect_timeout=10,
             retries={'max_attempts': 3}
         )
-        self.bedrock_runtime = boto3.client('bedrock-runtime', region_name=region_name, config=config)
-        
+
+        # Check for Bedrock API key authentication
+        api_key = os.environ.get('AWS_BEDROCK_API_KEY')
+        if api_key:
+            print("[INFO] Using Bedrock API key authentication")
+            # Bedrock API keys use endpoint URL authentication
+            self.bedrock_runtime = boto3.client(
+                'bedrock-runtime',
+                region_name=region_name,
+                config=config,
+                endpoint_url=f"https://bedrock-runtime.{region_name}.amazonaws.com"
+            )
+            # Store API key for custom auth
+            self.api_key = api_key
+        else:
+            print("[INFO] Using IAM credentials for Bedrock authentication")
+            self.bedrock_runtime = boto3.client('bedrock-runtime', region_name=region_name, config=config)
+            self.api_key = None
+
         self.load_vocabulary()
         self.load_replacement_map()
     
