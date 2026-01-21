@@ -21,6 +21,12 @@ import re
 import boto3
 from pathlib import Path
 import argparse
+import time
+
+
+class ModelStreamError(Exception):
+    """Raised when Claude streaming encounters a model error (retryable)."""
+    pass
 
 
 class ClaudeTranscriptRefiner:
@@ -28,8 +34,10 @@ class ClaudeTranscriptRefiner:
                  vocab_file="keyword_lists/whisper_vocabulary.json",
                  replacement_map_file="keyword_lists/replacement_map.json",
                  region_name="us-east-1"):
-        self.vocab_file = Path(vocab_file)
-        self.replacement_map_file = Path(replacement_map_file)
+        # Make paths relative to this script's directory
+        script_dir = Path(__file__).parent
+        self.vocab_file = script_dir / vocab_file if not Path(vocab_file).is_absolute() else Path(vocab_file)
+        self.replacement_map_file = script_dir / replacement_map_file if not Path(replacement_map_file).is_absolute() else Path(replacement_map_file)
         self.vocab_data = None
         self.replacement_map = None
         
@@ -49,6 +57,9 @@ class ClaudeTranscriptRefiner:
         """Load custom vocabulary data"""
         if not self.vocab_file.exists():
             print(f"WARNING:  Vocabulary file not found: {self.vocab_file}")
+            print(f"   Script location: {Path(__file__).parent}")
+            print(f"   Looking for: {self.vocab_file.absolute()}")
+            print(f"   Run 'python build_vocabulary.py' first!")
             return
         
         with open(self.vocab_file, 'r', encoding='utf-8') as f:
@@ -63,6 +74,7 @@ class ClaudeTranscriptRefiner:
         """Load replacement map for reference"""
         if not self.replacement_map_file.exists():
             print(f"WARNING:  Replacement map not found: {self.replacement_map_file}")
+            print(f"   Looking for: {self.replacement_map_file.absolute()}")
             return
         
         with open(self.replacement_map_file, 'r', encoding='utf-8') as f:
@@ -146,13 +158,13 @@ class ClaudeTranscriptRefiner:
         return "\n".join(context)
     
     def build_claude_prompt(self, transcript_text):
-        """Build the complete prompt for Claude - returns full refined transcript with paragraphs"""
+        """Build optimized prompt - Claude returns only changes and paragraph positions, not full text"""
         vocab_context = self.build_vocabulary_context()
         errors_context = self.build_known_errors_context()
         
-        prompt = f"""You are a meticulous transcript editor specializing in spiritual and philosophical content. Your task is to refine this Ram Dass teaching transcript by:
-1. Fixing clear errors (vocabulary, grammar, transcription mistakes)
-2. Adding proper paragraph breaks to make it readable
+        prompt = f"""You are a meticulous transcript editor specializing in spiritual and philosophical content. Your task is to analyze this Ram Dass teaching transcript and identify:
+1. Text corrections needed (vocabulary, grammar, transcription errors)
+2. Where paragraph breaks (\\n\\n) should be inserted
 
 Be EXTREMELY conservative with corrections - only fix obvious errors.
 
@@ -164,7 +176,7 @@ Be EXTREMELY conservative with corrections - only fix obvious errors.
 
 DO FIX:
 1. Clear misspellings of terms from the custom vocabulary above
-   Examples: "lispensky" → "Ouspensky", "maraj ji" → "Maharaj-ji", "gurdjief" → "Gurdjieff"
+   Examples: "lispensky" -> "Ouspensky", "maraj ji" -> "Maharaj-ji", "gurdjief" -> "Gurdjieff"
 2. Obvious grammar errors (wrong verb tense, missing articles where clearly needed)
 3. Duplicate words (e.g., "the the", "and and")
 4. Clear transcription errors (gibberish, fragments missing words)
@@ -181,7 +193,7 @@ DO NOT:
 
 === PARAGRAPHING RULES ===
 
-Add paragraph breaks (double newlines: \\n\\n) to make the text readable:
+Identify where paragraph breaks (\\n\\n) should be inserted:
 - Start a new paragraph when the speaker shifts to a new topic or example
 - Start a new paragraph when there's a significant pause or change in narrative
 - Start a new paragraph for each distinct story or anecdote
@@ -200,48 +212,122 @@ Guidelines:
 
 === YOUR TASK ===
 
-Return the refined transcript with:
-1. All clear errors corrected
-2. Proper paragraph breaks added using \\n\\n
-3. The speaker's authentic voice preserved
+Analyze the transcript and return ONLY the changes needed. DO NOT return the full transcript.
 
 Format as JSON:
 {{
-  "refined_transcript": "full transcript with corrections and \\n\\n paragraph breaks",
-  "changes_made": [
+  "corrections": [
     {{
-      "type": "correction",
-      "original": "text before",
-      "corrected": "text after",
-      "reason": "explanation"
+      "original": "exact text to find (10-30 chars for context)",
+      "corrected": "corrected version",
+      "reason": "brief explanation"
     }}
   ],
-  "paragraph_count": number_of_paragraphs_created
+  "paragraph_breaks": [
+    {{
+      "after_text": "last 15-25 chars before break",
+      "reason": "why break here (topic shift, new story, etc.)"
+    }}
+  ]
 }}
 
-Remember: Be conservative with corrections, generous with paragraph breaks. Make it readable while preserving the speaker's authentic voice."""
+IMPORTANT: 
+- For corrections: Include enough context (10-30 chars) to uniquely identify the location
+- For paragraph breaks: Provide the last 15-25 characters before where \\n\\n should be inserted
+- Be precise - we'll use these to programmatically modify the original text
+- Order paragraph_breaks from start to end of transcript
+
+Remember: Be conservative with corrections, generous with paragraph breaks."""
 
         return prompt
     
-    def apply_corrections(self, transcript_text, corrections):
-        """Apply corrections to transcript text"""
-        result = transcript_text
-        changes_made = []
+    def apply_corrections_and_paragraphs(self, transcript_text, corrections, paragraph_breaks):
+        """
+        Apply corrections and paragraph breaks to transcript text.
         
-        for correction in corrections:
-            original = correction['original_text']
-            corrected = correction['corrected_text']
+        Args:
+            transcript_text: Original transcript text
+            corrections: List of {original, corrected, reason} dicts
+            paragraph_breaks: List of {after_text, reason} dicts
             
-            # Check if original text exists in transcript
-            if original in result:
-                # Replace first occurrence
-                result = result.replace(original, corrected, 1)
-                changes_made.append(correction)
-                print(f"  [OK] Applied: {original[:50]}... -> {corrected[:50]}...")
-            else:
-                print(f"  [WARNING] Could not find: {original[:50]}...")
+        Returns:
+            tuple: (refined_text, changes_applied_count)
+        """
+        result = transcript_text
+        corrections_applied = 0
+        corrections_failed = 0
         
-        return result, changes_made
+        # Step 1: Apply text corrections
+        print(f"\nApplying {len(corrections)} corrections...")
+        for correction in corrections:
+            original = correction.get('original', '')
+            corrected = correction.get('corrected', '')
+            reason = correction.get('reason', '')
+            
+            if original in result:
+                result = result.replace(original, corrected, 1)
+                corrections_applied += 1
+                # Use ASCII-safe output to avoid encoding errors
+                orig_safe = original[:40].encode('ascii', 'replace').decode('ascii')
+                corr_safe = corrected[:40].encode('ascii', 'replace').decode('ascii')
+                print(f"  [OK] {orig_safe}... -> {corr_safe}...")
+            else:
+                corrections_failed += 1
+                orig_safe = original[:40].encode('ascii', 'replace').decode('ascii')
+                print(f"  [X] Not found: {orig_safe}...")
+        
+        print(f"Corrections: {corrections_applied} applied, {corrections_failed} failed")
+        
+        # Step 2: Insert paragraph breaks
+        print(f"\nInserting {len(paragraph_breaks)} paragraph breaks...")
+        breaks_applied = 0
+        breaks_failed = 0
+        
+        # Sort by position in text (process from end to start to preserve indices)
+        sorted_breaks = []
+        for pb in paragraph_breaks:
+            after_text = pb.get('after_text', '')
+            pos = result.rfind(after_text)  # Find last occurrence
+            if pos != -1:
+                sorted_breaks.append((pos + len(after_text), after_text, pb.get('reason', '')))
+        
+        # Sort in reverse order (end to start)
+        sorted_breaks.sort(reverse=True)
+        
+        for pos, after_text, reason in sorted_breaks:
+            # Check if there's already a paragraph break here
+            if result[pos:pos+2] == '\n\n':
+                # Use ASCII-safe output
+                text_safe = after_text[-20:].encode('ascii', 'replace').decode('ascii')
+                print(f"  [SKIP] Already has break after: ...{text_safe}...")
+                continue
+            
+            # Strip any leading whitespace after the break position
+            # to avoid " Right there..." indentation issues
+            stripped_pos = pos
+            while stripped_pos < len(result) and result[stripped_pos] in ' \t':
+                stripped_pos += 1
+            
+            # Insert \n\n at position, removing any leading whitespace
+            result = result[:pos] + '\n\n' + result[stripped_pos:]
+            breaks_applied += 1
+            # Use ASCII-safe output
+            text_safe = after_text[-25:].encode('ascii', 'replace').decode('ascii')
+            print(f"  [OK] Break after: ...{text_safe}...")
+        
+        breaks_failed = len(paragraph_breaks) - breaks_applied
+        print(f"Paragraph breaks: {breaks_applied} inserted, {breaks_failed} skipped/failed")
+        
+        # Count final paragraphs
+        paragraph_count = result.count('\n\n') + 1
+        
+        return result, {
+            'corrections_applied': corrections_applied,
+            'corrections_failed': corrections_failed,
+            'breaks_applied': breaks_applied,
+            'breaks_failed': breaks_failed,
+            'paragraph_count': paragraph_count
+        }
     
     def refine_transcript(self, transcript_text, verbose=False):
         """
@@ -267,36 +353,159 @@ Remember: Be conservative with corrections, generous with paragraph breaks. Make
         
         if prompt_tokens > 100000:
             print("WARNING:  Warning: Prompt may exceed 100k token context window")
+            print("          Consider processing in smaller chunks if errors occur")
         
         print("\nSending to Claude Sonnet 4.5...")
+        if verbose:
+            print("  [VERBOSE] Extended thinking enabled - Claude will show its reasoning process")
+            print("  [VERBOSE] Streaming enabled - showing real-time progress")
         
-        # Call Claude via Bedrock
+        # Retry logic for modelStreamErrorException
+        max_retries = 3
+        retry_delay = 5  # seconds
+        
+        for attempt in range(1, max_retries + 1):
+            try:
+                if attempt > 1:
+                    print(f"\n⚠️  Retry attempt {attempt}/{max_retries} after {retry_delay}s delay...")
+                    time.sleep(retry_delay)
+                
+                result = self._call_claude_with_streaming(prompt, transcript_text, verbose)
+                return result  # Success - return immediately
+                
+            except ModelStreamError as e:
+                if attempt < max_retries:
+                    print(f"\n⚠️  ModelStreamError: {e}")
+                    print(f"   Waiting {retry_delay}s before retry {attempt + 1}/{max_retries}...")
+                    continue  # Try again
+                else:
+                    # Final attempt failed
+                    print(f"\n❌ All {max_retries} retry attempts failed")
+                    raise
+            except Exception as e:
+                # Non-retryable error - fail immediately
+                print(f"\n[ERROR] Error calling Claude: {e}")
+                import traceback
+                traceback.print_exc()
+                raise
+    
+    def _call_claude_with_streaming(self, prompt, transcript_text, verbose):
+        """Internal method to call Claude with streaming (for retry logic)."""
         try:
-            response = self.bedrock_runtime.converse(
-                modelId='us.anthropic.claude-sonnet-4-5-20250929-v1:0',
-                messages=[
+            # Build request parameters
+            request_params = {
+                'modelId': 'us.anthropic.claude-sonnet-4-5-20250929-v1:0',
+                'messages': [
                     {
                         'role': 'user',
                         'content': [{'text': prompt}]
                     }
                 ],
-                inferenceConfig={
-                    'maxTokens': 20000,  # Increased since we're returning full transcript
-                    'temperature': 0.3  # Low temperature for conservative edits
+                'inferenceConfig': {
+                    'maxTokens': 25000,  # Allow full 25k output tokens for complete transcripts
+                    'temperature': 1.0 if verbose else 0.3  # Must be 1.0 when thinking is enabled
                 }
-            )
+            }
             
-            # Parse response
-            result_text = response['output']['message']['content'][0]['text']
+            # Enable extended thinking in verbose mode
+            if verbose:
+                request_params['additionalModelRequestFields'] = {
+                    'thinking': {
+                        'type': 'enabled',
+                        'budget_tokens': 5000  # Allow up to 5k tokens for thinking
+                    }
+                }
+            
+            # Use streaming API
+            response_stream = self.bedrock_runtime.converse_stream(**request_params)
+            
+            # Collect streamed content
+            thinking_text = None
+            result_text = ""
+            thinking_shown = False
+            input_tokens = 0
+            output_tokens = 0
+            last_event_time = None
+            
+            print()  # New line before streaming output
+            
+            # Process event stream
+            import time
+            for event in response_stream['stream']:
+                last_event_time = time.time()
+                
+                if 'contentBlockStart' in event:
+                    block_start = event['contentBlockStart']
+                    if 'start' in block_start and 'thinking' in block_start['start']:
+                        if verbose:
+                            print(f"\n{'='*70}")
+                            print("CLAUDE'S THINKING PROCESS:")
+                            print(f"{'='*70}")
+                            thinking_shown = True
+                
+                elif 'contentBlockDelta' in event:
+                    delta = event['contentBlockDelta']['delta']
+                    
+                    if 'thinking' in delta:
+                        # Thinking content
+                        thinking_chunk = delta['thinking']
+                        if thinking_text is None:
+                            thinking_text = thinking_chunk
+                        else:
+                            thinking_text += thinking_chunk
+                        
+                        if verbose:
+                            print(thinking_chunk, end='', flush=True)
+                    
+                    elif 'text' in delta:
+                        # Result text content
+                        text_chunk = delta['text']
+                        result_text += text_chunk
+                        
+                        if verbose:
+                            if thinking_shown:
+                                print(f"\n{'='*70}\n")
+                                print("REFINED TRANSCRIPT:")
+                                print(f"{'='*70}\n")
+                                thinking_shown = False
+                            print(text_chunk, end='', flush=True)
+                
+                elif 'metadata' in event:
+                    usage = event['metadata'].get('usage', {})
+                    input_tokens = usage.get('inputTokens', 0)
+                    output_tokens = usage.get('outputTokens', 0)
+                
+                elif 'internalServerException' in event:
+                    error_msg = event['internalServerException'].get('message', 'Unknown server error')
+                    raise Exception(f"AWS Bedrock server error: {error_msg}")
+                
+                elif 'modelStreamErrorException' in event:
+                    error_msg = event['modelStreamErrorException'].get('message', 'Unknown streaming error')
+                    # Mark as retryable error
+                    raise ModelStreamError(f"Model streaming error: {error_msg}")
+                
+                elif 'throttlingException' in event:
+                    error_msg = event['throttlingException'].get('message', 'Request throttled')
+                    raise Exception(f"Throttling error: {error_msg}")
+                
+                elif 'validationException' in event:
+                    error_msg = event['validationException'].get('message', 'Validation failed')
+                    raise Exception(f"Validation error: {error_msg}")
+            
+            print()  # New line after streaming
+            
+            # Verify we got content
+            if not result_text:
+                raise Exception("No text content received from Claude stream")
             
             if verbose:
-                usage = response.get('usage', {})
-                input_tokens = usage.get('inputTokens', 0)
-                output_tokens = usage.get('outputTokens', 0)
-                print(f"\n[OK] Claude response received")
+                stream_duration = time.time() - last_event_time if last_event_time else 0
+                print(f"\n[OK] Claude response complete")
                 print(f"  • Input tokens: {input_tokens:,}")
                 print(f"  • Output tokens: {output_tokens:,}")
                 print(f"  • Estimated cost: ${(input_tokens * 0.003 / 1000 + output_tokens * 0.015 / 1000):.4f}")
+                if stream_duration > 0:
+                    print(f"  • Stream completed in {stream_duration:.1f}s")
             
             # Extract JSON from response (handle markdown code blocks)
             json_text = result_text.strip()
@@ -315,38 +524,47 @@ Remember: Be conservative with corrections, generous with paragraph breaks. Make
             
             result = json.loads(json_text)
             
-            # Get refined transcript and changes
-            refined_text = result.get('refined_transcript', transcript_text)
-            changes_made = result.get('changes_made', [])
-            paragraph_count = result.get('paragraph_count', 0)
+            # Get corrections and paragraph breaks from Claude
+            corrections = result.get('corrections', [])
+            paragraph_breaks = result.get('paragraph_breaks', [])
             
             print(f"\n{'='*70}")
-            print(f"Claude made {len(changes_made)} corrections")
-            print(f"Created {paragraph_count} paragraphs")
+            print(f"Claude identified {len(corrections)} corrections")
+            print(f"Claude identified {len(paragraph_breaks)} paragraph breaks")
             print(f"{'='*70}")
             
-            if changes_made:
-                print("\nChanges made:")
-                for change in changes_made[:10]:  # Show first 10
-                    print(f"  • {change.get('original', '')[:50]}... -> {change.get('corrected', '')[:50]}...")
-                    print(f"    Reason: {change.get('reason', 'N/A')}")
-                if len(changes_made) > 10:
-                    print(f"  ... and {len(changes_made) - 10} more changes")
+            # Apply corrections and paragraph breaks locally
+            refined_text, apply_stats = self.apply_corrections_and_paragraphs(
+                transcript_text, 
+                corrections, 
+                paragraph_breaks
+            )
+            
+            # Show summary
+            print(f"\n{'='*70}")
+            print(f"REFINEMENT COMPLETE")
+            print(f"  • Corrections applied: {apply_stats['corrections_applied']}/{len(corrections)}")
+            print(f"  • Paragraph breaks inserted: {apply_stats['breaks_applied']}/{len(paragraph_breaks)}")
+            print(f"  • Final paragraph count: {apply_stats['paragraph_count']}")
+            print(f"{'='*70}")
             
             # Return in expected format
             return {
                 'refined_transcript': refined_text,
-                'changes': changes_made,
+                'changes': corrections,
                 'summary': {
-                    'total_changes': len(changes_made),
-                    'paragraph_count': paragraph_count
+                    'total_changes': apply_stats['corrections_applied'],
+                    'paragraph_count': apply_stats['paragraph_count'],
+                    'corrections_failed': apply_stats['corrections_failed'],
+                    'breaks_applied': apply_stats['breaks_applied']
                 }
             }
             
+        except ModelStreamError:
+            # Re-raise ModelStreamError for retry logic
+            raise
         except Exception as e:
-            print(f"\n[ERROR] Error calling Claude: {e}")
-            import traceback
-            traceback.print_exc()
+            # Other errors are not retryable
             raise
     
     def process_file(self, input_file, output_file=None, verbose=False):
@@ -402,20 +620,20 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Refine a formatted transcript
+  # Refine a formatted transcript (verbose by default)
   python claude_refine_transcript.py "downloads/Clip 1_1969_formatted.txt"
   
   # Specify output file
   python claude_refine_transcript.py input.txt --output refined.txt
   
-  # Verbose mode (show Claude's full response)
-  python claude_refine_transcript.py input.txt --verbose
+  # Silent mode (no streaming output)
+  python claude_refine_transcript.py input.txt --silent
         """
     )
     parser.add_argument('input_file', help='Path to transcript file (.txt)')
     parser.add_argument('-o', '--output', help='Output file path (default: input_refined.txt)')
-    parser.add_argument('-v', '--verbose', action='store_true', 
-                        help='Show detailed progress and Claude responses')
+    parser.add_argument('-s', '--silent', action='store_true', 
+                        help='Silent mode - disable streaming output and thinking display')
     parser.add_argument('--region', default='us-east-1',
                         help='AWS region (default: us-east-1)')
     
@@ -424,9 +642,12 @@ Examples:
     # Initialize refiner
     refiner = ClaudeTranscriptRefiner(region_name=args.region)
     
+    # Verbose is default (ON unless --silent is specified)
+    verbose = not args.silent
+    
     # Process file
     try:
-        refiner.process_file(args.input_file, args.output, args.verbose)
+        refiner.process_file(args.input_file, args.output, verbose)
         print(f"\n{'='*70}")
         print("[OK] REFINEMENT COMPLETE")
         print(f"{'='*70}\n")

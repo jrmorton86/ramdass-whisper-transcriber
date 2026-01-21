@@ -2,15 +2,15 @@
 """
 Audio Asset Processing Pipeline
 
-Downloads audio from Intelligence Bank, transcribes with AWS Transcribe (speaker diarization),
+Downloads audio from Intelligence Bank, transcribes with LOCAL WHISPER AI,
 generates 3 transcript formats (SRT, formatted .txt, raw JSON), creates embeddings, and
 stores everything in the database.
 
 Usage:
-    python3 process_audio_asset.py <asset_uuid> [--verbose]
+    python3 process_audio_asset.py <asset_uuid> [--verbose] [--model base]
 
 Example:
-    python3 process_audio_asset.py 550e8400-e29b-41d4-a716-446655440000 --verbose
+    python3 process_audio_asset.py 550e8400-e29b-41d4-a716-446655440000 --verbose --model medium
 """
 
 import os
@@ -32,6 +32,9 @@ import boto3
 from botocore.exceptions import ClientError
 import psycopg2
 
+# Import local Whisper transcription
+from whisper_with_vocab import VocabularyEnhancedTranscriber
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -50,18 +53,54 @@ bedrock_runtime = boto3.client('bedrock-runtime', region_name=AWS_REGION)
 
 
 def get_db_connection():
-    """Get database connection using AWS Secrets Manager."""
-    secrets_client = boto3.client('secretsmanager', region_name=AWS_REGION)
-    response = secrets_client.get_secret_value(SecretId='rds!cluster-5d0a4c76-e89a-4b6d-8087-2e68f185e24b')
-    db_credentials = json.loads(response['SecretString'])
+    """Get database connection using same approach as database_navigator."""
+    # Import here to avoid circular dependency
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from database_navigator.db import get_connection
+    return get_connection()
+
+
+def transcribe_with_whisper(audio_path: str, asset_uuid: str, base_filename: str, model_name: str = "base") -> Dict:
+    """
+    Transcribe audio using local Whisper AI with vocabulary enhancement.
     
-    return psycopg2.connect(
-        host='dam-ramdass-io-rds.cluster-c7ecmfdohgux.us-east-1.rds.amazonaws.com',
-        port=5432,
-        dbname='dam_ramdass_io_rds',
-        user=db_credentials['username'],
-        password=db_credentials['password']
+    Args:
+        audio_path: Path to local audio file
+        asset_uuid: Asset UUID for S3 upload path
+        base_filename: Base filename for output files
+        model_name: Whisper model size (tiny, base, small, medium, large)
+    
+    Returns:
+        dict: Whisper transcription result with segments and metadata
+    """
+    logger.info(f"🎙️  Transcribing with Whisper AI (model: {model_name})...")
+    logger.info(f"   Using vocabulary-enhanced transcription")
+    
+    # Initialize Whisper transcriber with vocabulary
+    transcriber = VocabularyEnhancedTranscriber()
+    
+    # Transcribe
+    result = transcriber.transcribe(
+        audio_path,
+        model_name=model_name,
+        language="en",
+        apply_vocab_corrections=True,
+        remove_fillers=False
     )
+    
+    logger.info(f"✅ Transcription complete ({len(result['text'])} chars)")
+    
+    # Save transcript JSON to temp location (will upload to S3 later)
+    temp_json_path = os.path.join(os.path.dirname(audio_path), f"{base_filename}.json")
+    with open(temp_json_path, 'w', encoding='utf-8') as f:
+        json.dump(result, f, indent=2, ensure_ascii=False)
+    
+    # Upload JSON to S3
+    json_s3_key = f"audio/{asset_uuid}/{base_filename}.json"
+    upload_to_s3(temp_json_path, json_s3_key)
+    logger.info(f"✅ Uploaded transcript JSON to S3: {json_s3_key}")
+    
+    return result
 
 
 def get_ib_session():
@@ -1387,31 +1426,32 @@ def process_audio_asset(asset_uuid: str, verbose: bool = False) -> Dict:
             base_filename = os.path.splitext(transcription_filename)[0]
             logger.info(f"Base filename for transcripts: {base_filename}")
             
-            # Step 2: Start transcription
-            logger.info("Step 2/7: Starting transcription with speaker diarization...")
-            job_name = start_transcription_job(asset_uuid, transcription_audio_uri, base_filename)
-            summary['transcription_job'] = job_name
-            summary['steps_completed'].append('transcription_start')
+            # Step 2: Transcribe with LOCAL Whisper AI
+            logger.info("Step 2/7: Transcribing with LOCAL Whisper AI...")
+            whisper_model = 'base'  # Options: tiny, base, small, medium, large
+            logger.info(f"   Model: {whisper_model}")
+            logger.info(f"   Using vocabulary-enhanced transcription")
             
-            # Step 3: Wait for transcription (poll S3 for output file)
-            logger.info("Step 3/7: Waiting for transcription output in S3...")
-            transcript_json = wait_for_transcription(job_name, asset_uuid, base_filename)
-            
-            # Check if transcription failed due to corrupted/invalid audio file
-            if transcript_json is None:
-                logger.error("❌ Transcription failed due to corrupted or invalid audio file")
+            try:
+                transcript_result = transcribe_with_whisper(
+                    transcription_local_path if 'transcription_local_path' in locals() else audio_local_path,
+                    asset_uuid, 
+                    base_filename,
+                    model_name=whisper_model
+                )
+                summary['transcription_method'] = f'whisper_{whisper_model}'
+                summary['steps_completed'].append('transcription_complete')
                 
-                # Mark as skipped, not failed
-                summary['status'] = 'skipped'
-                summary['message'] = 'Corrupted or invalid audio file - AWS Transcribe could not parse'
-                summary['steps_completed'].append('transcription_failed_corrupted')
+                # Whisper returns different format - store for compatibility
+                transcript_json = transcript_result  # Use Whisper result directly
                 
-                # Clean up temp directory
+            except Exception as e:
+                logger.error(f"❌ Whisper transcription failed: {e}")
+                summary['status'] = 'failed'
+                summary['message'] = f'Whisper transcription error: {str(e)}'
+                summary['steps_completed'].append('transcription_failed')
                 shutil.rmtree(temp_dir, ignore_errors=True)
-                
                 return summary
-            
-            summary['steps_completed'].append('transcription_complete')
             
             # Step 4: Generate transcript formats
             logger.info("Step 4/7: Generating transcript formats...")

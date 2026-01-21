@@ -1,5 +1,12 @@
 """Get assets that have NO embeddings in the asset_embeddings table."""
-from database_navigator import get_connection
+import sys
+import os
+from pathlib import Path
+
+# Add parent directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from database_navigator.db import get_connection
 from typing import List, Dict, Any, Optional
 import json
 
@@ -141,6 +148,7 @@ def export_assets_without_embeddings(
 ):
     """
     Export all assets without ANY embeddings to a JSON file.
+    Saves to the parent 'transcriber' folder for use by batch_process_from_json.py
     
     Args:
         output_file: Filename for the JSON export
@@ -162,7 +170,8 @@ def export_assets_without_embeddings(
     print(f"\nFetching {count:,} records...")
     assets = get_assets_without_any_embeddings(asset_type=asset_type)
     
-    output_path = Path(__file__).parent / output_file
+    # Save to parent 'transcriber' folder (not database_navigator folder)
+    output_path = Path(__file__).parent.parent / output_file
     
     print(f"Writing to {output_path}...")
     with open(output_path, 'w', encoding='utf-8') as f:
@@ -173,7 +182,7 @@ def export_assets_without_embeddings(
             "assets": assets
         }, f, indent=2, ensure_ascii=False)
     
-    print(f"✓ Exported {len(assets):,} assets to: {output_path}")
+    print(f"[OK] Exported {len(assets):,} assets to: {output_path}")
     
     # Print summary
     print("\nBreakdown by asset type:")

@@ -75,7 +75,10 @@ def apply_corrections_to_srt(subtitles, corrections):
                     **correction,
                     'subtitle_index': sub['index']
                 })
-                print(f"  [OK] Applied to subtitle #{sub['index']}: {original[:50]}... -> {corrected[:50]}...")
+                # Use ASCII-safe output to avoid encoding errors
+                orig_safe = original[:50].encode('ascii', 'replace').decode('ascii')
+                corr_safe = corrected[:50].encode('ascii', 'replace').decode('ascii')
+                print(f"  [OK] Applied to subtitle #{sub['index']}: {orig_safe}... -> {corr_safe}...")
                 break
         
         if not found:
@@ -113,7 +116,9 @@ def apply_corrections_to_srt(subtitles, corrections):
                             break
         
         if not found:
-            print(f"  [SKIP] Could not apply: {original[:50]}...")
+            # Use ASCII-safe output to avoid encoding errors
+            orig_safe = original[:50].encode('ascii', 'replace').decode('ascii')
+            print(f"  [SKIP] Could not apply: {orig_safe}...")
     
     return changes_made
 

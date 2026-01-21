@@ -1,31 +1,120 @@
-# Ramdass.io Transcriber Suite
+# Ram Dass Audio Transcription & Embeddings Pipeline
 
-A comprehensive suite of tools for managing, downloading, and transcribing audio assets from Intelligence Bank and S3, with database navigation capabilities.
+Complete pipeline for processing Ram Dass audio talks:
+- **Whisper AI** local transcription (vocabulary-enhanced)
+- **Claude** refinement for accuracy
+- **Titan** embeddings generation (4 types)
+- **AWS Comprehend** entity/phrase/sentiment analysis
+- **PostgreSQL** storage via SSH tunnel
+- **S3** upload to dam-ramdass-io-assets
 
 ## Project Structure
 
 ```
 transcriber/
-├── intelligencebank_utils/    # Intelligence Bank API integration
-│   ├── config.py             # IB configuration
-│   ├── ib_client.py          # IB API client
-│   ├── ib_discovery.py       # Asset discovery service
-│   └── download_asset.py     # Direct IB download
-├── s3_utils/                 # AWS S3 utilities
-│   ├── config.py             # S3 configuration
-│   └── s3_client.py          # S3 client operations
-├── database_navigator/       # PostgreSQL database tools
-│   ├── config.py             # Database configuration
-│   ├── db.py                 # Database connection
-│   ├── ssh_tunnel.py         # SSH tunnel for remote DB
-│   ├── extract_schema.py     # Schema extraction
-│   └── view_assets.py        # Asset querying
-├── transcribe_pipeline/      # Audio transcription pipeline
-│   └── [see PIPELINE.md]
-├── download_smart.py         # Smart download (S3 → IB fallback)
-├── test_ib_connection.py     # Test IB connectivity
-└── config.py                 # Root configuration
+├── transcribe_pipeline/          # YOUR Whisper + Claude pipeline
+│   ├── transcribe_pipeline.py    # Main orchestrator
+│   ├── whisper_with_vocab.py     # Vocabulary-enhanced Whisper
+│   └── claude_refine_transcript.py
+├── post_process_transcript.py    # Embeddings + Comprehend + DB + S3
+├── batch_process_audio.py        # Batch processor (in progress)
+├── comprehend_utils/             # Comprehend + embeddings utilities
+├── database_navigator/           # Database connection via SSH tunnel
+├── intelligencebank_utils/       # Intelligence Bank API client
+└── s3_utils/                     # S3 upload/download helpers
 ```
+
+## Quick Start
+
+### 1. Process Single Audio File
+
+```bash
+# Full pipeline: Whisper → Claude → Embeddings → Comprehend → DB → S3
+cd transcribe_pipeline
+python transcribe_pipeline.py ../downloads/audio.mp3 --model medium
+
+# Post-process for embeddings + DB + S3
+cd ..
+python post_process_transcript.py <asset-uuid> downloads/audio_base_name
+```
+
+### 2. Batch Processing from Database
+
+**Recommended workflow using `run_batch_from_json.bat`:**
+
+```bash
+# Step 1: Start SSH tunnel (in separate terminal)
+python database_navigator/ssh_tunnel.py
+
+# Step 2: Run the full workflow batch file
+run_batch_from_json.bat
+```
+
+This batch file:
+1. Generates `assets_without_embeddings.json` from the database
+2. Processes all Audio assets with **up to 5 parallel threads**
+3. Automatically removes assets from JSON before processing (prevents duplicates)
+4. Processes oldest to newest, excluding "To Be Sorted"
+
+**Manual workflow:**
+
+```bash
+# 1. Generate the JSON file
+echo "2" | venv/Scripts/python.exe database_navigator/get_assets_without_embeddings.py
+
+# 2. Process from JSON with 5 parallel threads
+venv/Scripts/python.exe batch_process_from_json.py -y -t 5 -d cuda:0
+```
+
+Options:
+- `-y`: Auto-continue on errors
+- `-t N`: Number of parallel threads (default: 5)
+- `-d DEVICE`: CUDA device (e.g., `cuda:0`, `cuda:1` for multi-GPU)
+- `--experimental`: ⚡ Enable intelligent GPU load balancing (dual-GPU only)
+- `--max-per-gpu N`: Max concurrent tasks per GPU in experimental mode (default: 5)
+
+**Experimental GPU Load Balancing:**
+```bash
+# Automatically balance 10 tasks across cuda:0 and cuda:1
+venv/Scripts/python.exe batch_process_from_json.py -y -t 10 --experimental
+```
+
+**Alternative: Process by limit/skip:**
+
+```bash
+python batch_process_audio.py --limit 10 --model medium --skip 50
+```
+
+## Prerequisites
+
+1. **SSH Tunnel** (for database access):
+```powershell
+Start-Job -ScriptBlock { 
+    ssh -i "$env:USERPROFILE\.ssh\ramdass-bastion-temp.pem" `
+        -N -L 5433:dam-ramdass-io-rds-instance-1.c7ecmfdohgux.us-east-1.rds.amazonaws.com:5432 `
+        ec2-user@54.175.205.16 
+}
+```
+
+2. **Python Environment**:
+```bash
+# Activate venv
+venv\Scripts\activate
+
+# Install dependencies
+pip install -r transcribe_pipeline/requirements.txt
+```
+
+## Configuration
+
+Environment variables in `.env`:
+- Database: `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_NAME`
+- AWS: `AWS_REGION`, `S3_BUCKET`
+- Intelligence Bank: `IB_API_EMAIL`, `IB_API_PASSWORD`
+
+## ramdass.io Transcriber Suite
+
+A comprehensive suite of tools for managing, downloading, and transcribing audio assets from Intelligence Bank and S3, with database navigation capabilities.
 
 ## Features
 
