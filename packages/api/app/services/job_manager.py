@@ -30,9 +30,46 @@ class JobManager:
         # Log history for completed/historical access
         self.log_history: dict[str, list] = defaultdict(list)
 
+        # Dashboard subscribers for real-time updates (set of queues)
+        self._dashboard_subscribers: set[asyncio.Queue] = set()
+
         # Background task reference
         self._processor_task: Optional[asyncio.Task] = None
         self._running = False
+
+    def subscribe_dashboard(self) -> asyncio.Queue:
+        """Subscribe to dashboard updates. Returns a queue to listen on."""
+        queue = asyncio.Queue()
+        self._dashboard_subscribers.add(queue)
+        logger.info(f"Dashboard subscriber added. Total: {len(self._dashboard_subscribers)}")
+        return queue
+
+    def unsubscribe_dashboard(self, queue: asyncio.Queue):
+        """Unsubscribe from dashboard updates."""
+        self._dashboard_subscribers.discard(queue)
+        logger.info(f"Dashboard subscriber removed. Total: {len(self._dashboard_subscribers)}")
+
+    async def _broadcast_dashboard(self, event_type: str, data: dict):
+        """Broadcast an event to all dashboard subscribers."""
+        if not self._dashboard_subscribers:
+            return
+
+        event = {
+            "type": event_type,
+            "timestamp": datetime.utcnow().isoformat(),
+            **data,
+        }
+
+        # Send to all subscribers (remove any that fail)
+        failed = []
+        for queue in self._dashboard_subscribers:
+            try:
+                queue.put_nowait(event)
+            except asyncio.QueueFull:
+                failed.append(queue)
+
+        for queue in failed:
+            self._dashboard_subscribers.discard(queue)
 
     async def start(self):
         """Start the background job processor."""
@@ -75,6 +112,9 @@ class JobManager:
             "type": job_type,
             "input": input_data,
         })
+
+        # Broadcast to dashboard subscribers
+        await self._broadcast_dashboard("job_created", {"jobId": job_id})
 
         logger.info(f"Job {job_id} submitted for processing")
 
@@ -136,6 +176,13 @@ class JobManager:
         if job_id in self.log_queues:
             await self.log_queues[job_id].put(progress_entry)
 
+        # Broadcast to dashboard subscribers
+        await self._broadcast_dashboard("job_progress", {
+            "jobId": job_id,
+            "progress": progress,
+            "stage": stage,
+        })
+
     async def _emit_status(self, job_id: str, status: str, error: str = None):
         """Emit a status change."""
         status_entry = {
@@ -151,6 +198,13 @@ class JobManager:
         # Send to queue
         if job_id in self.log_queues:
             await self.log_queues[job_id].put(status_entry)
+
+        # Broadcast to dashboard subscribers
+        await self._broadcast_dashboard("job_updated", {
+            "jobId": job_id,
+            "status": status,
+            "error": error,
+        })
 
     async def _process_jobs(self):
         """Background task to process job queue."""

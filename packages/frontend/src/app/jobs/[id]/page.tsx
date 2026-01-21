@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { JobDetails } from "@/components/JobDetails";
 import { LogViewer } from "@/components/LogViewer";
 import { api } from "@/lib/api";
+import { useLogStream } from "@/lib/sse";
 import { Job } from "@/types";
 
 interface JobPageProps {
@@ -19,6 +20,46 @@ export default function JobPage({ params }: JobPageProps) {
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // SSE stream for real-time updates (only for active jobs)
+  const isActiveJob = job?.status === "processing" || job?.status === "pending";
+  const { logs, isConnected, jobState } = useLogStream(isActiveJob ? id : null);
+
+  // Update job from SSE events
+  useEffect(() => {
+    if (job && jobState.status && jobState.status !== job.status) {
+      setJob((prev) =>
+        prev
+          ? {
+              ...prev,
+              status: jobState.status as Job["status"],
+              progress: jobState.progress,
+              currentStage: jobState.stage ?? undefined,
+              error: jobState.error ?? undefined,
+            }
+          : prev
+      );
+    }
+    // Also update progress even if status hasn't changed
+    if (job && jobState.progress !== job.progress) {
+      setJob((prev) =>
+        prev
+          ? {
+              ...prev,
+              progress: jobState.progress,
+              currentStage: jobState.stage ?? prev.currentStage,
+            }
+          : prev
+      );
+    }
+  }, [jobState.status, jobState.progress, jobState.stage, jobState.error]);
+
+  // Refetch when job completes to get final data (result, duration, etc.)
+  useEffect(() => {
+    if (jobState.isComplete) {
+      fetchJob();
+    }
+  }, [jobState.isComplete]);
 
   const fetchJob = async () => {
     try {
@@ -35,16 +76,10 @@ export default function JobPage({ params }: JobPageProps) {
     }
   };
 
+  // Initial fetch only - no more polling!
   useEffect(() => {
     fetchJob();
-    // Poll for updates if job is processing
-    const interval = setInterval(() => {
-      if (job?.status === "processing" || job?.status === "pending") {
-        fetchJob();
-      }
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [id, job?.status]);
+  }, [id]);
 
   if (loading) {
     return (
@@ -89,9 +124,9 @@ export default function JobPage({ params }: JobPageProps) {
         {/* Job Details */}
         <JobDetails job={job} />
 
-        {/* Log Viewer - show for processing/pending jobs */}
-        {(job.status === "processing" || job.status === "pending") && (
-          <LogViewer jobId={job.id} />
+        {/* Log Viewer - show for active jobs */}
+        {isActiveJob && (
+          <LogViewer jobId={job.id} logs={logs} isConnected={isConnected} />
         )}
       </div>
     </div>

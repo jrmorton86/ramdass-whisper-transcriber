@@ -1,5 +1,6 @@
 """
 Main FastAPI application entry point.
+Includes job management, file uploads, and real-time SSE streaming.
 """
 
 import logging

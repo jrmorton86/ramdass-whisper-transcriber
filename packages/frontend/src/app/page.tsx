@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Activity,
@@ -15,6 +15,7 @@ import { JobSubmission } from "@/components/JobSubmission";
 import { JobQueue } from "@/components/JobQueue";
 import { SearchBar } from "@/components/SearchBar";
 import { api } from "@/lib/api";
+import { useDashboardStream } from "@/lib/sse";
 import { Job, AnalyticsData } from "@/types";
 
 export default function DashboardPage() {
@@ -41,11 +42,50 @@ export default function DashboardPage() {
     }
   };
 
+  // Handle SSE events from dashboard stream
+  const handleDashboardEvent = useCallback((event: {
+    type: string;
+    jobId: string;
+    status?: string;
+    progress?: number;
+    stage?: string;
+  }) => {
+    if (event.type === "job_created") {
+      // Refetch to get the new job details
+      fetchData();
+    } else if (event.type === "job_updated") {
+      // Update job status in place
+      setJobs((prev) =>
+        prev.map((job) =>
+          job.id === event.jobId
+            ? { ...job, status: (event.status as Job["status"]) ?? job.status }
+            : job
+        )
+      );
+      // Refetch analytics since status changed
+      api.getAnalytics().then(setAnalytics).catch(console.error);
+    } else if (event.type === "job_progress") {
+      // Update job progress in place
+      setJobs((prev) =>
+        prev.map((job) =>
+          job.id === event.jobId
+            ? {
+                ...job,
+                progress: event.progress ?? job.progress,
+                currentStage: event.stage ?? job.currentStage,
+              }
+            : job
+        )
+      );
+    }
+  }, []);
+
+  // Subscribe to dashboard SSE stream
+  const { isConnected } = useDashboardStream(handleDashboardEvent);
+
+  // Initial fetch only - no more polling!
   useEffect(() => {
     fetchData();
-    // Poll for updates every 5 seconds
-    const interval = setInterval(fetchData, 5000);
-    return () => clearInterval(interval);
   }, []);
 
   const filteredJobs = useMemo(() => {

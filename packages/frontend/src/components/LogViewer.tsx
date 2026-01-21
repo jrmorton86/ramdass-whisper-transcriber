@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Terminal, Download, Trash2 } from "lucide-react";
 import {
   Card,
@@ -13,26 +13,36 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LogEntry } from "@/types";
 import { parseAnsi } from "@/lib/ansi";
-import { useLogStream } from "@/lib/sse";
 
 interface LogViewerProps {
   jobId: string;
+  logs: LogEntry[];
+  isConnected: boolean;
 }
 
-export function LogViewer({ jobId }: LogViewerProps) {
-  const { logs, isConnected, clearLogs } = useLogStream(jobId);
+export function LogViewer({ jobId, logs, isConnected }: LogViewerProps) {
   const [autoScroll, setAutoScroll] = useState(true);
+  const [displayLogs, setDisplayLogs] = useState<LogEntry[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  // Sync external logs to display logs
+  useEffect(() => {
+    setDisplayLogs(logs);
+  }, [logs]);
+
+  const clearLogs = useCallback(() => {
+    setDisplayLogs([]);
+  }, []);
 
   useEffect(() => {
     if (autoScroll && bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [logs, autoScroll]);
+  }, [displayLogs, autoScroll]);
 
   const handleDownloadLogs = () => {
-    const logText = logs
+    const logText = displayLogs
       .map(
         (log) =>
           `[${log.timestamp.toISOString()}] [${log.level.toUpperCase()}] ${log.message}`
@@ -88,18 +98,18 @@ export function LogViewer({ jobId }: LogViewerProps) {
       <CardContent>
         <ScrollArea className="h-96 w-full rounded-md border bg-slate-950 p-4">
           <div className="font-mono text-sm space-y-1" ref={scrollRef}>
-            {logs.length === 0 ? (
+            {displayLogs.length === 0 ? (
               <div className="text-gray-500 text-center py-8">
-                Waiting for logs...
+                {isConnected ? "Waiting for logs..." : "Connecting..."}
               </div>
             ) : (
-              logs.map((log, index) => <LogLine key={index} log={log} />)
+              displayLogs.map((log, index) => <LogLine key={index} log={log} />)
             )}
             <div ref={bottomRef} />
           </div>
         </ScrollArea>
         <div className="mt-2 text-sm text-muted-foreground">
-          {logs.length} log {logs.length === 1 ? "entry" : "entries"}
+          {displayLogs.length} log {displayLogs.length === 1 ? "entry" : "entries"}
         </div>
       </CardContent>
     </Card>
