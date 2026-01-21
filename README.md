@@ -85,6 +85,28 @@ venv/Scripts/python.exe batch_process_from_json.py -y -t 10 --experimental
 python batch_process_audio.py --limit 10 --model medium --skip 50
 ```
 
+### 3. High-Performance Worker Pool (Recommended for Large Batches)
+
+**New in v2.0:** Uses persistent GPU workers that load Whisper model once, eliminating per-asset loading overhead. 3-10x faster than subprocess-based processing.
+
+```bash
+# Standard dual-GPU run
+python batch_process_pool.py -t 2 --gpus 0,1
+
+# Single GPU with large model
+python batch_process_pool.py -t 1 --gpus 0 -m large
+
+# Skip first 50 assets
+python batch_process_pool.py --skip 50 -y
+```
+
+Options:
+- `-t N`: Number of workers (default: 2)
+- `-m MODEL`: Whisper model (tiny/base/small/medium/large, default: medium)
+- `--gpus 0,1`: GPU IDs to use (comma-separated)
+- `-y`: Auto-continue on errors
+- `--skip N`: Skip first N assets
+
 ## Prerequisites
 
 1. **SSH Tunnel** (for database access):
