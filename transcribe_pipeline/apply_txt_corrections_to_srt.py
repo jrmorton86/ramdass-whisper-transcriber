@@ -123,6 +123,71 @@ def apply_corrections_to_srt(subtitles, corrections):
     return changes_made
 
 
+def apply_corrections_to_srt_file(changes_json_path, srt_path, output_path=None):
+    """
+    Apply TXT corrections to SRT file.
+
+    Designed for worker pools - takes file paths directly.
+
+    Args:
+        changes_json_path: Path to changes JSON from claude_refine_transcript
+        srt_path: Path to SRT file to refine
+        output_path: Optional output path (default: input_refined.srt)
+
+    Returns:
+        dict with 'srt_path', 'changes_path', 'changes_count'
+    """
+    changes_path = Path(changes_json_path)
+    srt_file = Path(srt_path)
+
+    # Load changes
+    with open(changes_path, 'r', encoding='utf-8') as f:
+        changes_data = json.load(f)
+
+    corrections = changes_data.get('changes', [])
+    print(f"Loaded {len(corrections)} corrections")
+
+    # Load and parse SRT
+    with open(srt_file, 'r', encoding='utf-8') as f:
+        srt_content = f.read()
+
+    subtitles = parse_srt(srt_content)
+    print(f"Loaded {len(subtitles)} subtitles")
+
+    # Apply corrections
+    changes_made = apply_corrections_to_srt(subtitles, corrections)
+    print(f"Applied {len(changes_made)} corrections")
+
+    # Determine output path
+    if output_path:
+        out_path = Path(output_path)
+    else:
+        out_path = srt_file.parent / f"{srt_file.stem}_refined.srt"
+
+    # Save refined SRT
+    refined_srt = subtitles_to_srt(subtitles)
+    with open(out_path, 'w', encoding='utf-8') as f:
+        f.write(refined_srt)
+    print(f"[OK] Saved refined SRT: {out_path}")
+
+    # Save changes log
+    changes_log_path = out_path.parent / f"{out_path.stem}_changes.json"
+    with open(changes_log_path, 'w', encoding='utf-8') as f:
+        json.dump({
+            'changes': changes_made,
+            'summary': {
+                'total_subtitles': len(subtitles),
+                'total_changes': len(changes_made)
+            }
+        }, f, indent=2, ensure_ascii=False)
+
+    return {
+        'srt_path': str(out_path),
+        'changes_path': str(changes_log_path),
+        'changes_count': len(changes_made)
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Apply TXT corrections to SRT file',
