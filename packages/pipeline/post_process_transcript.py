@@ -26,8 +26,8 @@ import json
 import logging
 from pathlib import Path
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add current directory to path for local imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from comprehend_utils.comprehend import (
     analyze_transcript_with_comprehend,

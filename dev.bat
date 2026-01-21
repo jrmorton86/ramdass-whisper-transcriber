@@ -1,0 +1,3 @@
+@echo off
+echo Starting Development Servers...
+python scripts\dev.py %*

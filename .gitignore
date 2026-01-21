@@ -39,8 +39,9 @@ develop-eggs/
 dist/
 eggs/
 .eggs/
-lib/
-lib64/
+# Python lib folders (not frontend/src/lib)
+/lib/
+/lib64/
 parts/
 sdist/
 var/
@@ -74,3 +75,23 @@ archive/
 
 # Downloads
 .claude/settings.local.json
+
+# Node.js
+node_modules/
+.next/
+.turbo/
+*.tsbuildinfo
+
+# API
+packages/api/venv/
+packages/api/uploads/
+packages/api/*.db
+*.db
+
+# Frontend
+packages/frontend/.next/
+packages/frontend/node_modules/
+
+# Figma exports (design reference)
+Design Frontend Dashboard/
+Design Frontend Dashboard.zip

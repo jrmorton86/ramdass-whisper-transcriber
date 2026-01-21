@@ -15,7 +15,7 @@ echo BATCH PROCESS AUDIO FROM JSON - Full Workflow
 echo ================================================================================
 echo.
 echo Prerequisites Check:
-echo   1. SSH tunnel running? (python database_navigator/ssh_tunnel.py)
+echo   1. SSH tunnel running? (python packages/pipeline/database_navigator/ssh_tunnel.py)
 echo   2. AWS authenticated? (will prompt if needed)
 echo.
 echo Step 1: Generating assets_without_embeddings.json from database...
@@ -23,12 +23,12 @@ echo        (This will export all Audio assets without embeddings)
 echo.
 
 REM Run get_assets_without_embeddings.py with option 2 (export all)
-echo 2 | venv\Scripts\python.exe database_navigator\get_assets_without_embeddings.py
+echo 2 | venv\Scripts\python.exe packages\pipeline\database_navigator\get_assets_without_embeddings.py
 
 if errorlevel 1 (
     echo.
     echo [ERROR] Failed to generate assets_without_embeddings.json
-    echo         Make sure SSH tunnel is running: python database_navigator\ssh_tunnel.py
+    echo         Make sure SSH tunnel is running: python packages\pipeline\database_navigator\ssh_tunnel.py
     echo.
     pause
     exit /b 1
@@ -46,7 +46,7 @@ pause
 REM Run batch_process_from_json.py with auto-continue enabled and 5 threads
 REM Add -d cuda:0 or -d cuda:1 to specify which GPU to use
 REM Add --skip N to skip the first N oldest assets (e.g., --skip 27)
-venv\Scripts\python.exe batch_process_from_json.py -y -t 5
+venv\Scripts\python.exe packages\pipeline\batch_process_from_json.py -y -t 5
 
 if errorlevel 1 (
     echo.

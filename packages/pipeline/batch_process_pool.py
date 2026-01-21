@@ -22,7 +22,11 @@ import threading
 from pathlib import Path
 import argparse
 
-sys.path.insert(0, str(Path(__file__).parent))
+# Add pipeline package to path
+PIPELINE_DIR = Path(__file__).parent
+ROOT_DIR = PIPELINE_DIR.parent.parent
+sys.path.insert(0, str(PIPELINE_DIR))
+
 from worker_pool import WorkerPool
 
 logging.basicConfig(
@@ -112,7 +116,7 @@ def main():
     # Parse GPU IDs
     gpu_ids = [int(x.strip()) for x in args.gpus.split(',')][:args.threads]
 
-    json_file = Path("assets_without_embeddings.json")
+    json_file = ROOT_DIR / "assets_without_embeddings.json"
 
     if not json_file.exists():
         logger.error(f"JSON file not found: {json_file}")
