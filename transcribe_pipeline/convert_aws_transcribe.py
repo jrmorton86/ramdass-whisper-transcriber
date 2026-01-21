@@ -522,7 +522,7 @@ def convert_transcript(json_file: str, output_dir: Optional[str] = None, force_f
     print("="*60)
 
 
-def format_whisper_transcript(transcript_json, output_dir, base_filename):
+def format_whisper_transcript(transcript_json: Dict, output_dir: str, base_filename: str) -> Dict[str, Optional[str]]:
     """
     Format Whisper transcript JSON to SRT and formatted TXT.
 
