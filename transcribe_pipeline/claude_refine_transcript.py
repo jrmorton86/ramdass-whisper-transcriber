@@ -614,6 +614,58 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
         return output_path, changes_path
 
 
+def refine_transcript_text(transcript_text: str, output_path: str, verbose: bool = False, region_name: str = "us-east-1") -> dict:
+    """
+    Refine transcript text using Claude and save results.
+
+    Designed for worker pools - handles full refinement workflow.
+
+    Args:
+        transcript_text: Raw transcript text to refine
+        output_path: Path for output file (will add _refined.txt)
+        verbose: Enable detailed output
+        region_name: AWS region for Bedrock
+
+    Returns:
+        dict with 'refined_path', 'changes_path', 'summary'
+    """
+    refiner = ClaudeTranscriptRefiner(region_name=region_name)
+
+    # Remove filler words first
+    print("\nRemoving filler words...")
+    cleaned_text = refiner.remove_filler_words(transcript_text)
+
+    # Refine with Claude
+    result = refiner.refine_transcript(cleaned_text, verbose=verbose)
+
+    # Save outputs
+    output_path = Path(output_path)
+    refined_path = output_path.parent / f"{output_path.stem}_refined.txt"
+    changes_path = output_path.parent / f"{output_path.stem}_refined_changes.json"
+
+    refined_text = result.get('refined_transcript', cleaned_text)
+
+    try:
+        with open(refined_path, 'w', encoding='utf-8') as f:
+            f.write(refined_text)
+        print(f"[OK] Saved refined transcript: {refined_path}")
+    except IOError as e:
+        raise IOError(f"Failed to write refined transcript to {refined_path}: {e}")
+
+    try:
+        with open(changes_path, 'w', encoding='utf-8') as f:
+            json.dump(result, f, indent=2, ensure_ascii=False)
+        print(f"[OK] Saved changes log: {changes_path}")
+    except IOError as e:
+        raise IOError(f"Failed to write changes log to {changes_path}: {e}")
+
+    return {
+        'refined_path': str(refined_path),
+        'changes_path': str(changes_path),
+        'summary': result.get('summary', {})
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Refine transcript using Claude Sonnet 4.5 with vocabulary awareness',
