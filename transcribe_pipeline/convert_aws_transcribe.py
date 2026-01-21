@@ -522,6 +522,60 @@ def convert_transcript(json_file: str, output_dir: Optional[str] = None, force_f
     print("="*60)
 
 
+def format_whisper_transcript(transcript_json, output_dir, base_filename):
+    """
+    Format Whisper transcript JSON to SRT and formatted TXT.
+
+    Designed for worker pools - takes parsed JSON dict directly.
+
+    Args:
+        transcript_json: Whisper output dict with 'segments' and 'text'
+        output_dir: Directory to write output files
+        base_filename: Base name for output files (without extension)
+
+    Returns:
+        dict with 'srt_path' and 'txt_path'
+    """
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    # Generate SRT
+    print(f"\n{'='*60}")
+    srt_content = whisper_to_srt(transcript_json)
+    srt_file = output_path / f"{base_filename}.srt"
+    try:
+        with open(srt_file, 'w', encoding='utf-8') as f:
+            f.write(srt_content)
+        print(f"[OK] SRT file saved: {srt_file}")
+    except IOError as e:
+        print(f"[ERROR] Failed to write SRT file: {e}")
+        raise
+
+    # Generate formatted TXT
+    print(f"\n{'='*60}")
+    formatted_text = whisper_to_formatted_text(transcript_json)
+    txt_file = output_path / f"{base_filename}_formatted.txt"
+    if formatted_text:
+        try:
+            with open(txt_file, 'w', encoding='utf-8') as f:
+                f.write(formatted_text)
+            print(f"[OK] Formatted TXT file saved: {txt_file}")
+        except IOError as e:
+            print(f"[ERROR] Failed to write TXT file: {e}")
+            raise
+    else:
+        print("WARNING: No text content generated")
+        txt_file = None
+
+    print(f"\n{'='*60}")
+    print("Formatting complete!")
+
+    return {
+        'srt_path': str(srt_file),
+        'txt_path': str(txt_file) if txt_file else None
+    }
+
+
 def main():
     """CLI entry point."""
     parser = argparse.ArgumentParser(
