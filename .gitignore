@@ -66,6 +66,9 @@ nul
 # Archived/deprecated files
 archive/
 
+# Git worktrees
+.worktrees/
+
 # Accidental Windows path artifacts
 %USERPROFILE%/
 
