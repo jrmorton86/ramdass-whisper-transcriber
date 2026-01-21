@@ -73,4 +73,4 @@ archive/
 %USERPROFILE%/
 
 # Downloads
-/transcribe_pipeline/downloads/
+/transcribe_pipeline/downloads/.claude/settings.local.json
