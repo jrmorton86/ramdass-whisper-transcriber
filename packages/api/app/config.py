@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
     class Config:
-        env_file = ".env"
+        env_file = str(ROOT_DIR / ".env")
         env_file_encoding = "utf-8"
 
 
