@@ -5,6 +5,7 @@ Job Manager - Handles background job processing and log streaming.
 import asyncio
 import json
 import logging
+import re
 from datetime import datetime
 from typing import Optional
 from collections import defaultdict
@@ -417,6 +418,16 @@ class JobManager:
         # These are stage completions, not pipeline completion
         if "completed successfully" in lower:
             return None
+
+        # Match Whisper transcription progress: [PROGRESS] Whisper transcription: X%
+        # Maps 0-100% whisper progress to 10-40% overall progress (step 1)
+        if "[progress]" in lower and "whisper" in lower:
+            match = re.search(r'(\d+)%', message)
+            if match:
+                whisper_pct = int(match.group(1))
+                # Map 0-100% to 10-40% overall
+                overall_pct = 10 + int(whisper_pct * 0.3)
+                return ("Transcribing", overall_pct, 1)
 
         # Match specific [STEP] markers from transcribe_pipeline.py
         if "[step]" in lower:
