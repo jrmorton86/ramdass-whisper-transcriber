@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Callable, Optional
 
 from ..config import settings
+from .s3_upload import upload_results_to_s3, cleanup_job_files
 
 
 class PipelineRunner:
@@ -211,6 +212,19 @@ class PipelineRunner:
                 ]
 
         await self._log("info", "Pipeline completed successfully!")
+
+        # Upload results to S3 (scaffolded) and cleanup local files
+        s3_result = await upload_results_to_s3(job_id, output_dir)
+        if s3_result["success"]:
+            await self._log("info", f"S3 upload scaffold completed for {len(s3_result['files'])} files")
+            # Only cleanup if S3 "upload" succeeded
+            cleanup_success = await cleanup_job_files(job_id, abs_file_path, output_dir)
+            if cleanup_success:
+                await self._log("info", "Local file cleanup completed")
+            else:
+                await self._log("warning", "Local file cleanup had some failures")
+        else:
+            await self._log("warning", "S3 upload scaffold failed, skipping cleanup")
 
         return {
             "success": True,
