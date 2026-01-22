@@ -7,6 +7,7 @@ Uses subprocess.Popen for cross-platform compatibility (Windows/Linux).
 import asyncio
 import json
 import os
+import re
 import subprocess
 import sys
 import threading
@@ -250,6 +251,8 @@ class PipelineRunner:
         Run a subprocess with real-time log capture.
 
         Uses subprocess.Popen for Windows compatibility, with async log reading.
+        Handles both newline-terminated output and carriage-return progress updates
+        (like tqdm progress bars used by Whisper).
 
         Args:
             cmd: Command and arguments as a list
@@ -276,24 +279,71 @@ class PipelineRunner:
             env=env,
         )
 
-        # Read output in a thread to avoid blocking
+        # Track last progress percentage to avoid spamming logs
+        last_progress_pct = -1
+
+        def parse_progress(text: str) -> Optional[int]:
+            """Extract progress percentage from tqdm-style output."""
+            # Match patterns like "50%|" or " 50%|" from tqdm
+            match = re.search(r'(\d+)%\|', text)
+            if match:
+                return int(match.group(1))
+            return None
+
+        # Read output handling both \n and \r terminated lines
         async def read_output():
+            nonlocal last_progress_pct
             loop = asyncio.get_event_loop()
+            buffer = ""
+
             while True:
                 if is_cancelled():
                     process.terminate()
                     return
 
-                # Read line in executor to avoid blocking
-                line = await loop.run_in_executor(None, process.stdout.readline)
+                # Read a chunk of bytes (non-blocking via executor)
+                chunk = await loop.run_in_executor(None, lambda: process.stdout.read(1024))
 
-                if not line:
+                if not chunk:
+                    # Process any remaining buffer
+                    if buffer.strip():
+                        level = self._detect_level(buffer)
+                        await self._log(level, buffer.strip())
                     break
 
-                decoded = line.decode("utf-8", errors="replace").rstrip()
-                if decoded:
-                    level = self._detect_level(decoded)
-                    await self._log(level, decoded)
+                # Decode and add to buffer
+                buffer += chunk.decode("utf-8", errors="replace")
+
+                # Process complete lines (split on \n or \r)
+                while '\n' in buffer or '\r' in buffer:
+                    # Find the first line terminator
+                    newline_pos = buffer.find('\n')
+                    cr_pos = buffer.find('\r')
+
+                    if newline_pos == -1:
+                        split_pos = cr_pos
+                    elif cr_pos == -1:
+                        split_pos = newline_pos
+                    else:
+                        split_pos = min(newline_pos, cr_pos)
+
+                    line = buffer[:split_pos].strip()
+                    buffer = buffer[split_pos + 1:]
+
+                    if not line:
+                        continue
+
+                    # Check if this is a progress update
+                    progress = parse_progress(line)
+                    if progress is not None:
+                        # Only log progress at certain intervals to avoid spam
+                        if progress > last_progress_pct and (progress % 5 == 0 or progress == 100):
+                            last_progress_pct = progress
+                            await self._log("info", f"[PROGRESS] Whisper transcription: {progress}%")
+                    else:
+                        # Regular log line
+                        level = self._detect_level(line)
+                        await self._log(level, line)
 
         await read_output()
         process.wait()
