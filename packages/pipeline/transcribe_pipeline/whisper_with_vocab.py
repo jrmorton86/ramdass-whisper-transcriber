@@ -6,84 +6,11 @@ Uses the vocabulary built from AWS Transcribe exports and keyword analysis
 to improve transcription accuracy for Ram Dass content.
 """
 
+import whisper
 import json
 import re
 import sys
 from pathlib import Path
-
-
-class ProgressTqdm:
-    """
-    A tqdm replacement that prints clean progress lines.
-
-    Instead of tqdm's complex terminal output with carriage returns,
-    this prints simple "PROGRESS: X%" lines that are easy to parse.
-    """
-
-    def __init__(self, iterable=None, total=None, **kwargs):
-        self.iterable = iterable
-        self.total = total or (len(iterable) if iterable is not None else 0)
-        self.n = 0
-        self.last_printed = -1
-
-    def __iter__(self):
-        for item in self.iterable:
-            yield item
-            self.update(1)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        pass
-
-    def update(self, n=1):
-        self.n += n
-        if self.total > 0:
-            pct = int(100 * self.n / self.total)
-            # Print every 5% to avoid spam
-            if pct >= self.last_printed + 5 or pct == 100:
-                self.last_printed = pct
-                print(f"PROGRESS: {pct}%", flush=True)
-
-    def close(self):
-        pass
-
-    def set_description(self, desc=None, refresh=True):
-        pass
-
-    def set_postfix(self, ordered_dict=None, refresh=True, **kwargs):
-        pass
-
-
-def install_progress_tqdm():
-    """
-    Monkey-patch tqdm to use our simple progress printer.
-
-    This patches tqdm BEFORE whisper imports it, ensuring our
-    progress printer is used instead of the default tqdm.
-    """
-    import tqdm as tqdm_module
-    tqdm_module.tqdm = ProgressTqdm
-
-    # Also patch tqdm.auto which whisper uses
-    try:
-        import tqdm.auto
-        tqdm.auto.tqdm = ProgressTqdm
-    except ImportError:
-        pass
-
-
-# Patch tqdm BEFORE importing whisper (whisper caches tqdm on import)
-install_progress_tqdm()
-import whisper
-
-# Also patch whisper's internal tqdm reference directly
-try:
-    import whisper.transcribe
-    whisper.transcribe.tqdm = ProgressTqdm
-except (ImportError, AttributeError):
-    pass
 
 
 class VocabularyEnhancedTranscriber:

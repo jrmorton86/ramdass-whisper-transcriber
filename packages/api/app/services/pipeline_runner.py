@@ -276,9 +276,9 @@ class PipelineRunner:
         last_progress_pct = -1
 
         def parse_progress(text: str) -> Optional[int]:
-            """Extract progress percentage from PROGRESS: X% output."""
-            # Match our custom "PROGRESS: 50%" format
-            match = re.search(r'PROGRESS:\s*(\d+)%', text)
+            """Extract progress percentage from tqdm-style output."""
+            # Match tqdm patterns like "50%|" or " 50%|" or "100%|"
+            match = re.search(r'(\d+)%\|', text)
             if match:
                 return int(match.group(1))
             return None
@@ -294,9 +294,8 @@ class PipelineRunner:
                     process.terminate()
                     return
 
-                # Read small chunks for responsive progress updates
-                # 256 bytes is small enough for real-time feedback but not too slow
-                chunk = await loop.run_in_executor(None, lambda: process.stdout.read(256))
+                # Read 1 byte at a time for maximum responsiveness to tqdm progress
+                chunk = await loop.run_in_executor(None, lambda: process.stdout.read(1))
 
                 if not chunk:
                     # Process any remaining buffer
