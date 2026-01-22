@@ -5,12 +5,12 @@ Job Manager - Handles background job processing and log streaming.
 import asyncio
 import json
 import logging
-import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional
 from collections import defaultdict
 
 from .pipeline_runner import PipelineRunner
+from .resource_manager import ResourceManager
 from ..config import settings
 
 logger = logging.getLogger(__name__)
@@ -47,17 +47,14 @@ class JobManager:
         # Dashboard subscribers for real-time updates (set of queues)
         self._dashboard_subscribers: set[asyncio.Queue] = set()
 
-        # GPU tracking
-        self._gpu_ids: list[int] = self._parse_gpu_ids(settings.gpu_ids)
-        self._gpu_busy_until: dict[int, datetime] = {gpu_id: datetime.min for gpu_id in self._gpu_ids}
-        self._gpu_current_job: dict[int, str] = {}
+        # Resource manager for GPU slots and RAM
+        gpu_ids = self._parse_gpu_ids(settings.gpu_ids)
+        self._resource_manager = ResourceManager(gpu_ids)
 
-        # Background task references (one per GPU)
-        self._processor_tasks: list[asyncio.Task] = []
+        # Background task references
+        self._scheduler_task: Optional[asyncio.Task] = None
+        self._job_tasks: dict[str, asyncio.Task] = {}
         self._running = False
-
-        # Lock for GPU state modifications
-        self._gpu_lock = asyncio.Lock()
 
     def _parse_gpu_ids(self, gpu_ids_str: str) -> list[int]:
         """Parse comma-separated GPU IDs string into list of integers."""
@@ -68,51 +65,6 @@ class JobManager:
         except ValueError:
             logger.warning(f"Invalid gpu_ids setting '{gpu_ids_str}', defaulting to [0]")
             return [0]
-
-    def get_least_busy_gpu(self) -> int:
-        """
-        Returns the GPU ID that will be free soonest.
-
-        This method is primarily for external status queries (e.g., dashboard display,
-        API endpoints) rather than internal scheduling. The actual load balancing is
-        achieved by having one processor task per GPU, where each processor only takes
-        a new job from the shared queue when it's free. This naturally distributes
-        work to available GPUs.
-
-        If all GPUs have busy_until times in the past, returns the first available GPU.
-        """
-        # Find the GPU with the lowest busy_until time
-        least_busy_gpu = self._gpu_ids[0]
-        least_busy_time = self._gpu_busy_until.get(least_busy_gpu, datetime.min)
-
-        for gpu_id in self._gpu_ids:
-            busy_until = self._gpu_busy_until.get(gpu_id, datetime.min)
-            if busy_until < least_busy_time:
-                least_busy_time = busy_until
-                least_busy_gpu = gpu_id
-
-        return least_busy_gpu
-
-    def estimate_job_duration(self, file_path: str) -> float:
-        """
-        Estimate job duration based on file size.
-
-        Uses a rough estimate of 1 second processing per 100KB, with a minimum of 60 seconds.
-
-        Args:
-            file_path: Path to the audio file
-
-        Returns:
-            Estimated duration in seconds
-        """
-        try:
-            file_size = os.path.getsize(file_path)
-            # 1 second per 100KB (102400 bytes)
-            estimated_seconds = max(60.0, file_size / 102400.0)
-            return estimated_seconds
-        except OSError:
-            # If we can't get file size, return minimum estimate
-            return 60.0
 
     def subscribe_dashboard(self) -> asyncio.Queue:
         """Subscribe to dashboard updates. Returns a queue to listen on."""
@@ -149,35 +101,34 @@ class JobManager:
             self._dashboard_subscribers.discard(queue)
 
     async def start(self):
-        """Start the background job processors (one per GPU)."""
+        """Start the job scheduler."""
+        await self._resource_manager.initialize()
         self._running = True
-        self._processor_tasks = []
-
-        for gpu_id in self._gpu_ids:
-            task = asyncio.create_task(self._process_jobs(gpu_id))
-            self._processor_tasks.append(task)
-            logger.info(f"Started job processor for GPU {gpu_id}")
-
-        logger.info(f"Job manager started with {len(self._gpu_ids)} GPU(s): {self._gpu_ids}")
+        self._scheduler_task = asyncio.create_task(self._scheduler_loop())
+        logger.info("Job scheduler started")
 
     async def stop(self):
-        """Stop the background job processors."""
+        """Stop the job scheduler."""
         self._running = False
 
-        # Cancel all pending jobs
-        for job_id in list(self.active_jobs.keys()):
-            await self.cancel_job(job_id)
+        # Cancel scheduler
+        if self._scheduler_task:
+            self._scheduler_task.cancel()
+            try:
+                await self._scheduler_task
+            except asyncio.CancelledError:
+                pass
 
-        # Cancel all processor tasks
-        for task in self._processor_tasks:
+        # Cancel all job tasks
+        for job_id, task in list(self._job_tasks.items()):
             task.cancel()
             try:
                 await task
             except asyncio.CancelledError:
                 pass
 
-        self._processor_tasks = []
-        logger.info("Job manager stopped")
+        self._job_tasks = {}
+        logger.info("Job scheduler stopped")
 
     async def submit_job(self, job_id: str, job_type: str, input_data: str):
         """Submit a job for processing."""
@@ -297,17 +248,13 @@ class JobManager:
             "error": error,
         })
 
-    async def _process_jobs(self, gpu_id: int):
-        """Background task to process job queue for a specific GPU.
-
-        Args:
-            gpu_id: The GPU ID this processor is responsible for
-        """
-        logger.info(f"GPU {gpu_id} processor starting")
+    async def _scheduler_loop(self):
+        """Main scheduler loop - assigns jobs to available GPU slots."""
+        logger.info("Scheduler loop starting")
 
         while self._running:
             try:
-                # Wait for a job
+                # Wait for a job from the queue
                 job = await asyncio.wait_for(
                     self.pending_jobs.get(),
                     timeout=1.0
@@ -319,53 +266,68 @@ class JobManager:
 
             job_id = job["id"]
 
-            # Check if cancelled
+            # Check if cancelled before we even start
             if job_id in self.cancelled_jobs:
                 self.cancelled_jobs.discard(job_id)
                 continue
 
-            try:
-                # Track GPU assignment (protected by lock)
-                async with self._gpu_lock:
-                    self._gpu_current_job[gpu_id] = job_id
+            # Wait for an available GPU slot and reserve it atomically
+            gpu_id = await self._resource_manager.wait_and_reserve_slot(job_id)
 
-                    # Estimate job duration and update busy_until
-                    input_data = job.get("input", "")
-                    estimated_duration = self.estimate_job_duration(input_data)
-                    self._gpu_busy_until[gpu_id] = datetime.utcnow() + timedelta(seconds=estimated_duration)
+            # Check system RAM before starting
+            if not self._resource_manager.check_system_ram():
+                logger.info(f"Waiting for system RAM before starting job {job_id}")
+                await self._resource_manager.wait_for_ram()
 
-                logger.info(f"GPU {gpu_id} starting job {job_id}, estimated duration: {estimated_duration:.0f}s")
+            # Spawn job task
+            task = asyncio.create_task(self._run_job_with_cleanup(job, gpu_id))
+            self._job_tasks[job_id] = task
 
-                # Update status
-                self.active_jobs[job_id]["status"] = "processing"
-                self.active_jobs[job_id]["gpu_id"] = gpu_id
-                await self._emit_status(job_id, "processing")
+        logger.info("Scheduler loop stopped")
 
-                # Process the job
-                await self._run_job(job, gpu_id)
+    async def _run_job_with_cleanup(self, job: dict, gpu_id: int):
+        """
+        Run a job and ensure cleanup happens regardless of outcome.
 
-            except Exception as e:
-                logger.exception(f"Error processing job {job_id} on GPU {gpu_id}")
-                await self._emit_log(job_id, "error", f"Job failed: {str(e)}")
-                await self._emit_status(job_id, "failed", str(e))
-                await self._update_job_in_db(job_id, "failed", error=str(e))
+        Args:
+            job: Job dict with id, type, input
+            gpu_id: GPU ID assigned to this job
+        """
+        job_id = job["id"]
 
-            finally:
-                # Clear GPU tracking (protected by lock)
-                async with self._gpu_lock:
-                    if gpu_id in self._gpu_current_job and self._gpu_current_job.get(gpu_id) == job_id:
-                        del self._gpu_current_job[gpu_id]
-                    self._gpu_busy_until[gpu_id] = datetime.utcnow()
+        try:
+            # Update status
+            self.active_jobs[job_id]["status"] = "processing"
+            self.active_jobs[job_id]["gpu_id"] = gpu_id
+            await self._emit_status(job_id, "processing")
 
-                # Signal completion to log listeners
-                if job_id in self.log_queues:
-                    await self.log_queues[job_id].put(None)
+            # Run the job
+            await self._run_job(job, gpu_id)
 
-                # Clean up
-                if job_id in self.active_jobs:
-                    del self.active_jobs[job_id]
+        except asyncio.CancelledError:
+            logger.info(f"Job {job_id} was cancelled")
+            await self._emit_status(job_id, "cancelled")
+            await self._update_job_in_db(job_id, "cancelled")
 
-        logger.info(f"GPU {gpu_id} processor stopped")
+        except Exception as e:
+            logger.exception(f"Error processing job {job_id} on GPU {gpu_id}")
+            await self._emit_log(job_id, "error", f"Job failed: {str(e)}")
+            await self._emit_status(job_id, "failed", str(e))
+            await self._update_job_in_db(job_id, "failed", error=str(e))
+
+        finally:
+            # Always release the GPU slot
+            await self._resource_manager.release_slot(gpu_id, job_id)
+
+            # Signal completion to log listeners
+            if job_id in self.log_queues:
+                await self.log_queues[job_id].put(None)
+
+            # Clean up tracking
+            if job_id in self.active_jobs:
+                del self.active_jobs[job_id]
+            if job_id in self._job_tasks:
+                del self._job_tasks[job_id]
 
     async def _run_job(self, job: dict, gpu_id: int):
         """Run a single job through the pipeline.
@@ -528,6 +490,13 @@ class JobManager:
                     job.logs = json.dumps(logs)
 
                 await session.commit()
+
+    def get_resource_status(self) -> dict:
+        """Get current resource manager status."""
+        status = self._resource_manager.get_status()
+        status["pending_jobs"] = self.pending_jobs.qsize()
+        status["active_jobs"] = len(self.active_jobs)
+        return status
 
 
 # Global job manager instance
