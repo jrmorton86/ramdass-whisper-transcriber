@@ -6,7 +6,6 @@ Uses the vocabulary built from AWS Transcribe exports and keyword analysis
 to improve transcription accuracy for Ram Dass content.
 """
 
-import whisper
 import json
 import re
 import sys
@@ -61,18 +60,23 @@ def install_progress_tqdm():
     """
     Monkey-patch tqdm to use our simple progress printer.
 
-    This must be called before importing whisper's internal modules
-    that use tqdm.
+    This patches tqdm BEFORE whisper imports it, ensuring our
+    progress printer is used instead of the default tqdm.
     """
     import tqdm as tqdm_module
     tqdm_module.tqdm = ProgressTqdm
 
-    # Also patch tqdm.auto which whisper may use
+    # Also patch tqdm.auto which whisper uses
     try:
         import tqdm.auto
         tqdm.auto.tqdm = ProgressTqdm
     except ImportError:
         pass
+
+
+# Patch tqdm BEFORE importing whisper (whisper caches tqdm on import)
+install_progress_tqdm()
+import whisper
 
 
 class VocabularyEnhancedTranscriber:
@@ -339,9 +343,6 @@ class VocabularyEnhancedTranscriber:
             device_idx = actual_device.index if actual_device.index is not None else 0
             vram_before = torch.cuda.memory_allocated(device_idx) / 1024**3
             print(f"\n[VRAM] Before transcription: {vram_before:.2f} GB")
-        
-        # Install progress tqdm to get clean progress output
-        install_progress_tqdm()
 
         # Transcribe (NOTE: Whisper architecture requires audio in CPU RAM first)
         # Audio preprocessing (load, resample) happens on CPU
@@ -486,9 +487,6 @@ def transcribe_audio(audio_path, model, vocab_data=None, replacement_map=None,
         device_idx = _parse_device_index(target_device)
         vram_before = torch.cuda.memory_allocated(device_idx) / 1024**3
         print(f"[VRAM] Before transcription: {vram_before:.2f} GB")
-
-    # Install progress tqdm to get clean progress output
-    install_progress_tqdm()
 
     # Transcribe with timing
     start_time = time.time()
