@@ -26,6 +26,7 @@ async def lifespan(app: FastAPI):
     """Application lifespan handler for startup and shutdown."""
     # Startup
     logger.info("=== API STARTING (v2 with job creation) ===")
+    logger.info(f"GPU_IDS config: {settings.gpu_ids}")
     print("=== API STARTING (v2 with job creation) ===")
     await init_db()
     logger.info("Database initialized")

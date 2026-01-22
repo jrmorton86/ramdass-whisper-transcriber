@@ -5,7 +5,7 @@ Configuration settings for the API.
 import sys
 import os
 from pathlib import Path
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 # Root directory (transcriber/)
@@ -42,9 +42,11 @@ class Settings(BaseSettings):
     # CORS
     cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(
+        env_file=str(ROOT_DIR / ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore",  # Ignore extra env vars not in Settings
+    )
 
 
 # Global settings instance

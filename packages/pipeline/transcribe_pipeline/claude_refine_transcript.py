@@ -28,6 +28,7 @@ import boto3
 from pathlib import Path
 import argparse
 import time
+from difflib import SequenceMatcher
 
 # Load environment variables from .env file
 try:
@@ -46,6 +47,9 @@ class ModelStreamError(Exception):
 
 
 class ClaudeTranscriptRefiner:
+    # Fuzzy matching threshold (0.85 = 85% similarity required)
+    FUZZY_MATCH_THRESHOLD = 0.85
+
     def __init__(self,
                  vocab_file="keyword_lists/whisper_vocabulary.json",
                  replacement_map_file="keyword_lists/replacement_map.json",
@@ -133,7 +137,70 @@ class ClaudeTranscriptRefiner:
             self.replacement_map = json.load(f)
         
         print(f"[OK] Loaded {len(self.replacement_map)} known misspellings")
-    
+
+    def fuzzy_find(self, text, needle, threshold=None, search_window=50):
+        """
+        Find a needle in text using fuzzy matching when exact match fails.
+
+        Args:
+            text: The text to search in
+            needle: The string to find
+            threshold: Minimum similarity ratio (0-1). Defaults to FUZZY_MATCH_THRESHOLD
+            search_window: How many extra characters to check around potential matches
+
+        Returns:
+            tuple: (position, matched_text, is_exact) or (-1, None, False) if not found
+        """
+        if threshold is None:
+            threshold = self.FUZZY_MATCH_THRESHOLD
+
+        # Try exact match first (fastest)
+        exact_pos = text.rfind(needle)
+        if exact_pos != -1:
+            return (exact_pos, needle, True)
+
+        # Normalize for comparison: collapse whitespace, lowercase
+        def normalize(s):
+            return ' '.join(s.lower().split())
+
+        needle_normalized = normalize(needle)
+        needle_len = len(needle)
+
+        # Slide a window through the text looking for similar substrings
+        best_match = None
+        best_ratio = threshold  # Only accept matches above threshold
+        best_pos = -1
+
+        # Search from end to start (like rfind behavior)
+        for i in range(len(text) - needle_len, -1, -1):
+            # Check windows of varying sizes around needle length
+            for window_size in [needle_len, needle_len - 2, needle_len + 2, needle_len - 5, needle_len + 5]:
+                if window_size <= 0 or i + window_size > len(text):
+                    continue
+
+                candidate = text[i:i + window_size]
+                candidate_normalized = normalize(candidate)
+
+                # Quick rejection: if lengths are too different, skip
+                if abs(len(candidate_normalized) - len(needle_normalized)) > len(needle_normalized) * 0.3:
+                    continue
+
+                ratio = SequenceMatcher(None, needle_normalized, candidate_normalized).ratio()
+
+                if ratio > best_ratio:
+                    best_ratio = ratio
+                    best_match = candidate
+                    best_pos = i
+
+                    # If we found a very good match (>95%), stop searching
+                    if ratio > 0.95:
+                        return (best_pos, best_match, False)
+
+        if best_match:
+            return (best_pos, best_match, False)
+
+        return (-1, None, False)
+
     def remove_filler_words(self, text):
         """
         Remove filler words (um, uh, ugh, etc.) from text.
@@ -311,11 +378,13 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
         
         # Step 1: Apply text corrections
         print(f"\nApplying {len(corrections)} corrections...")
+        corrections_fuzzy = 0
         for correction in corrections:
             original = correction.get('original', '')
             corrected = correction.get('corrected', '')
             reason = correction.get('reason', '')
-            
+
+            # Try exact match first
             if original in result:
                 result = result.replace(original, corrected, 1)
                 corrections_applied += 1
@@ -324,59 +393,94 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
                 corr_safe = corrected[:40].encode('ascii', 'replace').decode('ascii')
                 print(f"  [OK] {orig_safe}... -> {corr_safe}...")
             else:
-                corrections_failed += 1
-                orig_safe = original[:40].encode('ascii', 'replace').decode('ascii')
-                print(f"  [X] Not found: {orig_safe}...")
-        
-        print(f"Corrections: {corrections_applied} applied, {corrections_failed} failed")
+                # Try fuzzy matching
+                pos, matched_text, is_exact = self.fuzzy_find(result, original)
+                if pos != -1 and matched_text:
+                    # Replace the fuzzy-matched text with the corrected version
+                    result = result[:pos] + corrected + result[pos + len(matched_text):]
+                    corrections_applied += 1
+                    corrections_fuzzy += 1
+                    orig_safe = original[:40].encode('ascii', 'replace').decode('ascii')
+                    corr_safe = corrected[:40].encode('ascii', 'replace').decode('ascii')
+                    matched_safe = matched_text[:40].encode('ascii', 'replace').decode('ascii')
+                    print(f"  [OK~] Fuzzy: {orig_safe}... -> {corr_safe}... (matched: {matched_safe}...)")
+                else:
+                    corrections_failed += 1
+                    orig_safe = original[:40].encode('ascii', 'replace').decode('ascii')
+                    print(f"  [X] Not found: {orig_safe}...")
+
+        print(f"Corrections: {corrections_applied} applied ({corrections_fuzzy} fuzzy), {corrections_failed} failed")
         
         # Step 2: Insert paragraph breaks
         print(f"\nInserting {len(paragraph_breaks)} paragraph breaks...")
         breaks_applied = 0
+        breaks_skipped = 0
+        breaks_fuzzy = 0
         breaks_failed = 0
-        
+
         # Sort by position in text (process from end to start to preserve indices)
         sorted_breaks = []
+        not_found = []
         for pb in paragraph_breaks:
             after_text = pb.get('after_text', '')
-            pos = result.rfind(after_text)  # Find last occurrence
+            # Use fuzzy matching with fallback
+            pos, matched_text, is_exact = self.fuzzy_find(result, after_text)
             if pos != -1:
-                sorted_breaks.append((pos + len(after_text), after_text, pb.get('reason', '')))
-        
+                # Store position at end of matched text, plus matched text and match type
+                sorted_breaks.append((pos + len(matched_text), after_text, matched_text, is_exact, pb.get('reason', '')))
+            else:
+                not_found.append(after_text)
+
+        # Log any that couldn't be found even with fuzzy matching
+        for after_text in not_found:
+            text_safe = after_text[:40].encode('ascii', 'replace').decode('ascii')
+            print(f"  [X] Not found (even with fuzzy): ...{text_safe}...")
+            breaks_failed += 1
+
         # Sort in reverse order (end to start)
         sorted_breaks.sort(reverse=True)
-        
-        for pos, after_text, reason in sorted_breaks:
+
+        for pos, after_text, matched_text, is_exact, reason in sorted_breaks:
             # Check if there's already a paragraph break here
             if result[pos:pos+2] == '\n\n':
                 # Use ASCII-safe output
                 text_safe = after_text[-20:].encode('ascii', 'replace').decode('ascii')
                 print(f"  [SKIP] Already has break after: ...{text_safe}...")
+                breaks_skipped += 1
                 continue
-            
+
             # Strip any leading whitespace after the break position
             # to avoid " Right there..." indentation issues
             stripped_pos = pos
             while stripped_pos < len(result) and result[stripped_pos] in ' \t':
                 stripped_pos += 1
-            
+
             # Insert \n\n at position, removing any leading whitespace
             result = result[:pos] + '\n\n' + result[stripped_pos:]
             breaks_applied += 1
+
             # Use ASCII-safe output
             text_safe = after_text[-25:].encode('ascii', 'replace').decode('ascii')
-            print(f"  [OK] Break after: ...{text_safe}...")
-        
-        breaks_failed = len(paragraph_breaks) - breaks_applied
-        print(f"Paragraph breaks: {breaks_applied} inserted, {breaks_failed} skipped/failed")
-        
+            if is_exact:
+                print(f"  [OK] Break after: ...{text_safe}...")
+            else:
+                breaks_fuzzy += 1
+                matched_safe = matched_text[-25:].encode('ascii', 'replace').decode('ascii')
+                print(f"  [OK~] Fuzzy break after: ...{text_safe}... (matched: ...{matched_safe}...)")
+
+        total_processed = breaks_applied + breaks_skipped + breaks_failed
+        print(f"Paragraph breaks: {breaks_applied} inserted ({breaks_fuzzy} fuzzy), {breaks_skipped} skipped, {breaks_failed} failed")
+
         # Count final paragraphs
         paragraph_count = result.count('\n\n') + 1
-        
+
         return result, {
             'corrections_applied': corrections_applied,
+            'corrections_fuzzy': corrections_fuzzy,
             'corrections_failed': corrections_failed,
             'breaks_applied': breaks_applied,
+            'breaks_fuzzy': breaks_fuzzy,
+            'breaks_skipped': breaks_skipped,
             'breaks_failed': breaks_failed,
             'paragraph_count': paragraph_count
         }

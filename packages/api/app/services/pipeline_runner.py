@@ -148,16 +148,18 @@ class PipelineRunner:
         await self._log("info", f"Using GPU {effective_gpu_id} for transcription")
 
         # Build command - use pipeline Python (has whisper installed)
+        # Note: Always use cuda:0 since CUDA_VISIBLE_DEVICES handles actual GPU selection
         cmd = [
             str(settings.pipeline_python),
             str(pipeline_script),
             str(abs_file_path),
             "--model", settings.whisper_model,
             "--output-dir", str(output_dir),
-            "--device", f"cuda:{effective_gpu_id}",
+            "--device", "cuda:0",
         ]
 
         # Run the pipeline using safe subprocess execution with GPU environment
+        # CUDA_VISIBLE_DEVICES will be set to effective_gpu_id, making physical GPU N appear as cuda:0
         returncode = await self._run_subprocess(cmd, str(self.pipeline_dir), is_cancelled, gpu_id=effective_gpu_id)
 
         if is_cancelled():
