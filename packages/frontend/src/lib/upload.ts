@@ -202,15 +202,17 @@ export async function uploadFilesWithProgress(
   onFileComplete: (fileId: string, jobId: string) => void,
   onFileError: (fileId: string, error: string) => void
 ): Promise<void> {
-  // Filter to only pending files
-  const pendingFiles = files.filter((f) => f.status === "pending");
+  // Filter to only pending or uploading files (caller may have already set status)
+  const filesToUpload = files.filter(
+    (f) => f.status === "pending" || f.status === "uploading"
+  );
 
-  if (pendingFiles.length === 0) {
+  if (filesToUpload.length === 0) {
     return;
   }
 
   // Create a queue of files to upload
-  const queue = [...pendingFiles];
+  const queue = [...filesToUpload];
   const inProgress = new Set<string>();
 
   // Process files with concurrency limit
