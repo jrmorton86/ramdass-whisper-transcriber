@@ -1,9 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { Upload, Hash, Loader2, List } from "lucide-react";
+import { useState, useRef, useCallback } from "react";
+import {
+  Upload,
+  Hash,
+  Loader2,
+  List,
+  ChevronDown,
+  ChevronRight,
+  Check,
+  X,
+  Circle,
+  Folder,
+  Trash2,
+  FolderOpen,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,26 +26,89 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import {
+  UploadFile,
+  generateFileId,
+  uploadFilesWithProgress,
+  extractFilesFromDataTransfer,
+  createUploadFiles,
+  calculateUploadProgress,
+} from "@/lib/upload";
 
 interface JobSubmissionProps {
   onJobCreated?: () => void;
 }
 
+// Concurrency limit for uploads
+const UPLOAD_CONCURRENCY = 3;
+
+/**
+ * Format bytes to human-readable string
+ */
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return "0 B";
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${(bytes / Math.pow(k, i)).toFixed(1)} ${sizes[i]}`;
+}
+
 export function JobSubmission({ onJobCreated }: JobSubmissionProps) {
-  const [file, setFile] = useState<File | null>(null);
+  // UUID tab state
   const [uuids, setUuids] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [uuidLoading, setUuidLoading] = useState(false);
+
+  // File upload state
+  const [files, setFiles] = useState<UploadFile[]>([]);
+  const [folderMode, setFolderMode] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [filesExpanded, setFilesExpanded] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
-  };
+  // Calculate overall progress
+  const progress = calculateUploadProgress(files);
+  const overallPercent =
+    progress.totalBytes > 0
+      ? Math.round((progress.uploadedBytes / progress.totalBytes) * 100)
+      : 0;
 
-  const handleDrag = (e: React.DragEvent) => {
+  // Add files to the queue
+  const addFiles = useCallback((newFiles: File[]) => {
+    const uploadFiles = createUploadFiles(newFiles);
+    setFiles((prev) => [...prev, ...uploadFiles]);
+  }, []);
+
+  // Remove a file from the queue
+  const removeFile = useCallback((fileId: string) => {
+    setFiles((prev) => prev.filter((f) => f.id !== fileId));
+  }, []);
+
+  // Clear all files
+  const clearAllFiles = useCallback(() => {
+    setFiles([]);
+  }, []);
+
+  // Handle file input change
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        const fileArray = Array.from(e.target.files);
+        addFiles(fileArray);
+      }
+      // Reset input so the same files can be selected again
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    },
+    [addFiles]
+  );
+
+  // Handle drag events
+  const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
@@ -41,38 +116,108 @@ export function JobSubmission({ onJobCreated }: JobSubmissionProps) {
     } else if (e.type === "dragleave") {
       setDragActive(false);
     }
-  };
+  }, []);
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
+  // Handle drop
+  const handleDrop = useCallback(
+    async (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragActive(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFile(e.dataTransfer.files[0]);
-    }
-  };
+      const extractedFiles = await extractFilesFromDataTransfer(e.dataTransfer);
+      if (extractedFiles.length > 0) {
+        addFiles(extractedFiles);
+      }
+    },
+    [addFiles]
+  );
 
-  const handleFileSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!file) {
-      toast.error("Please select a file");
+  // Handle upload
+  const handleUpload = async () => {
+    const pendingFiles = files.filter((f) => f.status === "pending");
+    if (pendingFiles.length === 0) {
+      toast.error("No files to upload");
       return;
     }
 
-    setLoading(true);
+    setIsUploading(true);
+
+    // Create upload files with "uploading" status for the upload function
+    // Note: We pass pendingFiles directly since state updates are async
+    const filesToUpload: UploadFile[] = pendingFiles.map((f) => ({
+      ...f,
+      status: "uploading" as const,
+    }));
+
+    // Update UI to show uploading status
+    setFiles((prev) =>
+      prev.map((f) =>
+        f.status === "pending" ? { ...f, status: "uploading" as const } : f
+      )
+    );
+
+    // Generate a batch ID for this upload session
+    const batchId = generateFileId();
+
+    let completedCount = 0;
+    let failedCount = 0;
+
     try {
-      await api.uploadFile(file);
-      toast.success("Job created successfully");
-      setFile(null);
+      await uploadFilesWithProgress(
+        filesToUpload,
+        batchId,
+        UPLOAD_CONCURRENCY,
+        // onFileProgress
+        (fileId, progressValue) => {
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === fileId ? { ...f, progress: progressValue } : f
+            )
+          );
+        },
+        // onFileComplete
+        (fileId, jobId) => {
+          completedCount++;
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === fileId
+                ? { ...f, status: "complete" as const, progress: 100, jobId }
+                : f
+            )
+          );
+        },
+        // onFileError
+        (fileId, error) => {
+          failedCount++;
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === fileId ? { ...f, status: "error" as const, error } : f
+            )
+          );
+        }
+      );
+
+      // Show toast based on results
+      if (failedCount === 0) {
+        toast.success(
+          `Successfully uploaded ${completedCount} file${completedCount > 1 ? "s" : ""}`
+        );
+      } else if (completedCount > 0) {
+        toast.warning(`Uploaded ${completedCount} files, ${failedCount} failed`);
+      } else {
+        toast.error("All uploads failed");
+      }
+
       onJobCreated?.();
     } catch (error) {
-      toast.error("Failed to create job");
+      toast.error("Upload failed");
     } finally {
-      setLoading(false);
+      setIsUploading(false);
     }
   };
 
+  // Handle UUID submit (preserved from original)
   const handleUuidSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!uuids.trim()) {
@@ -91,7 +236,7 @@ export function JobSubmission({ onJobCreated }: JobSubmissionProps) {
       return;
     }
 
-    setLoading(true);
+    setUuidLoading(true);
     try {
       // Create a job for each UUID
       const promises = uuidList.map((uuid) =>
@@ -114,16 +259,50 @@ export function JobSubmission({ onJobCreated }: JobSubmissionProps) {
     } catch (error) {
       toast.error("Failed to create jobs");
     } finally {
-      setLoading(false);
+      setUuidLoading(false);
     }
   };
+
+  // Get status icon for a file
+  const getStatusIcon = (file: UploadFile) => {
+    switch (file.status) {
+      case "pending":
+        return <Circle className="w-4 h-4 text-gray-400" />;
+      case "uploading":
+        return <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />;
+      case "complete":
+        return <Check className="w-4 h-4 text-green-500" />;
+      case "error":
+        return <X className="w-4 h-4 text-red-500" />;
+    }
+  };
+
+  // Get status text for a file
+  const getStatusText = (file: UploadFile) => {
+    switch (file.status) {
+      case "pending":
+        return "Pending";
+      case "uploading":
+        return `Uploading... ${file.progress}%`;
+      case "complete":
+        return "Completed";
+      case "error":
+        return file.error || "Failed";
+    }
+  };
+
+  // Check if we can remove files (only before upload starts)
+  const canModifyFiles = !isUploading;
+  const hasFiles = files.length > 0;
+  const hasPendingFiles = files.some((f) => f.status === "pending");
+  const totalSize = files.reduce((sum, f) => sum + f.file.size, 0);
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Create Transcription Job</CardTitle>
         <CardDescription>
-          Upload an audio file or provide an Intelligence Bank UUID
+          Upload audio files or provide Intelligence Bank UUIDs
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -140,62 +319,189 @@ export function JobSubmission({ onJobCreated }: JobSubmissionProps) {
           </TabsList>
 
           <TabsContent value="file" className="space-y-4">
-            <form onSubmit={handleFileSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="file">Audio File</Label>
-                <div
-                  className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                    dragActive
-                      ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
-                      : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600"
-                  }`}
-                  onDragEnter={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDragOver={handleDrag}
-                  onDrop={handleDrop}
-                >
-                  <input
-                    id="file"
-                    type="file"
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    accept="audio/*,video/*"
-                    onChange={handleFileChange}
-                  />
-                  <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                  {file ? (
-                    <div>
-                      <p className="font-medium">{file.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {(file.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                    </div>
-                  ) : (
-                    <div>
-                      <p className="text-muted-foreground">
-                        Drag and drop your audio file here, or click to browse
-                      </p>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Supports MP3, WAV, M4A, FLAC, and more
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
+            {/* Folder mode toggle */}
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="folder-mode"
+                checked={folderMode}
+                onChange={(e) => setFolderMode(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                disabled={isUploading}
+              />
+              <Label
+                htmlFor="folder-mode"
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <FolderOpen className="w-4 h-4" />
+                Enable folder mode
+              </Label>
+            </div>
 
-              <Button type="submit" className="w-full" disabled={!file || loading}>
-                {loading ? (
+            {/* Drop zone */}
+            <div
+              className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                dragActive
+                  ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
+                  : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600"
+              }`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                accept="audio/*,video/*"
+                multiple
+                onChange={handleFileChange}
+                disabled={isUploading}
+                {...(folderMode
+                  ? {
+                      webkitdirectory: "true",
+                      directory: "",
+                    }
+                  : {})}
+              />
+              {folderMode ? (
+                <Folder className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+              ) : (
+                <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+              )}
+              {hasFiles ? (
+                <div>
+                  <p className="font-medium">
+                    {files.length} file{files.length > 1 ? "s" : ""} selected
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {formatBytes(totalSize)}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Drop more files to add them
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-muted-foreground">
+                    {folderMode
+                      ? "Drag folders here or click to browse"
+                      : "Drag files/folders here or click to browse"}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Supports MP3, WAV, M4A, FLAC, and more
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Overall progress bar - only show during/after upload */}
+            {hasFiles && (isUploading || progress.completedFiles > 0) && (
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Overall Progress:</span>
+                  <span>
+                    {overallPercent}% ({formatBytes(progress.uploadedBytes)} /{" "}
+                    {formatBytes(progress.totalBytes)})
+                  </span>
+                </div>
+                <Progress value={overallPercent} className="h-2" />
+              </div>
+            )}
+
+            {/* File list */}
+            {hasFiles && (
+              <div className="border rounded-lg">
+                {/* Collapsible header */}
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  onClick={() => setFilesExpanded(!filesExpanded)}
+                >
+                  <span className="flex items-center gap-2 font-medium">
+                    {filesExpanded ? (
+                      <ChevronDown className="w-4 h-4" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4" />
+                    )}
+                    Files ({files.length})
+                  </span>
+                  {progress.completedFiles > 0 && (
+                    <span className="text-sm text-muted-foreground">
+                      {progress.completedFiles} completed
+                      {progress.failedFiles > 0 &&
+                        `, ${progress.failedFiles} failed`}
+                    </span>
+                  )}
+                </button>
+
+                {/* File list content */}
+                {filesExpanded && (
+                  <div className="border-t max-h-64 overflow-y-auto">
+                    {files.map((file) => (
+                      <div
+                        key={file.id}
+                        className="flex items-center justify-between p-3 border-b last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      >
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          {getStatusIcon(file)}
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium truncate">
+                              {file.file.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {formatBytes(file.file.size)} -{" "}
+                              {getStatusText(file)}
+                            </p>
+                          </div>
+                        </div>
+                        {canModifyFiles && file.status === "pending" && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeFile(file.id)}
+                            className="ml-2 text-gray-400 hover:text-red-500"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Action buttons */}
+            <div className="flex justify-between items-center">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={clearAllFiles}
+                disabled={!hasFiles || isUploading}
+              >
+                Clear All
+              </Button>
+              <Button
+                type="button"
+                onClick={handleUpload}
+                disabled={!hasPendingFiles || isUploading}
+              >
+                {isUploading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Creating Job...
+                    Uploading...
                   </>
                 ) : (
                   <>
                     <Upload className="w-4 h-4 mr-2" />
-                    Create Job
+                    Upload Files
                   </>
                 )}
               </Button>
-            </form>
+            </div>
           </TabsContent>
 
           <TabsContent value="uuid" className="space-y-4">
@@ -225,9 +531,9 @@ export function JobSubmission({ onJobCreated }: JobSubmissionProps) {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={!uuids.trim() || loading}
+                disabled={!uuids.trim() || uuidLoading}
               >
-                {loading ? (
+                {uuidLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Creating Jobs...
