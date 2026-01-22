@@ -78,6 +78,13 @@ def install_progress_tqdm():
 install_progress_tqdm()
 import whisper
 
+# Also patch whisper's internal tqdm reference directly
+try:
+    import whisper.transcribe
+    whisper.transcribe.tqdm = ProgressTqdm
+except (ImportError, AttributeError):
+    pass
+
 
 class VocabularyEnhancedTranscriber:
     def __init__(self, vocab_file="keyword_lists/whisper_vocabulary.json",
