@@ -191,30 +191,34 @@ class TranscriptionPipeline:
         print(f"Model: {self.model}")
         print(f"Output directory: {self.output_dir}")
         print(f"{'='*70}\n")
-        
+
         # Stage 1: Transcribe
+        print("[STEP] Transcribing audio with Whisper...")
         if not self.stage1_transcribe():
             print("\n[ERROR] Pipeline failed at Stage 1 (Whisper)")
             return False
-        
+
         # Stage 2: Format
+        print("[STEP] Formatting transcript with intelligent paragraphs...")
         if not self.stage2_format():
             print("\n[ERROR] Pipeline failed at Stage 2 (Formatting)")
             return False
-        
+
         # Stage 3: Claude Transcript Refinement
+        print("[STEP] Refining transcript with Claude...")
         if not self.stage3_refine():
             print("\n[ERROR] Pipeline failed at Stage 3 (Claude Transcript)")
             return False
-        
+
         # Stage 4: Claude SRT Refinement
+        print("[STEP] Post-processing SRT corrections...")
         if not self.stage4_refine_srt():
             print("\n[ERROR] Pipeline failed at Stage 4 (Claude SRT)")
             return False
-        
+
         # Success!
         print(f"\n{'='*70}")
-        print(f"[OK] PIPELINE COMPLETE!")
+        print(f"[OK] Pipeline complete - transcription successful!")
         print(f"{'='*70}")
         print(f"\nOutput files:")
         print(f"  1. Raw transcript (JSON): {self.json_file}")
@@ -225,7 +229,7 @@ class TranscriptionPipeline:
             print(f"  5. Refined subtitles:     {self.refined_srt_file}")
             print(f"  6. Change log:            {self.changes_file}")
         print(f"{'='*70}\n")
-        
+
         return True
 
 

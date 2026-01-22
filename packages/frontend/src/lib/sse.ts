@@ -16,6 +16,8 @@ interface JobStreamState {
   status: string | null;
   progress: number;
   stage: string | null;
+  step: number | null;
+  totalSteps: number | null;
   error: string | null;
   isComplete: boolean;
 }
@@ -43,6 +45,8 @@ export function useLogStream(
     status: null,
     progress: 0,
     stage: null,
+    step: null,
+    totalSteps: null,
     error: null,
     isComplete: false,
   });
@@ -148,14 +152,19 @@ export function useLogStream(
           ...prev,
           progress: data.progress ?? prev.progress,
           stage: data.stage ?? prev.stage,
+          step: data.step ?? prev.step,
+          totalSteps: data.totalSteps ?? prev.totalSteps,
         }));
         // Add progress as a log entry for visibility
         if (data.stage) {
+          const stepInfo = data.step && data.totalSteps
+            ? `[Step ${data.step}/${data.totalSteps}]`
+            : `[Progress ${data.progress}%]`;
           addLogEntry({
             timestamp: new Date(data.timestamp),
             level: "info",
-            message: `[Progress ${data.progress}%] ${data.stage}`,
-            ansi: `[Progress ${data.progress}%] ${data.stage}`,
+            message: `${stepInfo} ${data.stage}`,
+            ansi: `${stepInfo} ${data.stage}`,
           });
         }
       } catch (e) {
@@ -264,6 +273,8 @@ interface DashboardEvent {
   status?: string;
   progress?: number;
   stage?: string;
+  step?: number;
+  totalSteps?: number;
   error?: string;
 }
 

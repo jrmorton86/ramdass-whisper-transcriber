@@ -129,10 +129,12 @@ export function JobQueue({ jobs, onJobSelect, onJobsChange }: JobQueueProps) {
                         <StatusBadge status={job.status} />
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2 min-w-32">
-                          <Progress value={job.progress} className="h-2" />
-                          <span className="text-sm text-muted-foreground w-12">
-                            {job.progress}%
+                        <div className="flex items-center gap-2 min-w-40">
+                          <Progress value={job.progress} className="h-2 flex-1" />
+                          <span className="text-sm text-muted-foreground whitespace-nowrap">
+                            {job.currentStep && job.totalSteps
+                              ? `Step ${job.currentStep}/${job.totalSteps}`
+                              : job.currentStage || `${job.progress}%`}
                           </span>
                         </div>
                       </TableCell>

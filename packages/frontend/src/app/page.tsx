@@ -49,6 +49,8 @@ export default function DashboardPage() {
     status?: string;
     progress?: number;
     stage?: string;
+    step?: number;
+    totalSteps?: number;
   }) => {
     if (event.type === "job_created") {
       // Refetch to get the new job details
@@ -73,6 +75,8 @@ export default function DashboardPage() {
                 ...job,
                 progress: event.progress ?? job.progress,
                 currentStage: event.stage ?? job.currentStage,
+                currentStep: event.step ?? job.currentStep,
+                totalSteps: event.totalSteps ?? job.totalSteps,
               }
             : job
         )

@@ -8,6 +8,8 @@ export interface Job {
   status: JobStatus;
   progress: number;
   currentStage?: string;
+  currentStep?: number;
+  totalSteps?: number;
   createdAt: Date;
   startedAt?: Date;
   completedAt?: Date;

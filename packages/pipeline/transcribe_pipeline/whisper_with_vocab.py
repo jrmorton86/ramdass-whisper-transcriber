@@ -357,12 +357,33 @@ def transcribe_audio(audio_path, model, vocab_data=None, replacement_map=None,
         dict with 'text', 'segments', and metadata
     """
     import torch
+    import os
+    import time
 
     print(f"\n{'='*70}")
     print(f"TRANSCRIBING: {audio_path}")
     if device:
         print(f"Device hint: {device}")
     print(f"{'='*70}\n")
+
+    # Log audio file info
+    audio_path_obj = Path(audio_path)
+    if audio_path_obj.exists():
+        file_size = audio_path_obj.stat().st_size
+        file_size_mb = file_size / (1024 * 1024)
+        print(f"[FILE INFO] Size: {file_size_mb:.2f} MB")
+        print(f"[FILE INFO] Format: {audio_path_obj.suffix.upper()}")
+
+        # Try to get audio duration using whisper's audio loading
+        try:
+            import whisper
+            audio = whisper.load_audio(str(audio_path))
+            duration_seconds = len(audio) / whisper.audio.SAMPLE_RATE
+            duration_minutes = duration_seconds / 60
+            print(f"[FILE INFO] Duration: {duration_minutes:.1f} minutes ({duration_seconds:.0f} seconds)")
+            print(f"[FILE INFO] Sample rate: {whisper.audio.SAMPLE_RATE} Hz")
+        except Exception as e:
+            print(f"[FILE INFO] Could not determine duration: {e}")
 
     # Build initial prompt from vocabulary if available
     initial_prompt = None
@@ -387,21 +408,50 @@ def transcribe_audio(audio_path, model, vocab_data=None, replacement_map=None,
         'compression_ratio_threshold': 2.4,
         'logprob_threshold': -1.0,
         'no_speech_threshold': 0.6,
-        'verbose': False,
+        'verbose': False,  # We handle our own logging
         'fp16': is_cuda
     }
+
+    print(f"\n[TRANSCRIPTION] Starting Whisper transcription...")
+    print(f"[TRANSCRIPTION] Using vocabulary-enhanced prompt: {'Yes' if initial_prompt else 'No'}")
+    print(f"[TRANSCRIPTION] FP16 precision: {'Enabled' if is_cuda else 'Disabled (CPU mode)'}")
 
     if is_cuda:
         device_idx = _parse_device_index(target_device)
         vram_before = torch.cuda.memory_allocated(device_idx) / 1024**3
         print(f"[VRAM] Before transcription: {vram_before:.2f} GB")
 
-    # Transcribe
+    # Transcribe with timing
+    start_time = time.time()
+    print(f"[TRANSCRIPTION] Processing audio... (this may take a while for long files)")
     result = model.transcribe(str(audio_path), **options)
+    elapsed_time = time.time() - start_time
 
     if is_cuda:
         vram_after = torch.cuda.memory_allocated(device_idx) / 1024**3
         print(f"[VRAM] After transcription: {vram_after:.2f} GB")
+
+    # Log transcription results
+    print(f"\n[TRANSCRIPTION] Completed in {elapsed_time:.1f} seconds")
+
+    # Log segment details
+    segments = result.get('segments', [])
+    if segments:
+        print(f"\n[SEGMENTS] Total segments: {len(segments)}")
+        print(f"[SEGMENTS] Breakdown:")
+        for i, seg in enumerate(segments):
+            start = seg.get('start', 0)
+            end = seg.get('end', 0)
+            text_preview = seg.get('text', '')[:50].strip()
+            if len(seg.get('text', '')) > 50:
+                text_preview += '...'
+            print(f"  Segment {i+1}/{len(segments)}: [{start:.1f}s - {end:.1f}s] \"{text_preview}\"")
+            # Limit detailed output to first 10 and last 5 for very long transcriptions
+            if len(segments) > 20 and i == 9:
+                print(f"  ... ({len(segments) - 15} more segments) ...")
+                continue
+            if len(segments) > 20 and i >= 10 and i < len(segments) - 5:
+                continue
 
     # Post-process text
     original_text = result['text']

@@ -19,6 +19,18 @@ class JobManager:
     Manages job queue, background processing, and log streaming.
     """
 
+    # Define pipeline steps in order
+    PIPELINE_STEPS = [
+        "Downloading",
+        "Transcribing",
+        "Formatting",
+        "Refining",
+        "Post-processing",
+        "Uploading",
+        "Complete",
+    ]
+    TOTAL_STEPS = len(PIPELINE_STEPS)
+
     def __init__(self):
         self.pending_jobs: asyncio.Queue = asyncio.Queue()
         self.active_jobs: dict[str, dict] = {}
@@ -156,17 +168,21 @@ class JobManager:
         if job_id in self.log_queues:
             await self.log_queues[job_id].put(log_entry)
 
-    async def _emit_progress(self, job_id: str, progress: int, stage: str = None):
+    async def _emit_progress(self, job_id: str, progress: int, stage: str = None, step: int = None):
         """Emit a progress update."""
         self.active_jobs[job_id]["progress"] = progress
         if stage:
             self.active_jobs[job_id]["stage"] = stage
+        if step is not None:
+            self.active_jobs[job_id]["step"] = step
 
         progress_entry = {
             "type": "progress",
             "timestamp": datetime.utcnow().isoformat(),
             "progress": progress,
             "stage": stage,
+            "step": step,
+            "totalSteps": self.TOTAL_STEPS,
         }
 
         # Add to history
@@ -181,6 +197,8 @@ class JobManager:
             "jobId": job_id,
             "progress": progress,
             "stage": stage,
+            "step": step,
+            "totalSteps": self.TOTAL_STEPS,
         })
 
     async def _emit_status(self, job_id: str, status: str, error: str = None):
@@ -267,7 +285,8 @@ class JobManager:
             # Parse progress from log if available
             progress = self._parse_progress(entry.get("message", ""))
             if progress:
-                await self._emit_progress(job_id, progress[1], progress[0])
+                stage, percentage, step = progress
+                await self._emit_progress(job_id, percentage, stage, step)
 
         runner = PipelineRunner(log_callback)
 
@@ -303,24 +322,27 @@ class JobManager:
             await self._emit_status(job_id, "failed", result.get("error"))
             await self._update_job_in_db(job_id, "failed", error=result.get("error"))
 
-    def _parse_progress(self, message: str) -> Optional[tuple[str, int]]:
-        """Parse progress information from log message."""
+    def _parse_progress(self, message: str) -> Optional[tuple[str, int, int]]:
+        """Parse progress information from log message.
+
+        Returns: (stage_name, progress_percentage, step_number) or None
+        """
         lower = message.lower()
 
         if "downloading" in lower:
-            return ("Downloading", 5)
+            return ("Downloading", 5, 1)
         elif "transcribing" in lower or "whisper" in lower:
-            return ("Transcribing", 30)
+            return ("Transcribing", 30, 2)
         elif "formatting" in lower:
-            return ("Formatting", 55)
+            return ("Formatting", 55, 3)
         elif "refining" in lower or "claude" in lower:
-            return ("Refining", 70)
+            return ("Refining", 70, 4)
         elif "post-processing" in lower or "embeddings" in lower:
-            return ("Post-processing", 90)
+            return ("Post-processing", 90, 5)
         elif "uploading" in lower or "s3" in lower:
-            return ("Uploading", 97)
+            return ("Uploading", 97, 6)
         elif "complete" in lower or "success" in lower:
-            return ("Complete", 100)
+            return ("Complete", 100, 7)
 
         return None
 

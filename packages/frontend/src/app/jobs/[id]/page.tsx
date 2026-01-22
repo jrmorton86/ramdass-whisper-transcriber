@@ -35,24 +35,28 @@ export default function JobPage({ params }: JobPageProps) {
               status: jobState.status as Job["status"],
               progress: jobState.progress,
               currentStage: jobState.stage ?? undefined,
+              currentStep: jobState.step ?? undefined,
+              totalSteps: jobState.totalSteps ?? undefined,
               error: jobState.error ?? undefined,
             }
           : prev
       );
     }
     // Also update progress even if status hasn't changed
-    if (job && jobState.progress !== job.progress) {
+    if (job && (jobState.progress !== job.progress || jobState.step !== job.currentStep)) {
       setJob((prev) =>
         prev
           ? {
               ...prev,
               progress: jobState.progress,
               currentStage: jobState.stage ?? prev.currentStage,
+              currentStep: jobState.step ?? prev.currentStep,
+              totalSteps: jobState.totalSteps ?? prev.totalSteps,
             }
           : prev
       );
     }
-  }, [jobState.status, jobState.progress, jobState.stage, jobState.error]);
+  }, [jobState.status, jobState.progress, jobState.stage, jobState.step, jobState.totalSteps, jobState.error]);
 
   // Refetch when job completes to get final data (result, duration, etc.)
   useEffect(() => {
