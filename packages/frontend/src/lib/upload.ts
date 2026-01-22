@@ -120,6 +120,8 @@ export async function uploadFileWithProgress(
       url += `?batch_id=${encodeURIComponent(batchId)}`;
     }
 
+    console.log("[Upload] Starting upload:", { fileName: file.name, fileSize: file.size, url });
+
     // Track upload progress
     xhr.upload.addEventListener("progress", (event) => {
       if (event.lengthComputable) {
@@ -130,14 +132,17 @@ export async function uploadFileWithProgress(
 
     // Handle completion
     xhr.addEventListener("load", () => {
+      console.log("[Upload] XHR load event:", { status: xhr.status, response: xhr.responseText });
       if (xhr.status >= 200 && xhr.status < 300) {
         try {
           const response = JSON.parse(xhr.responseText);
+          console.log("[Upload] Success:", response);
           resolve({
             success: true,
             jobId: response.id || response.job_id,
           });
         } catch {
+          console.error("[Upload] Invalid JSON response");
           resolve({
             success: false,
             error: "Invalid response from server",
@@ -153,6 +158,7 @@ export async function uploadFileWithProgress(
         } catch {
           // Keep default error message
         }
+        console.error("[Upload] HTTP error:", errorMessage);
         resolve({
           success: false,
           error: errorMessage,
@@ -161,7 +167,8 @@ export async function uploadFileWithProgress(
     });
 
     // Handle network errors
-    xhr.addEventListener("error", () => {
+    xhr.addEventListener("error", (event) => {
+      console.error("[Upload] Network error:", event);
       resolve({
         success: false,
         error: "Network error - please check your connection",
@@ -253,7 +260,7 @@ export async function uploadFilesWithProgress(
   }
 
   // Start concurrent uploads up to the limit
-  const workers = Array(Math.min(concurrency, pendingFiles.length))
+  const workers = Array(Math.min(concurrency, filesToUpload.length))
     .fill(null)
     .map(() => processNext());
 

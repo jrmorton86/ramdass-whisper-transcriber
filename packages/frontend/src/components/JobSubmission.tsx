@@ -211,6 +211,7 @@ export function JobSubmission({ onJobCreated }: JobSubmissionProps) {
 
       onJobCreated?.();
     } catch (error) {
+      console.error("[Upload] handleUpload error:", error);
       toast.error("Upload failed");
     } finally {
       setIsUploading(false);
