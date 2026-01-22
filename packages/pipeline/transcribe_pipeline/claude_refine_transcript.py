@@ -46,6 +46,19 @@ class ModelStreamError(Exception):
     pass
 
 
+def safe_print(text, end='\n', flush=False):
+    """
+    Print text safely, handling Unicode characters that can't be encoded
+    by the console (e.g., Windows cp1252).
+    """
+    try:
+        print(text, end=end, flush=flush)
+    except UnicodeEncodeError:
+        # Fall back to replacing unencodable characters
+        safe_text = text.encode('ascii', 'replace').decode('ascii')
+        print(safe_text, end=end, flush=flush)
+
+
 class ClaudeTranscriptRefiner:
     # Fuzzy matching threshold (0.85 = 85% similarity required)
     FUZZY_MATCH_THRESHOLD = 0.85
@@ -588,7 +601,7 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
                                     thinking_text = thinking_chunk
                                 else:
                                     thinking_text += thinking_chunk
-                                print(thinking_chunk, end='', flush=True)
+                                safe_print(thinking_chunk, end='', flush=True)
                             elif hasattr(event.delta, 'text'):
                                 text_chunk = event.delta.text
                                 result_text += text_chunk
@@ -597,7 +610,7 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
                                     print("REFINED TRANSCRIPT:")
                                     print(f"{'='*70}\n")
                                     thinking_shown = False
-                                print(text_chunk, end='', flush=True)
+                                safe_print(text_chunk, end='', flush=True)
 
                     response = stream.get_final_message()
                     input_tokens = response.usage.input_tokens
@@ -737,22 +750,22 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
                             thinking_text = thinking_chunk
                         else:
                             thinking_text += thinking_chunk
-                        
+
                         if verbose:
-                            print(thinking_chunk, end='', flush=True)
-                    
+                            safe_print(thinking_chunk, end='', flush=True)
+
                     elif 'text' in delta:
                         # Result text content
                         text_chunk = delta['text']
                         result_text += text_chunk
-                        
+
                         if verbose:
                             if thinking_shown:
                                 print(f"\n{'='*70}\n")
                                 print("REFINED TRANSCRIPT:")
                                 print(f"{'='*70}\n")
                                 thinking_shown = False
-                            print(text_chunk, end='', flush=True)
+                            safe_print(text_chunk, end='', flush=True)
                 
                 elif 'metadata' in event:
                     usage = event['metadata'].get('usage', {})
