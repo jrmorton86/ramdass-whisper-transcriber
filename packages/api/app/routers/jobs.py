@@ -2,8 +2,10 @@
 Jobs API router - CRUD operations for transcription jobs.
 """
 
+import json
 import uuid
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, func, desc
@@ -15,6 +17,54 @@ from ..models.job import JobCreate, JobResponse, JobListResponse, AnalyticsRespo
 from ..services.job_manager import job_manager
 
 router = APIRouter()
+
+
+def _srt_time_to_seconds(time_str: str) -> float:
+    """Convert SRT timestamp to seconds."""
+    time_str = time_str.replace(",", ".")
+    parts = time_str.split(":")
+    if len(parts) == 3:
+        hours = int(parts[0])
+        minutes = int(parts[1])
+        seconds = float(parts[2])
+        return hours * 3600 + minutes * 60 + seconds
+    return 0.0
+
+
+def _parse_srt(srt_path: Path) -> list[dict]:
+    """Parse SRT file into segments list."""
+    segments = []
+    with open(srt_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    blocks = content.strip().split("\n\n")
+    for block in blocks:
+        lines = block.strip().split("\n")
+        if len(lines) >= 3:
+            timestamp_line = lines[1]
+            text_lines = lines[2:]
+            if " --> " in timestamp_line:
+                start_str, end_str = timestamp_line.split(" --> ")
+                start = _srt_time_to_seconds(start_str.strip())
+                end = _srt_time_to_seconds(end_str.strip())
+                text = " ".join(text_lines).strip()
+                segments.append({"start": start, "end": end, "text": text})
+    return segments
+
+
+def _get_refined_segments(job_id: str, input_path: str) -> Optional[list[dict]]:
+    """Try to load segments from refined SRT file."""
+    try:
+        # Get base name from input path
+        base_name = Path(input_path).stem
+        output_dir = Path("tmp") / job_id
+        refined_srt = output_dir / f"{base_name}_refined.srt"
+
+        if refined_srt.exists():
+            return _parse_srt(refined_srt)
+    except Exception:
+        pass
+    return None
 
 
 @router.get("/jobs", response_model=JobListResponse)
@@ -66,7 +116,16 @@ async def get_job(
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
 
-    return JobResponse(**job.to_dict())
+    job_dict = job.to_dict()
+
+    # For completed jobs, try to load refined segments from SRT file
+    # This ensures old jobs show refined text even if processed before the fix
+    if job.status == JobStatus.COMPLETED.value and job.input:
+        refined_segments = _get_refined_segments(job_id, job.input)
+        if refined_segments and job_dict.get("result"):
+            job_dict["result"]["segments"] = refined_segments
+
+    return JobResponse(**job_dict)
 
 
 @router.post("/jobs", response_model=JobResponse, status_code=201)
