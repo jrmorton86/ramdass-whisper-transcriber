@@ -891,19 +891,24 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
         result = self.refine_transcript(transcript_text, verbose=verbose)
         
         # Determine output path
+        # Input is {base}_formatted.txt, output should be {base}.txt
+        base_stem = input_path.stem
+        if base_stem.endswith('_formatted'):
+            base_stem = base_stem[:-len('_formatted')]
+
         if output_file:
             output_path = Path(output_file)
         else:
-            output_path = input_path.parent / f"{input_path.stem}_refined.txt"
-        
+            output_path = input_path.parent / f"{base_stem}.txt"
+
         # Save refined transcript
         refined_text = result.get('refined_transcript', transcript_text)
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(refined_text)
         print(f"\n[OK] Saved refined transcript: {output_path}")
-        
-        # Save changes log
-        changes_path = output_path.parent / f"{output_path.stem}_changes.json"
+
+        # Save changes log as {base}_logs.json
+        changes_path = input_path.parent / f"{base_stem}_logs.json"
         with open(changes_path, 'w', encoding='utf-8') as f:
             json.dump(result, f, indent=2, ensure_ascii=False)
         print(f"[OK] Saved changes log: {changes_path}")
@@ -936,9 +941,14 @@ def refine_transcript_text(transcript_text: str, output_path: str, verbose: bool
     result = refiner.refine_transcript(cleaned_text, verbose=verbose)
 
     # Save outputs
+    # Input is {base}_formatted.txt, output should be {base}.txt
     output_path = Path(output_path)
-    refined_path = output_path.parent / f"{output_path.stem}_refined.txt"
-    changes_path = output_path.parent / f"{output_path.stem}_refined_changes.json"
+    base_stem = output_path.stem
+    if base_stem.endswith('_formatted'):
+        base_stem = base_stem[:-len('_formatted')]
+
+    refined_path = output_path.parent / f"{base_stem}.txt"
+    changes_path = output_path.parent / f"{base_stem}_logs.json"
 
     refined_text = result.get('refined_transcript', cleaned_text)
 
