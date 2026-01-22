@@ -120,24 +120,21 @@ class ResourceManager:
 
     def _find_available_gpu(self) -> Optional[int]:
         """
-        Find the GPU with the most available slots (least loaded).
+        Find an available GPU, prioritizing higher GPU IDs.
 
-        This spreads jobs across GPUs for better performance and thermal distribution
-        rather than filling one GPU before using the next.
+        GPU 1 (desktop 2080 Super) is faster than GPU 0 (laptop 5070 Ti),
+        so we prefer higher GPU IDs first, filling them before using lower IDs.
 
         Returns:
-            GPU ID with most available slots, or None if all full
+            GPU ID with available slot, or None if all full
         """
-        best_gpu = None
-        best_free_slots = 0
+        # Check GPUs in reverse order (higher IDs = faster GPUs)
+        for gpu_id in sorted(self._gpu_info.keys(), reverse=True):
+            info = self._gpu_info[gpu_id]
+            if len(info["jobs"]) < info["max_slots"]:
+                return gpu_id
 
-        for gpu_id, info in self._gpu_info.items():
-            free_slots = info["max_slots"] - len(info["jobs"])
-            if free_slots > best_free_slots:
-                best_free_slots = free_slots
-                best_gpu = gpu_id
-
-        return best_gpu
+        return None
 
     async def wait_for_slot(self) -> int:
         """
