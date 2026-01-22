@@ -25,7 +25,6 @@ class ResourceManager:
     VRAM_PER_JOB_MB = 3000      # ~3GB for Whisper medium model
     VRAM_HEADROOM_MB = 2000     # 2GB safety buffer per GPU
     MIN_SYSTEM_RAM_MB = 4000    # Require 4GB free before starting job
-    RAM_WAIT_TIMEOUT = 300      # Wait up to 5 minutes for RAM
 
     def __init__(self, gpu_ids: list[int]):
         """
@@ -210,9 +209,12 @@ class ResourceManager:
         available_mb = psutil.virtual_memory().available / (1024 * 1024)
         return available_mb >= self.MIN_SYSTEM_RAM_MB
 
-    async def wait_for_ram(self) -> bool:
+    async def wait_for_ram(self, timeout: float = 300) -> bool:
         """
         Wait for system RAM to become available.
+
+        Args:
+            timeout: Maximum time in seconds to wait for RAM (default: 300)
 
         Returns:
             True if RAM became available, False if timeout
@@ -221,10 +223,10 @@ class ResourceManager:
 
         while not self.check_system_ram():
             elapsed = time.time() - start_time
-            if elapsed > self.RAM_WAIT_TIMEOUT:
+            if elapsed > timeout:
                 available_mb = psutil.virtual_memory().available / (1024 * 1024)
                 logger.warning(
-                    f"RAM wait timeout after {self.RAM_WAIT_TIMEOUT}s, "
+                    f"RAM wait timeout after {timeout}s, "
                     f"proceeding with {available_mb:.0f} MB available"
                 )
                 return False
