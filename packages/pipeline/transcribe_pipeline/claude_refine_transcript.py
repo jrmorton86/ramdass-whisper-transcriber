@@ -574,7 +574,7 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
         try:
             # Build request parameters
             request_params = {
-                'modelId': 'anthropic.claude-opus-4-5-20251101-v1:0',
+                'modelId': 'us.anthropic.claude-opus-4-5-20251101-v1:0',
                 'messages': [
                     {
                         'role': 'user',
@@ -683,7 +683,7 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
                 print(f"\n[OK] Claude response complete")
                 print(f"  • Input tokens: {input_tokens:,}")
                 print(f"  • Output tokens: {output_tokens:,}")
-                print(f"  • Estimated cost: ${(input_tokens * 0.003 / 1000 + output_tokens * 0.015 / 1000):.4f}")
+                print(f"  • Estimated cost: ${(input_tokens * 0.005 / 1000 + output_tokens * 0.025 / 1000):.4f}")
                 if stream_duration > 0:
                     print(f"  • Stream completed in {stream_duration:.1f}s")
             

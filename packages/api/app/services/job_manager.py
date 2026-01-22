@@ -20,14 +20,14 @@ class JobManager:
     """
 
     # Define pipeline steps in order
+    # For local file processing: Transcribing -> Formatting -> Refining -> Post-processing -> Complete
+    # For UUID processing: adds Downloading (step 1) and Uploading (step 6)
     PIPELINE_STEPS = [
-        "Downloading",
-        "Transcribing",
-        "Formatting",
-        "Refining",
-        "Post-processing",
-        "Uploading",
-        "Complete",
+        "Transcribing",     # 1 - Whisper transcription
+        "Formatting",       # 2 - Convert to SRT + formatted text
+        "Refining",         # 3 - Claude refinement
+        "Post-processing",  # 4 - Apply corrections to SRT
+        "Complete",         # 5 - Pipeline done
     ]
     TOTAL_STEPS = len(PIPELINE_STEPS)
 
@@ -330,23 +330,49 @@ class JobManager:
         """Parse progress information from log message.
 
         Returns: (stage_name, progress_percentage, step_number) or None
+
+        Steps (5 total for local files):
+        1. Transcribing - Whisper transcription
+        2. Formatting - Convert to SRT + formatted text
+        3. Refining - Claude refinement
+        4. Post-processing - Apply corrections to SRT
+        5. Complete - Pipeline done
+
+        Note: Order matters! More specific matches should come first.
+        Avoid matching "completed successfully" as pipeline complete.
         """
         lower = message.lower()
 
-        if "downloading" in lower:
-            return ("Downloading", 5, 1)
-        elif "transcribing" in lower or "whisper" in lower:
-            return ("Transcribing", 30, 2)
-        elif "formatting" in lower:
-            return ("Formatting", 55, 3)
-        elif "refining" in lower or "claude" in lower:
-            return ("Refining", 70, 4)
-        elif "post-processing" in lower or "embeddings" in lower:
-            return ("Post-processing", 90, 5)
-        elif "uploading" in lower or "s3" in lower:
-            return ("Uploading", 97, 6)
-        elif "complete" in lower or "success" in lower:
-            return ("Complete", 100, 7)
+        # Skip generic completion messages (e.g., "completed successfully")
+        # These are stage completions, not pipeline completion
+        if "completed successfully" in lower:
+            return None
+
+        # Match specific [STEP] markers from transcribe_pipeline.py
+        if "[step]" in lower:
+            if "transcribing" in lower:
+                return ("Transcribing", 10, 1)
+            elif "formatting" in lower:
+                return ("Formatting", 40, 2)
+            elif "refining" in lower:
+                return ("Refining", 55, 3)
+            elif "post-processing" in lower:
+                return ("Post-processing", 80, 4)
+
+        # Match stage headers (STAGE: ...)
+        if "stage:" in lower:
+            if "whisper" in lower:
+                return ("Transcribing", 15, 1)
+            elif "format" in lower:
+                return ("Formatting", 45, 2)
+            elif "claude" in lower:
+                return ("Refining", 60, 3)
+            elif "srt" in lower or "corrections" in lower:
+                return ("Post-processing", 85, 4)
+
+        # Final pipeline completion - only match the specific message
+        if "pipeline complete" in lower or "[ok] pipeline complete" in lower:
+            return ("Complete", 100, 5)
 
         return None
 
