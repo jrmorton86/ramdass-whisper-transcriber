@@ -169,37 +169,30 @@ class PipelineRunner:
         if returncode != 0:
             return {"success": False, "error": f"Pipeline failed with code {returncode}"}
 
-        # Read results
+        # Read results - pipeline outputs simplified to 3 files:
+        # {base}.txt (refined transcript), {base}.srt (refined subtitles), {base}.json (whisper output)
         base_name = Path(file_path).stem
-        refined_txt = output_dir / f"{base_name}_formatted_refined.txt"
-        formatted_txt = output_dir / f"{base_name}_formatted.txt"
-        refined_srt = output_dir / f"{base_name}_refined.srt"
-        original_srt = output_dir / f"{base_name}.srt"
+        transcript_txt = output_dir / f"{base_name}.txt"
+        srt_file = output_dir / f"{base_name}.srt"
         json_file = output_dir / f"{base_name}.json"
 
         await self._log("info", f"Looking for transcript files with base: {base_name}")
-        await self._log("info", f"  Refined TXT: {refined_txt.exists()}, Refined SRT: {refined_srt.exists()}")
+        await self._log("info", f"  TXT: {transcript_txt.exists()}, SRT: {srt_file.exists()}, JSON: {json_file.exists()}")
 
-        # Use refined transcript if available, otherwise fall back to formatted
-        if refined_txt.exists():
-            transcript_file = refined_txt
-            await self._log("info", f"Using REFINED transcript")
-        elif formatted_txt.exists():
-            await self._log("warning", "Claude refinement not available, using formatted transcript")
-            transcript_file = formatted_txt
-        else:
-            return {"success": False, "error": "No transcript file found"}
+        # Check for transcript file
+        if not transcript_txt.exists():
+            return {"success": False, "error": f"Transcript file not found: {transcript_txt}"}
+
+        await self._log("info", "Found transcript file")
 
         # Read transcript
-        with open(transcript_file, "r", encoding="utf-8") as f:
+        with open(transcript_txt, "r", encoding="utf-8") as f:
             text = f.read()
 
-        # Read segments from refined SRT if available, otherwise from original SRT/JSON
+        # Read segments from SRT if available, otherwise from JSON
         segments = []
-        srt_file = refined_srt if refined_srt.exists() else (original_srt if original_srt.exists() else None)
-
-        if srt_file and srt_file.exists():
-            await self._log("info", f"Loading segments from {'refined' if srt_file == refined_srt else 'original'} SRT")
+        if srt_file.exists():
+            await self._log("info", "Loading segments from SRT file")
             segments = self._parse_srt(srt_file)
         elif json_file.exists():
             await self._log("info", "Loading segments from Whisper JSON")
