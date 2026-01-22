@@ -2,7 +2,7 @@
 """
 Claude-powered transcript refinement using AWS Bedrock.
 
-Uses Claude Sonnet 4.5 with the same vocabulary context given to Whisper
+Uses Claude Opus 4.5 with the same vocabulary context given to Whisper
 to fix transcription errors while being extremely conservative about changes.
 
 Only fixes:
@@ -359,7 +359,7 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
             dict with refined_transcript, changes, and summary
         """
         print(f"\n{'='*70}")
-        print("REFINING TRANSCRIPT WITH CLAUDE SONNET 4.5")
+        print("REFINING TRANSCRIPT WITH CLAUDE OPUS 4.5")
         print(f"{'='*70}\n")
         
         print(f"Transcript length: {len(transcript_text):,} characters")
@@ -412,7 +412,7 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
         try:
             # Build request parameters
             request_params = {
-                'modelId': 'us.anthropic.claude-sonnet-4-5-20250929-v1:0',
+                'modelId': 'anthropic.claude-opus-4-5-20251101-v1:0',
                 'messages': [
                     {
                         'role': 'user',

@@ -145,7 +145,6 @@ class PipelineRunner:
             str(abs_file_path),
             "--model", settings.whisper_model,
             "--output-dir", str(output_dir),
-            "--skip-claude",  # Skip Claude refinement until IAM credentials are configured
         ]
 
         # Add GPU device if specified
