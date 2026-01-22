@@ -165,11 +165,17 @@ class PipelineRunner:
         base_name = Path(file_path).stem
         refined_txt = output_dir / f"{base_name}_formatted_refined.txt"
         formatted_txt = output_dir / f"{base_name}_formatted.txt"
+        refined_srt = output_dir / f"{base_name}_refined.srt"
+        original_srt = output_dir / f"{base_name}.srt"
         json_file = output_dir / f"{base_name}.json"
+
+        await self._log("info", f"Looking for transcript files with base: {base_name}")
+        await self._log("info", f"  Refined TXT: {refined_txt.exists()}, Refined SRT: {refined_srt.exists()}")
 
         # Use refined transcript if available, otherwise fall back to formatted
         if refined_txt.exists():
             transcript_file = refined_txt
+            await self._log("info", f"Using REFINED transcript")
         elif formatted_txt.exists():
             await self._log("warning", "Claude refinement not available, using formatted transcript")
             transcript_file = formatted_txt
@@ -180,9 +186,15 @@ class PipelineRunner:
         with open(transcript_file, "r", encoding="utf-8") as f:
             text = f.read()
 
-        # Read segments from JSON if available
+        # Read segments from refined SRT if available, otherwise from original SRT/JSON
         segments = []
-        if json_file.exists():
+        srt_file = refined_srt if refined_srt.exists() else (original_srt if original_srt.exists() else None)
+
+        if srt_file and srt_file.exists():
+            await self._log("info", f"Loading segments from {'refined' if srt_file == refined_srt else 'original'} SRT")
+            segments = self._parse_srt(srt_file)
+        elif json_file.exists():
+            await self._log("info", "Loading segments from Whisper JSON")
             with open(json_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 segments = [
@@ -304,6 +316,68 @@ class PipelineRunner:
                 await self._log("info", line)
 
         return returncode, output
+
+    def _parse_srt(self, srt_path: Path) -> list[dict]:
+        """Parse SRT file into segments list.
+
+        Args:
+            srt_path: Path to the SRT file
+
+        Returns:
+            List of segment dicts with start, end, text keys
+        """
+        segments = []
+
+        with open(srt_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Split by double newlines to get individual subtitle blocks
+        blocks = content.strip().split("\n\n")
+
+        for block in blocks:
+            lines = block.strip().split("\n")
+            if len(lines) >= 3:
+                # Line 0: subtitle number (skip)
+                # Line 1: timestamp (00:00:00,000 --> 00:00:05,000)
+                # Line 2+: text
+                timestamp_line = lines[1]
+                text_lines = lines[2:]
+
+                # Parse timestamp
+                if " --> " in timestamp_line:
+                    start_str, end_str = timestamp_line.split(" --> ")
+                    start = self._srt_time_to_seconds(start_str.strip())
+                    end = self._srt_time_to_seconds(end_str.strip())
+                    text = " ".join(text_lines).strip()
+
+                    segments.append({
+                        "start": start,
+                        "end": end,
+                        "text": text,
+                    })
+
+        return segments
+
+    def _srt_time_to_seconds(self, time_str: str) -> float:
+        """Convert SRT timestamp to seconds.
+
+        Args:
+            time_str: Time in format HH:MM:SS,mmm
+
+        Returns:
+            Time in seconds as float
+        """
+        # Handle both comma and period as decimal separator
+        time_str = time_str.replace(",", ".")
+
+        parts = time_str.split(":")
+        if len(parts) == 3:
+            hours = int(parts[0])
+            minutes = int(parts[1])
+            seconds = float(parts[2])
+            return hours * 3600 + minutes * 60 + seconds
+
+        return 0.0
 
     def _detect_level(self, message: str) -> str:
         """Detect log level from message content."""
