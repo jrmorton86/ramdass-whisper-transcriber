@@ -25,6 +25,7 @@ class ResourceManager:
     VRAM_PER_JOB_MB = 3000      # ~3GB for Whisper medium model
     VRAM_HEADROOM_MB = 2000     # 2GB safety buffer per GPU
     MIN_SYSTEM_RAM_MB = 4000    # Require 4GB free before starting job
+    NVIDIA_SMI_TIMEOUT = 10     # Timeout for nvidia-smi subprocess call
 
     def __init__(self, gpu_ids: list[int]):
         """
@@ -80,7 +81,7 @@ class ResourceManager:
             ["nvidia-smi", "--query-gpu=index,name,memory.total", "--format=csv,noheader,nounits"],
             capture_output=True,
             text=True,
-            timeout=10,
+            timeout=self.NVIDIA_SMI_TIMEOUT,
         )
 
         if result.returncode != 0:
@@ -148,6 +149,37 @@ class ResourceManager:
             # Wait for a slot to become available
             await self._slot_available.wait()
 
+    async def wait_and_reserve_slot(self, job_id: str) -> int:
+        """
+        Wait for an available GPU slot and reserve it atomically.
+
+        This is the preferred method for job scheduling as it prevents
+        race conditions between finding and reserving a slot.
+
+        Args:
+            job_id: Job ID to reserve the slot for
+
+        Returns:
+            GPU ID where slot was reserved
+        """
+        while True:
+            async with self._lock:
+                gpu_id = self._find_available_gpu()
+                if gpu_id is not None:
+                    # Reserve immediately while holding lock
+                    info = self._gpu_info[gpu_id]
+                    info["jobs"].add(job_id)
+                    slots_used = len(info["jobs"])
+                    slots_max = info["max_slots"]
+                    logger.info(f"Job {job_id} assigned to GPU {gpu_id} (slot {slots_used}/{slots_max} now used)")
+                    return gpu_id
+
+                # Clear event so we wait
+                self._slot_available.clear()
+
+            # Wait for a slot to become available
+            await self._slot_available.wait()
+
     async def reserve_slot(self, gpu_id: int, job_id: str) -> bool:
         """
         Reserve a slot on a GPU for a job.
@@ -186,6 +218,7 @@ class ResourceManager:
         """
         async with self._lock:
             if gpu_id not in self._gpu_info:
+                logger.warning(f"Attempted to release slot on unknown GPU {gpu_id} for job {job_id}")
                 return
 
             info = self._gpu_info[gpu_id]
@@ -200,14 +233,13 @@ class ResourceManager:
             self._slot_available.set()
 
     def check_system_ram(self) -> bool:
-        """
-        Check if enough system RAM is available.
-
-        Returns:
-            True if RAM >= MIN_SYSTEM_RAM_MB, False otherwise
-        """
-        available_mb = psutil.virtual_memory().available / (1024 * 1024)
-        return available_mb >= self.MIN_SYSTEM_RAM_MB
+        """Check if enough system RAM is available."""
+        try:
+            available_mb = psutil.virtual_memory().available / (1024 * 1024)
+            return available_mb >= self.MIN_SYSTEM_RAM_MB
+        except Exception as e:
+            logger.error(f"Failed to check system RAM: {e}, assuming insufficient")
+            return False
 
     async def wait_for_ram(self, timeout: float = 300) -> bool:
         """
