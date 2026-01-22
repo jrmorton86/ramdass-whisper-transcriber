@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .database import init_db
-from .routers import jobs, files, logs
+from .routers import jobs, files, logs, batch
 from .services.job_manager import job_manager
 
 # Configure logging
@@ -57,6 +57,7 @@ app.add_middleware(
 app.include_router(jobs.router, prefix="/api", tags=["jobs"])
 app.include_router(files.router, prefix="/api", tags=["files"])
 app.include_router(logs.router, prefix="/api", tags=["logs"])
+app.include_router(batch.router, prefix="/api", tags=["batch"])
 
 
 @app.get("/")

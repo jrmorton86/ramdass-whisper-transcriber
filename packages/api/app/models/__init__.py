@@ -9,6 +9,10 @@ from .job import (
     TranscriptionMetadata,
     AnalyticsResponse,
 )
+from .batch import (
+    BatchResponse,
+    BatchListResponse,
+)
 
 __all__ = [
     "JobCreate",
@@ -18,4 +22,6 @@ __all__ = [
     "TranscriptionSegment",
     "TranscriptionMetadata",
     "AnalyticsResponse",
+    "BatchResponse",
+    "BatchListResponse",
 ]

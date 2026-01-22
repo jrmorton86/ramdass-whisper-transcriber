@@ -1,5 +1,5 @@
 """API routers."""
 
-from . import jobs, files, logs
+from . import jobs, files, logs, batch
 
-__all__ = ["jobs", "files", "logs"]
+__all__ = ["jobs", "files", "logs", "batch"]
