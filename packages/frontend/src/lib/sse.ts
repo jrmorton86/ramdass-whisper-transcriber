@@ -53,6 +53,7 @@ export function useLogStream(
 
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastLoggedStepRef = useRef<number | null>(null);
 
   const clearLogs = useCallback(() => {
     setLogs([]);
@@ -155,11 +156,12 @@ export function useLogStream(
           step: data.step ?? prev.step,
           totalSteps: data.totalSteps ?? prev.totalSteps,
         }));
-        // Add progress as a log entry for visibility
-        if (data.stage) {
-          const stepInfo = data.step && data.totalSteps
+        // Add step change as a log entry (only when step changes, not every progress update)
+        if (data.stage && data.step && data.step !== lastLoggedStepRef.current) {
+          lastLoggedStepRef.current = data.step;
+          const stepInfo = data.totalSteps
             ? `[Step ${data.step}/${data.totalSteps}]`
-            : `[Progress ${data.progress}%]`;
+            : `[Step ${data.step}]`;
           addLogEntry({
             timestamp: new Date(data.timestamp),
             level: "info",
