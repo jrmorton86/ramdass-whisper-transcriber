@@ -40,6 +40,7 @@ class PipelineRunner:
         job_id: str,
         asset_uuid: str,
         is_cancelled: Callable[[], bool],
+        gpu_id: Optional[int] = None,
     ) -> dict:
         """
         Process an Intelligence Bank UUID through the pipeline.
@@ -48,6 +49,7 @@ class PipelineRunner:
             job_id: Job ID for tracking
             asset_uuid: The asset UUID to process
             is_cancelled: Function to check if job is cancelled
+            gpu_id: Optional GPU ID to use for processing
 
         Returns:
             dict with success status and result/error
@@ -94,8 +96,8 @@ class PipelineRunner:
 
             audio_path = audio_files[0]
 
-            # Now process the file
-            return await self.process_file(job_id, str(audio_path), is_cancelled)
+            # Now process the file with the same GPU ID
+            return await self.process_file(job_id, str(audio_path), is_cancelled, gpu_id=gpu_id)
 
         finally:
             # Cleanup temp directory
@@ -108,6 +110,7 @@ class PipelineRunner:
         job_id: str,
         file_path: str,
         is_cancelled: Callable[[], bool],
+        gpu_id: Optional[int] = None,
     ) -> dict:
         """
         Process an audio file through the transcription pipeline.
@@ -116,6 +119,7 @@ class PipelineRunner:
             job_id: Job ID for tracking
             file_path: Path to the audio file
             is_cancelled: Function to check if job is cancelled
+            gpu_id: Optional GPU ID to use for processing
 
         Returns:
             dict with success status and result/error
@@ -138,6 +142,10 @@ class PipelineRunner:
         output_dir = (Path.cwd() / "tmp" / job_id).resolve()
         output_dir.mkdir(parents=True, exist_ok=True)
 
+        # Determine GPU to use (explicit gpu_id or first from settings)
+        effective_gpu_id = gpu_id if gpu_id is not None else int(settings.gpu_ids.split(",")[0])
+        await self._log("info", f"Using GPU {effective_gpu_id} for transcription")
+
         # Build command - use pipeline Python (has whisper installed)
         cmd = [
             str(settings.pipeline_python),
@@ -145,15 +153,11 @@ class PipelineRunner:
             str(abs_file_path),
             "--model", settings.whisper_model,
             "--output-dir", str(output_dir),
+            "--device", f"cuda:{effective_gpu_id}",
         ]
 
-        # Add GPU device if specified
-        gpu_ids = settings.gpu_ids.split(",")
-        if gpu_ids:
-            cmd.extend(["--device", f"cuda:{gpu_ids[0]}"])
-
-        # Run the pipeline using safe subprocess execution
-        returncode = await self._run_subprocess(cmd, str(self.pipeline_dir), is_cancelled)
+        # Run the pipeline using safe subprocess execution with GPU environment
+        returncode = await self._run_subprocess(cmd, str(self.pipeline_dir), is_cancelled, gpu_id=effective_gpu_id)
 
         if is_cancelled():
             return {"success": False, "error": "Job cancelled"}
@@ -224,6 +228,7 @@ class PipelineRunner:
         cmd: list[str],
         cwd: str,
         is_cancelled: Callable[[], bool],
+        gpu_id: Optional[int] = None,
     ) -> int:
         """
         Run a subprocess with real-time log capture.
@@ -234,12 +239,17 @@ class PipelineRunner:
             cmd: Command and arguments as a list
             cwd: Working directory
             is_cancelled: Function to check cancellation
+            gpu_id: Optional GPU ID to use (sets CUDA_VISIBLE_DEVICES)
 
         Returns:
             Process return code
         """
         env = os.environ.copy()
         env["PYTHONUNBUFFERED"] = "1"  # Ensure unbuffered output
+
+        # Set GPU visibility if specified
+        if gpu_id is not None:
+            env["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
 
         # Use Popen for Windows compatibility
         process = subprocess.Popen(
