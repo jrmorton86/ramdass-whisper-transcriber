@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """
-Claude-powered transcript refinement using AWS Bedrock.
+Claude-powered transcript refinement using AWS Bedrock or Anthropic API.
 
 Uses Claude Opus 4.5 with the same vocabulary context given to Whisper
 to fix transcription errors while being extremely conservative about changes.
+
+Authentication options (checked in order):
+1. ANTHROPIC_API_KEY - Use Anthropic API directly (recommended)
+2. AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY - Use AWS Bedrock with explicit credentials
+3. AWS SSO/IAM - Use default boto3 credential chain (requires 'aws sso login')
 
 Only fixes:
 - Clear misspellings of terms explicitly in the vocabulary
@@ -41,32 +46,51 @@ class ClaudeTranscriptRefiner:
         self.replacement_map_file = script_dir / replacement_map_file if not Path(replacement_map_file).is_absolute() else Path(replacement_map_file)
         self.vocab_data = None
         self.replacement_map = None
+        self.use_anthropic_api = False
+        self.anthropic_client = None
+        self.bedrock_runtime = None
 
-        # Configure boto3 with longer timeout
-        from botocore.config import Config
-        config = Config(
-            read_timeout=180,  # 3 minutes
-            connect_timeout=10,
-            retries={'max_attempts': 3}
-        )
+        # Check for Anthropic API key first (preferred)
+        anthropic_api_key = os.environ.get('ANTHROPIC_API_KEY')
+        if anthropic_api_key:
+            print("[INFO] Using Anthropic API directly (ANTHROPIC_API_KEY found)")
+            try:
+                import anthropic
+                self.anthropic_client = anthropic.Anthropic(api_key=anthropic_api_key)
+                self.use_anthropic_api = True
+            except ImportError:
+                print("[WARN] anthropic package not installed, falling back to Bedrock")
+                print("       Install with: pip install anthropic")
+                anthropic_api_key = None
 
-        # Check for Bedrock API key authentication
-        api_key = os.environ.get('AWS_BEDROCK_API_KEY')
-        if api_key:
-            print("[INFO] Using Bedrock API key authentication")
-            # Bedrock API keys use endpoint URL authentication
-            self.bedrock_runtime = boto3.client(
-                'bedrock-runtime',
-                region_name=region_name,
-                config=config,
-                endpoint_url=f"https://bedrock-runtime.{region_name}.amazonaws.com"
+        # Fall back to AWS Bedrock
+        if not self.use_anthropic_api:
+            from botocore.config import Config
+            config = Config(
+                read_timeout=180,  # 3 minutes
+                connect_timeout=10,
+                retries={'max_attempts': 3}
             )
-            # Store API key for custom auth
-            self.api_key = api_key
-        else:
-            print("[INFO] Using IAM credentials for Bedrock authentication")
-            self.bedrock_runtime = boto3.client('bedrock-runtime', region_name=region_name, config=config)
-            self.api_key = None
+
+            # Check for explicit AWS credentials
+            aws_access_key = os.environ.get('AWS_ACCESS_KEY_ID')
+            aws_secret_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
+
+            if aws_access_key and aws_secret_key:
+                print("[INFO] Using AWS Bedrock with explicit credentials (AWS_ACCESS_KEY_ID)")
+                self.bedrock_runtime = boto3.client(
+                    'bedrock-runtime',
+                    region_name=region_name,
+                    config=config,
+                    aws_access_key_id=aws_access_key,
+                    aws_secret_access_key=aws_secret_key,
+                    aws_session_token=os.environ.get('AWS_SESSION_TOKEN')  # Optional
+                )
+            else:
+                print("[INFO] Using AWS Bedrock with default credential chain (SSO/IAM)")
+                print("       If you get token errors, run: aws sso login")
+                print("       Or set ANTHROPIC_API_KEY to use Anthropic API directly")
+                self.bedrock_runtime = boto3.client('bedrock-runtime', region_name=region_name, config=config)
 
         self.load_vocabulary()
         self.load_replacement_map()
@@ -373,7 +397,7 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
             print("WARNING:  Warning: Prompt may exceed 100k token context window")
             print("          Consider processing in smaller chunks if errors occur")
         
-        print("\nSending to Claude Sonnet 4.5...")
+        print("\nSending to Claude Opus 4.5...")
         if verbose:
             print("  [VERBOSE] Extended thinking enabled - Claude will show its reasoning process")
             print("  [VERBOSE] Streaming enabled - showing real-time progress")
@@ -409,6 +433,134 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
     
     def _call_claude_with_streaming(self, prompt, transcript_text, verbose):
         """Internal method to call Claude with streaming (for retry logic)."""
+        if self.use_anthropic_api:
+            return self._call_claude_anthropic_api(prompt, transcript_text, verbose)
+        else:
+            return self._call_claude_bedrock_api(prompt, transcript_text, verbose)
+
+    def _call_claude_anthropic_api(self, prompt, transcript_text, verbose):
+        """Call Claude using Anthropic API directly."""
+        try:
+            print("[INFO] Calling Claude via Anthropic API...")
+
+            # Build message with extended thinking if verbose
+            if verbose:
+                with self.anthropic_client.messages.stream(
+                    model="claude-opus-4-5-20250514",
+                    max_tokens=16000,
+                    thinking={
+                        "type": "enabled",
+                        "budget_tokens": 5000
+                    },
+                    messages=[{"role": "user", "content": prompt}]
+                ) as stream:
+                    thinking_text = None
+                    result_text = ""
+                    thinking_shown = False
+
+                    print()  # New line before streaming output
+
+                    for event in stream:
+                        if event.type == "content_block_start":
+                            if hasattr(event.content_block, 'type') and event.content_block.type == "thinking":
+                                print(f"\n{'='*70}")
+                                print("CLAUDE'S THINKING PROCESS:")
+                                print(f"{'='*70}")
+                                thinking_shown = True
+                        elif event.type == "content_block_delta":
+                            if hasattr(event.delta, 'thinking'):
+                                thinking_chunk = event.delta.thinking
+                                if thinking_text is None:
+                                    thinking_text = thinking_chunk
+                                else:
+                                    thinking_text += thinking_chunk
+                                print(thinking_chunk, end='', flush=True)
+                            elif hasattr(event.delta, 'text'):
+                                text_chunk = event.delta.text
+                                result_text += text_chunk
+                                if thinking_shown:
+                                    print(f"\n{'='*70}\n")
+                                    print("REFINED TRANSCRIPT:")
+                                    print(f"{'='*70}\n")
+                                    thinking_shown = False
+                                print(text_chunk, end='', flush=True)
+
+                    response = stream.get_final_message()
+                    input_tokens = response.usage.input_tokens
+                    output_tokens = response.usage.output_tokens
+            else:
+                response = self.anthropic_client.messages.create(
+                    model="claude-opus-4-5-20250514",
+                    max_tokens=16000,
+                    messages=[{"role": "user", "content": prompt}]
+                )
+                result_text = response.content[0].text
+                thinking_text = None
+                input_tokens = response.usage.input_tokens
+                output_tokens = response.usage.output_tokens
+
+            print(f"\n\n[TOKENS] Input: {input_tokens:,}, Output: {output_tokens:,}")
+
+            # Extract JSON from response (handle markdown code blocks)
+            json_text = result_text.strip()
+            if json_text.startswith('```'):
+                lines = json_text.split('\n')
+                json_text = '\n'.join(lines[1:-1]) if len(lines) > 2 else json_text
+                json_text = json_text.replace('```json', '').replace('```', '').strip()
+
+            # If JSON still has extra text, try to extract just the JSON object
+            if not json_text.startswith('{'):
+                start = json_text.find('{')
+                end = json_text.rfind('}')
+                if start != -1 and end != -1:
+                    json_text = json_text[start:end+1]
+
+            result = json.loads(json_text)
+
+            # Get corrections and paragraph breaks from Claude
+            corrections = result.get('corrections', [])
+            paragraph_breaks = result.get('paragraph_breaks', [])
+
+            print(f"\n{'='*70}")
+            print(f"Claude identified {len(corrections)} corrections")
+            print(f"Claude identified {len(paragraph_breaks)} paragraph breaks")
+            print(f"{'='*70}")
+
+            # Apply corrections and paragraph breaks locally
+            refined_text, apply_stats = self.apply_corrections_and_paragraphs(
+                transcript_text,
+                corrections,
+                paragraph_breaks
+            )
+
+            # Show summary
+            print(f"\n{'='*70}")
+            print(f"REFINEMENT COMPLETE")
+            print(f"  Corrections applied: {apply_stats['corrections_applied']}/{len(corrections)}")
+            print(f"  Paragraph breaks inserted: {apply_stats['breaks_applied']}/{len(paragraph_breaks)}")
+            print(f"  Final paragraph count: {apply_stats['paragraph_count']}")
+            print(f"{'='*70}")
+
+            # Return in expected format
+            return {
+                'refined_transcript': refined_text,
+                'changes': corrections,
+                'summary': {
+                    'total_changes': apply_stats['corrections_applied'],
+                    'paragraph_count': apply_stats['paragraph_count'],
+                    'corrections_failed': apply_stats['corrections_failed'],
+                    'breaks_applied': apply_stats['breaks_applied']
+                }
+            }
+
+        except Exception as e:
+            print(f"\n[ERROR] Error calling Claude (Anthropic API): {e}")
+            import traceback
+            traceback.print_exc()
+            raise
+
+    def _call_claude_bedrock_api(self, prompt, transcript_text, verbose):
+        """Call Claude using AWS Bedrock API."""
         try:
             # Build request parameters
             request_params = {
@@ -424,7 +576,7 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
                     'temperature': 1.0 if verbose else 0.3  # Must be 1.0 when thinking is enabled
                 }
             }
-            
+
             # Enable extended thinking in verbose mode
             if verbose:
                 request_params['additionalModelRequestFields'] = {
@@ -433,7 +585,7 @@ Remember: Be conservative with corrections, generous with paragraph breaks."""
                         'budget_tokens': 5000  # Allow up to 5k tokens for thinking
                     }
                 }
-            
+
             # Use streaming API
             response_stream = self.bedrock_runtime.converse_stream(**request_params)
             
@@ -686,7 +838,7 @@ def refine_transcript_text(transcript_text: str, output_path: str, verbose: bool
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Refine transcript using Claude Sonnet 4.5 with vocabulary awareness',
+        description='Refine transcript using Claude Opus 4.5 with vocabulary awareness',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
