@@ -276,9 +276,9 @@ class PipelineRunner:
         last_progress_pct = -1
 
         def parse_progress(text: str) -> Optional[int]:
-            """Extract progress percentage from tqdm-style output."""
-            # Match patterns like "50%|" or " 50%|" from tqdm
-            match = re.search(r'(\d+)%\|', text)
+            """Extract progress percentage from PROGRESS: X% output."""
+            # Match our custom "PROGRESS: 50%" format
+            match = re.search(r'PROGRESS:\s*(\d+)%', text)
             if match:
                 return int(match.group(1))
             return None

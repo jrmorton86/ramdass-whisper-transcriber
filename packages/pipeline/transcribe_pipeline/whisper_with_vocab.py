@@ -9,7 +9,70 @@ to improve transcription accuracy for Ram Dass content.
 import whisper
 import json
 import re
+import sys
 from pathlib import Path
+
+
+class ProgressTqdm:
+    """
+    A tqdm replacement that prints clean progress lines.
+
+    Instead of tqdm's complex terminal output with carriage returns,
+    this prints simple "PROGRESS: X%" lines that are easy to parse.
+    """
+
+    def __init__(self, iterable=None, total=None, **kwargs):
+        self.iterable = iterable
+        self.total = total or (len(iterable) if iterable is not None else 0)
+        self.n = 0
+        self.last_printed = -1
+
+    def __iter__(self):
+        for item in self.iterable:
+            yield item
+            self.update(1)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
+    def update(self, n=1):
+        self.n += n
+        if self.total > 0:
+            pct = int(100 * self.n / self.total)
+            # Print every 5% to avoid spam
+            if pct >= self.last_printed + 5 or pct == 100:
+                self.last_printed = pct
+                print(f"PROGRESS: {pct}%", flush=True)
+
+    def close(self):
+        pass
+
+    def set_description(self, desc=None, refresh=True):
+        pass
+
+    def set_postfix(self, ordered_dict=None, refresh=True, **kwargs):
+        pass
+
+
+def install_progress_tqdm():
+    """
+    Monkey-patch tqdm to use our simple progress printer.
+
+    This must be called before importing whisper's internal modules
+    that use tqdm.
+    """
+    import tqdm as tqdm_module
+    tqdm_module.tqdm = ProgressTqdm
+
+    # Also patch tqdm.auto which whisper may use
+    try:
+        import tqdm.auto
+        tqdm.auto.tqdm = ProgressTqdm
+    except ImportError:
+        pass
 
 
 class VocabularyEnhancedTranscriber:
@@ -277,6 +340,9 @@ class VocabularyEnhancedTranscriber:
             vram_before = torch.cuda.memory_allocated(device_idx) / 1024**3
             print(f"\n[VRAM] Before transcription: {vram_before:.2f} GB")
         
+        # Install progress tqdm to get clean progress output
+        install_progress_tqdm()
+
         # Transcribe (NOTE: Whisper architecture requires audio in CPU RAM first)
         # Audio preprocessing (load, resample) happens on CPU
         # Model inference happens on GPU with FP16
@@ -420,6 +486,9 @@ def transcribe_audio(audio_path, model, vocab_data=None, replacement_map=None,
         device_idx = _parse_device_index(target_device)
         vram_before = torch.cuda.memory_allocated(device_idx) / 1024**3
         print(f"[VRAM] Before transcription: {vram_before:.2f} GB")
+
+    # Install progress tqdm to get clean progress output
+    install_progress_tqdm()
 
     # Transcribe with timing
     start_time = time.time()
