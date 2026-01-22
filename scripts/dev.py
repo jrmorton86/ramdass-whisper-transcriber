@@ -19,6 +19,7 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).parent.parent
 API_DIR = ROOT_DIR / "packages" / "api"
 FRONTEND_DIR = ROOT_DIR / "packages" / "frontend"
+SCRIPTS_DIR = ROOT_DIR / "scripts"
 
 # Detect venv Python executable
 if sys.platform == "win32":
@@ -27,6 +28,61 @@ else:
     API_PYTHON = API_DIR / "venv" / "bin" / "python"
 
 processes = []
+
+
+def kill_dev_ports():
+    """Kill any processes using the development ports (8000 and 3000)."""
+    print("[CLEANUP] Checking for processes on dev ports...")
+
+    if sys.platform == "win32":
+        # Use PowerShell script for Windows
+        ps_script = SCRIPTS_DIR / "kill_dev_ports.ps1"
+        if ps_script.exists():
+            result = subprocess.run(
+                ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(ps_script)],
+                capture_output=True,
+                text=True,
+            )
+            if result.stdout:
+                for line in result.stdout.strip().split("\n"):
+                    print(f"[CLEANUP] {line}")
+        else:
+            # Fallback: use netstat and taskkill
+            for port in [8000, 3000]:
+                result = subprocess.run(
+                    f'netstat -ano | findstr ":{port}.*LISTENING"',
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                )
+                for line in result.stdout.strip().split("\n"):
+                    if line:
+                        parts = line.split()
+                        if len(parts) >= 5:
+                            pid = parts[-1]
+                            print(f"[CLEANUP] Killing PID {pid} on port {port}")
+                            subprocess.run(
+                                ["powershell.exe", "-Command", f"Stop-Process -Id {pid} -Force -ErrorAction SilentlyContinue"],
+                                capture_output=True,
+                            )
+    else:
+        # Linux/macOS: use lsof and kill
+        for port in [8000, 3000]:
+            result = subprocess.run(
+                f"lsof -ti :{port}",
+                shell=True,
+                capture_output=True,
+                text=True,
+            )
+            pids = result.stdout.strip().split("\n")
+            for pid in pids:
+                if pid:
+                    print(f"[CLEANUP] Killing PID {pid} on port {port}")
+                    subprocess.run(["kill", "-9", pid], capture_output=True)
+
+    # Give sockets time to fully release
+    time.sleep(1)
+    print("[CLEANUP] Port cleanup complete")
 
 
 def clear_python_cache():
@@ -136,6 +192,9 @@ def main():
     print("=" * 60)
     print("  Transcription Dashboard - Development Server")
     print("=" * 60)
+
+    # Kill any existing processes on dev ports
+    kill_dev_ports()
 
     # Clear cache on startup to ensure fresh code
     clear_python_cache()
