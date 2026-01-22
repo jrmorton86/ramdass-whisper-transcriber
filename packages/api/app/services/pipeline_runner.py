@@ -294,8 +294,10 @@ class PipelineRunner:
                     process.terminate()
                     return
 
-                # Read a chunk of bytes (non-blocking via executor)
-                chunk = await loop.run_in_executor(None, lambda: process.stdout.read(1024))
+                # Use os.read for unbuffered, non-blocking reads
+                # Returns immediately with available data (up to 4096 bytes) instead of waiting
+                fd = process.stdout.fileno()
+                chunk = await loop.run_in_executor(None, lambda: os.read(fd, 4096))
 
                 if not chunk:
                     # Process any remaining buffer
