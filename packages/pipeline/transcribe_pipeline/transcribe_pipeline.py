@@ -47,12 +47,11 @@ class TranscriptionPipeline:
         # File paths for pipeline stages
         self.base_name = self.audio_file.stem
         self.json_file = self.output_dir / f"{self.base_name}.json"
-        self.srt_file = self.output_dir / f"{self.base_name}.srt"
-        self.formatted_file = self.output_dir / f"{self.base_name}_formatted.txt"
-        self.refined_file = self.output_dir / f"{self.base_name}_formatted_refined.txt"
-        self.changes_file = self.output_dir / f"{self.base_name}_formatted_refined_changes.json"
-        self.refined_srt_file = self.output_dir / f"{self.base_name}_refined.srt"
-        self.srt_changes_file = self.output_dir / f"{self.base_name}_refined_changes.json"
+        self.temp_srt_file = self.output_dir / f"{self.base_name}_temp.srt"  # intermediate
+        self.formatted_file = self.output_dir / f"{self.base_name}_formatted.txt"  # intermediate
+        self.refined_file = self.output_dir / f"{self.base_name}.txt"  # final
+        self.logs_file = self.output_dir / f"{self.base_name}_logs.json"  # final (renamed from changes)
+        self.srt_file = self.output_dir / f"{self.base_name}.srt"  # final (refined SRT takes this name)
     
     def run_command(self, cmd, stage_name):
         """Run a subprocess command and handle errors"""
@@ -156,30 +155,29 @@ class TranscriptionPipeline:
         if self.skip_claude:
             print(f"\n[SKIP]  Skipping SRT refinement (--skip-claude)")
             return True
-        
-        if not self.srt_file.exists():
-            print(f"[ERROR] Error: SRT file not found: {self.srt_file}")
+
+        if not self.temp_srt_file.exists():
+            print(f"[ERROR] Error: SRT file not found: {self.temp_srt_file}")
             return False
-        
-        # Check for changes file from Stage 3
-        changes_file = self.output_dir / f"{self.base_name}_formatted_refined_changes.json"
-        if not changes_file.exists():
-            print(f"[ERROR] Error: Changes file not found: {changes_file}")
+
+        # Check for logs file from Stage 3
+        if not self.logs_file.exists():
+            print(f"[ERROR] Error: Logs file not found: {self.logs_file}")
             print("       Stage 3 must complete successfully first.")
             return False
-        
+
         # Build command to apply TXT corrections to SRT with absolute path
         apply_corrections_script = self.script_dir / "apply_txt_corrections_to_srt.py"
         cmd = [
             sys.executable,
             str(apply_corrections_script),
-            str(changes_file),
-            str(self.srt_file)
+            str(self.logs_file),
+            str(self.temp_srt_file)
         ]
-        
+
         if self.verbose:
             cmd.append("--verbose")
-        
+
         return self.run_command(cmd, "Apply TXT Corrections to SRT")
     
     def run(self):
@@ -216,18 +214,25 @@ class TranscriptionPipeline:
             print("\n[ERROR] Pipeline failed at Stage 4 (Claude SRT)")
             return False
 
+        # Cleanup intermediate files after successful completion
+        if not self.skip_claude:
+            for intermediate_file in [self.formatted_file, self.temp_srt_file]:
+                if intermediate_file.exists():
+                    intermediate_file.unlink()
+
         # Success!
         print(f"\n{'='*70}")
         print(f"[OK] Pipeline complete - transcription successful!")
         print(f"{'='*70}")
         print(f"\nOutput files:")
         print(f"  1. Raw transcript (JSON): {self.json_file}")
-        print(f"  2. Subtitles (SRT):       {self.srt_file}")
-        print(f"  3. Formatted text:        {self.formatted_file}")
-        if not self.skip_claude:
-            print(f"  4. Refined text:          {self.refined_file}")
-            print(f"  5. Refined subtitles:     {self.refined_srt_file}")
-            print(f"  6. Change log:            {self.changes_file}")
+        if self.skip_claude:
+            print(f"  2. Formatted text:        {self.formatted_file}")
+            print(f"  3. Subtitles (SRT):       {self.temp_srt_file}")
+        else:
+            print(f"  2. Refined text:          {self.refined_file}")
+            print(f"  3. Refined subtitles:     {self.srt_file}")
+            print(f"  4. Change log:            {self.logs_file}")
         print(f"{'='*70}\n")
 
         return True
