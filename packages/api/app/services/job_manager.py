@@ -194,6 +194,9 @@ class JobManager:
 
     async def _emit_progress(self, job_id: str, progress: int, stage: str = None, step: int = None):
         """Emit a progress update."""
+        if job_id not in self.active_jobs:
+            return  # Job already completed/cleaned up
+
         self.active_jobs[job_id]["progress"] = progress
         if stage:
             self.active_jobs[job_id]["stage"] = stage
@@ -297,8 +300,9 @@ class JobManager:
 
         try:
             # Update status
-            self.active_jobs[job_id]["status"] = "processing"
-            self.active_jobs[job_id]["gpu_id"] = gpu_id
+            if job_id in self.active_jobs:
+                self.active_jobs[job_id]["status"] = "processing"
+                self.active_jobs[job_id]["gpu_id"] = gpu_id
             await self._emit_status(job_id, "processing")
 
             # Run the job
