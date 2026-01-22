@@ -497,7 +497,7 @@ def convert_transcript(json_file: str, output_dir: Optional[str] = None, force_f
     else:
         srt_content = transcribe_to_srt(transcript_json)
     
-    srt_file = output_path / f"{base_filename}.srt"
+    srt_file = output_path / f"{base_filename}_temp.srt"
     with open(srt_file, 'w', encoding='utf-8') as f:
         f.write(srt_content)
     print(f"[OK] SRT file saved: {srt_file}")
@@ -542,7 +542,7 @@ def format_whisper_transcript(transcript_json: Dict, output_dir: str, base_filen
     # Generate SRT
     print(f"\n{'='*60}")
     srt_content = whisper_to_srt(transcript_json)
-    srt_file = output_path / f"{base_filename}.srt"
+    srt_file = output_path / f"{base_filename}_temp.srt"
     try:
         with open(srt_file, 'w', encoding='utf-8') as f:
             f.write(srt_content)
