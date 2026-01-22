@@ -132,7 +132,7 @@ def apply_corrections_to_srt_file(changes_json_path, srt_path, output_path=None)
     Args:
         changes_json_path: Path to changes JSON from claude_refine_transcript
         srt_path: Path to SRT file to refine
-        output_path: Optional output path (default: input_refined.srt)
+        output_path: Optional output path (default: strips _temp suffix, e.g., base_temp.srt -> base.srt)
 
     Returns:
         dict with 'srt_path', 'changes_path', 'changes_count'
@@ -162,7 +162,9 @@ def apply_corrections_to_srt_file(changes_json_path, srt_path, output_path=None)
     if output_path:
         out_path = Path(output_path)
     else:
-        out_path = srt_file.parent / f"{srt_file.stem}_refined.srt"
+        # Strip _temp suffix from input filename for output (e.g., base_temp.srt -> base.srt)
+        base_stem = srt_file.stem.removesuffix('_temp')
+        out_path = srt_file.parent / f"{base_stem}.srt"
 
     # Save refined SRT
     refined_srt = subtitles_to_srt(subtitles)
@@ -195,12 +197,12 @@ def main():
         epilog="""
 Examples:
   # Apply corrections from TXT refinement to SRT
-  python apply_txt_corrections_to_srt.py downloads/Clip_1_changes.json downloads/Clip_1.srt
+  python apply_txt_corrections_to_srt.py downloads/Clip_1_logs.json downloads/Clip_1_temp.srt
         """
     )
     parser.add_argument('changes_json', help='Path to changes JSON from claude_refine_transcript.py')
     parser.add_argument('srt_file', help='Path to SRT file to refine')
-    parser.add_argument('-o', '--output', help='Output SRT file (default: input_refined.srt)')
+    parser.add_argument('-o', '--output', help='Output SRT file (default: strips _temp suffix, e.g., base_temp.srt -> base.srt)')
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose output')
     
     args = parser.parse_args()
@@ -248,7 +250,9 @@ Examples:
     if args.output:
         output_path = Path(args.output)
     else:
-        output_path = srt_path.parent / f"{srt_path.stem}_refined.srt"
+        # Strip _temp suffix from input filename for output (e.g., base_temp.srt -> base.srt)
+        base_stem = srt_path.stem.removesuffix('_temp')
+        output_path = srt_path.parent / f"{base_stem}.srt"
     
     # Save refined SRT
     refined_srt = subtitles_to_srt(subtitles)
