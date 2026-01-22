@@ -48,10 +48,8 @@ async def upload_file(
     Returns the created job.
     """
     logger.info(f"=== UPLOAD START: {file.filename} ===")
-    print(f"=== UPLOAD START: {file.filename} ===")
     if batch_id:
         logger.info(f"Batch ID: {batch_id}")
-        print(f"Batch ID: {batch_id}")
 
     # Validate file extension
     ext = Path(file.filename).suffix.lower()
@@ -71,7 +69,6 @@ async def upload_file(
     temp_filename = f"{file_id}{ext}"
     temp_path = TEMP_DIR / temp_filename
     logger.info(f"Saving to temp: {temp_path}")
-    print(f"Saving to temp: {temp_path}")
 
     # Stream to disk
     try:
@@ -81,10 +78,8 @@ async def upload_file(
                 await f.write(chunk)
                 bytes_written += len(chunk)
         logger.info(f"File saved: {bytes_written} bytes")
-        print(f"File saved: {bytes_written} bytes")
     except Exception as e:
         logger.error(f"Failed to save file: {e}")
-        print(f"Failed to save file: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to save file: {str(e)}")
 
     # Determine final MP3 path
@@ -95,7 +90,6 @@ async def upload_file(
     if ext == ".mp3":
         # Already MP3, just move from temp to upload dir
         logger.info("File is already MP3, moving to uploads")
-        print("File is already MP3, moving to uploads")
         try:
             temp_path.rename(final_path)
         except Exception as e:
@@ -105,7 +99,6 @@ async def upload_file(
     else:
         # Convert to MP3 using FFmpeg
         logger.info(f"Converting {ext} to MP3...")
-        print(f"Converting {ext} to MP3...")
 
         success, error = await convert_to_mp3(temp_path, final_path)
 
@@ -113,25 +106,20 @@ async def upload_file(
         try:
             temp_path.unlink()
             logger.info("Temp file deleted")
-            print("Temp file deleted")
         except Exception as e:
             logger.warning(f"Failed to delete temp file: {e}")
-            print(f"Failed to delete temp file: {e}")
 
         if not success:
             logger.error(f"FFmpeg conversion failed: {error}")
-            print(f"FFmpeg conversion failed: {error}")
             raise HTTPException(
                 status_code=500,
                 detail=f"Failed to convert file to MP3: {error}",
             )
 
         logger.info("Conversion complete")
-        print("Conversion complete")
 
     # Create a job for this file
     logger.info("Creating job in database...")
-    print("Creating job in database...")
     job_id = str(uuid.uuid4())
     job = Job(
         id=job_id,
@@ -140,25 +128,21 @@ async def upload_file(
         input=str(final_path),
         status=JobStatus.PENDING.value,
         progress=0,
+        batch_id=batch_id,
     )
-    # Note: batch_id will be used once the Job model supports it (Task 3)
 
     session.add(job)
     await session.commit()
     await session.refresh(job)
     logger.info(f"Job created: {job_id}")
-    print(f"Job created: {job_id}")
 
     # Submit to job manager for processing
     logger.info("Submitting to job manager...")
-    print("Submitting to job manager...")
     await job_manager.submit_job(job_id, "file", str(final_path))
     logger.info("Job submitted!")
-    print("Job submitted!")
 
     job_dict = job.to_dict()
     logger.info(f"Returning JobResponse: {job_dict}")
-    print(f"Returning JobResponse: {job_dict}")
 
     return JobResponse(**job_dict)
 
