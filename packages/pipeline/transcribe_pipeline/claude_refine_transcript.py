@@ -29,6 +29,16 @@ from pathlib import Path
 import argparse
 import time
 
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    env_path = Path(__file__).parent / '.env'
+    if env_path.exists():
+        load_dotenv(env_path)
+        print(f"[INFO] Loaded environment from {env_path}")
+except ImportError:
+    pass  # python-dotenv not installed, rely on system env vars
+
 
 class ModelStreamError(Exception):
     """Raised when Claude streaming encounters a model error (retryable)."""
