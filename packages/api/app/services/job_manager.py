@@ -308,6 +308,9 @@ class JobManager:
             self.cancelled_jobs.discard(job_id)
             return
 
+        # Get logs for this job to save to database
+        job_logs = self.log_history.get(job_id, [])
+
         # Update final status
         if result["success"]:
             await self._emit_status(job_id, "completed")
@@ -317,10 +320,11 @@ class JobManager:
                 result_text=result.get("text"),
                 result_segments=result.get("segments"),
                 result_metadata=result.get("metadata"),
+                logs=job_logs,
             )
         else:
             await self._emit_status(job_id, "failed", result.get("error"))
-            await self._update_job_in_db(job_id, "failed", error=result.get("error"))
+            await self._update_job_in_db(job_id, "failed", error=result.get("error"), logs=job_logs)
 
     def _parse_progress(self, message: str) -> Optional[tuple[str, int, int]]:
         """Parse progress information from log message.
@@ -355,6 +359,7 @@ class JobManager:
         result_text: str = None,
         result_segments: list = None,
         result_metadata: dict = None,
+        logs: list = None,
     ):
         """Update job in database."""
         from ..database import async_session_maker
@@ -388,6 +393,9 @@ class JobManager:
 
                 if result_metadata:
                     job.result_metadata = json.dumps(result_metadata)
+
+                if logs is not None:
+                    job.logs = json.dumps(logs)
 
                 await session.commit()
 

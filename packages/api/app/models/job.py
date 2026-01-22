@@ -35,6 +35,17 @@ class JobCreate(BaseModel):
     name: Optional[str] = Field(None, description="Display name for the job")
 
 
+class LogEntry(BaseModel):
+    """A log entry from job execution."""
+    type: str = "log"
+    timestamp: str
+    level: str = "info"
+    message: str
+    stage: Optional[str] = None
+    step: Optional[int] = None
+    totalSteps: Optional[int] = None
+
+
 class JobResponse(BaseModel):
     """Response model for a job."""
     id: str
@@ -50,6 +61,7 @@ class JobResponse(BaseModel):
     duration: Optional[float] = None
     error: Optional[str] = None
     result: Optional[TranscriptionResult] = None
+    logs: Optional[list[LogEntry]] = None
 
     class Config:
         from_attributes = True

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, useMemo, use } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { JobDetails } from "@/components/JobDetails";
 import { LogViewer } from "@/components/LogViewer";
 import { api } from "@/lib/api";
 import { useLogStream } from "@/lib/sse";
-import { Job } from "@/types";
+import { Job, LogEntry } from "@/types";
 
 interface JobPageProps {
   params: Promise<{ id: string }>;
@@ -23,7 +23,24 @@ export default function JobPage({ params }: JobPageProps) {
 
   // SSE stream for real-time updates (only for active jobs)
   const isActiveJob = job?.status === "processing" || job?.status === "pending";
-  const { logs, isConnected, jobState } = useLogStream(isActiveJob ? id : null);
+  const { logs: streamingLogs, isConnected, jobState } = useLogStream(isActiveJob ? id : null);
+
+  // Convert saved logs from database to LogEntry format
+  const savedLogs = useMemo((): LogEntry[] => {
+    if (!job?.logs) return [];
+    return job.logs
+      .filter((log) => log.type === "log") // Only show actual log entries, not progress/status
+      .map((log) => ({
+        timestamp: new Date(log.timestamp),
+        level: (log.level || "info") as LogEntry["level"],
+        message: log.message,
+        ansi: log.ansi || log.message,
+      }));
+  }, [job?.logs]);
+
+  // Use streaming logs for active jobs, saved logs for completed jobs
+  const displayLogs = isActiveJob ? streamingLogs : savedLogs;
+  const hasLogs = displayLogs.length > 0;
 
   // Update job from SSE events
   useEffect(() => {
@@ -128,9 +145,14 @@ export default function JobPage({ params }: JobPageProps) {
         {/* Job Details */}
         <JobDetails job={job} />
 
-        {/* Log Viewer - show for active jobs */}
-        {isActiveJob && (
-          <LogViewer jobId={job.id} logs={logs} isConnected={isConnected} />
+        {/* Log Viewer - show for active jobs (streaming) or completed jobs (saved) */}
+        {(isActiveJob || hasLogs) && (
+          <LogViewer
+            jobId={job.id}
+            logs={displayLogs}
+            isConnected={isActiveJob ? isConnected : false}
+            isHistorical={!isActiveJob}
+          />
         )}
       </div>
     </div>

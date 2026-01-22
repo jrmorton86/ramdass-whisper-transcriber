@@ -18,9 +18,10 @@ interface LogViewerProps {
   jobId: string;
   logs: LogEntry[];
   isConnected: boolean;
+  isHistorical?: boolean; // True when showing saved logs from completed jobs
 }
 
-export function LogViewer({ jobId, logs, isConnected }: LogViewerProps) {
+export function LogViewer({ jobId, logs, isConnected, isHistorical = false }: LogViewerProps) {
   const [autoScroll, setAutoScroll] = useState(true);
   const [displayLogs, setDisplayLogs] = useState<LogEntry[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -69,29 +70,35 @@ export function LogViewer({ jobId, logs, isConnected }: LogViewerProps) {
           <div>
             <CardTitle className="flex items-center gap-2">
               <Terminal className="w-5 h-5" />
-              Live Logs
-              {isConnected && (
+              {isHistorical ? "Job Logs" : "Live Logs"}
+              {!isHistorical && isConnected && (
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               )}
             </CardTitle>
-            <CardDescription>Real-time job execution logs</CardDescription>
+            <CardDescription>
+              {isHistorical ? "Saved execution logs from this job" : "Real-time job execution logs"}
+            </CardDescription>
           </div>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setAutoScroll(!autoScroll)}
-            >
-              {autoScroll ? "Disable" : "Enable"} Auto-scroll
-            </Button>
+            {!isHistorical && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAutoScroll(!autoScroll)}
+              >
+                {autoScroll ? "Disable" : "Enable"} Auto-scroll
+              </Button>
+            )}
             <Button variant="outline" size="sm" onClick={handleDownloadLogs}>
               <Download className="w-4 h-4 mr-2" />
               Download
             </Button>
-            <Button variant="outline" size="sm" onClick={handleClearLogs}>
-              <Trash2 className="w-4 h-4 mr-2" />
-              Clear
-            </Button>
+            {!isHistorical && (
+              <Button variant="outline" size="sm" onClick={handleClearLogs}>
+                <Trash2 className="w-4 h-4 mr-2" />
+                Clear
+              </Button>
+            )}
           </div>
         </div>
       </CardHeader>
@@ -100,7 +107,11 @@ export function LogViewer({ jobId, logs, isConnected }: LogViewerProps) {
           <div className="font-mono text-sm space-y-1" ref={scrollRef}>
             {displayLogs.length === 0 ? (
               <div className="text-gray-500 text-center py-8">
-                {isConnected ? "Waiting for logs..." : "Connecting..."}
+                {isHistorical
+                  ? "No logs saved for this job"
+                  : isConnected
+                  ? "Waiting for logs..."
+                  : "Connecting..."}
               </div>
             ) : (
               displayLogs.map((log, index) => <LogLine key={index} log={log} />)

@@ -50,6 +50,9 @@ class Job(Base):
     result_segments = Column(Text, nullable=True)  # JSON array
     result_metadata = Column(Text, nullable=True)  # JSON object
 
+    # Logs stored as JSON array for persistence after job completion
+    logs = Column(Text, nullable=True)  # JSON array of log entries
+
     def to_dict(self):
         """Convert to dictionary."""
         import json
@@ -76,4 +79,5 @@ class Job(Base):
             "duration": self.duration,
             "error": self.error,
             "result": result,
+            "logs": json.loads(self.logs) if self.logs else None,
         }

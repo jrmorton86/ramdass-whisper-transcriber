@@ -16,6 +16,7 @@ export interface Job {
   duration?: number;
   result?: TranscriptionResult;
   error?: string;
+  logs?: RawLogEntry[]; // Persisted logs from database
 }
 
 export interface TranscriptionResult {
@@ -37,6 +38,22 @@ export interface LogEntry {
   level: "info" | "warning" | "error" | "debug";
   message: string;
   ansi?: string; // Raw ANSI string
+  type?: string;
+  stage?: string;
+  step?: number;
+  totalSteps?: number;
+}
+
+// Raw log entry from API (timestamp is string)
+export interface RawLogEntry {
+  timestamp: string;
+  level: string;
+  message: string;
+  ansi?: string;
+  type?: string;
+  stage?: string;
+  step?: number;
+  totalSteps?: number;
 }
 
 export interface AnalyticsData {
