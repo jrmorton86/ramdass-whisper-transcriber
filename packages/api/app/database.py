@@ -30,6 +30,7 @@ async_session_maker = async_sessionmaker(
 async def init_db():
     """Initialize database tables."""
     from .schemas.job import Job  # Import to register model
+    from .schemas.batch import Batch  # Import to register model
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

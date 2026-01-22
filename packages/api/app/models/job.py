@@ -66,6 +66,7 @@ class JobResponse(BaseModel):
     error: Optional[str] = None
     result: Optional[TranscriptionResult] = None
     logs: Optional[list[LogEntry]] = None
+    batchId: Optional[str] = None
 
     class Config:
         from_attributes = True

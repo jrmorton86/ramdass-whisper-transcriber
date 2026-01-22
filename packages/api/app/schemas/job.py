@@ -53,6 +53,9 @@ class Job(Base):
     # Logs stored as JSON array for persistence after job completion
     logs = Column(Text, nullable=True)  # JSON array of log entries
 
+    # Batch association (optional)
+    batch_id = Column(String(36), nullable=True)
+
     def to_dict(self):
         """Convert to dictionary."""
         import json
@@ -80,4 +83,5 @@ class Job(Base):
             "error": self.error,
             "result": result,
             "logs": json.loads(self.logs) if self.logs else None,
+            "batchId": self.batch_id,
         }
