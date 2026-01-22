@@ -39,11 +39,15 @@ class LogEntry(BaseModel):
     """A log entry from job execution."""
     type: str = "log"
     timestamp: str
-    level: str = "info"
-    message: str
+    level: Optional[str] = "info"
+    message: Optional[str] = None  # Not present in progress/status entries
+    ansi: Optional[str] = None
     stage: Optional[str] = None
     step: Optional[int] = None
     totalSteps: Optional[int] = None
+    progress: Optional[int] = None  # For progress entries
+    status: Optional[str] = None  # For status entries
+    error: Optional[str] = None
 
 
 class JobResponse(BaseModel):
